@@ -3,7 +3,7 @@ import './Login.css';
 
 export default function Login() {
     const [inputs, setInputs] = useState({});
-    //const history = useHistory();d
+    //const history = useHistory();dd
 
     const handleChange = (event) => {
         const name = event.target.name;
