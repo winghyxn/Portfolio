@@ -12,9 +12,9 @@ export default function Login() {
         setInputs(values => ({...values, [name] : value}));
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        alert("submitted!")
+        navigate('/home');
         //navigate("www.google.com");
     }
 
@@ -46,7 +46,8 @@ export default function Login() {
                 <br></br>
                 <input type="submit" id="submit-button" />
             </form>
-            <button onClick={handleCreateAccount}>Create Account</button>
+            <br></br>
+            <button id = "create-account" onClick={handleCreateAccount}>Create Account</button>
         </section>
     );
 }

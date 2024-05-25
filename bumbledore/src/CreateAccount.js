@@ -25,7 +25,7 @@ export default function CreateAccount() {
 
         if (response.ok) {
             alert('Account created successfully!');
-            navigate('/');
+            navigate('/home');
         } else {
             alert('Failed to create account.');
         }

@@ -17,3 +17,7 @@ form {
     font-weight: bold;
     border-radius: 5px;
 }
+
+#create-account {
+    text-align: center
+}
