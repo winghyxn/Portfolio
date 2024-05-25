@@ -1,20 +1,19 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from "./Login.js";
 import Home from "./Home.js";
+import CreateAccount from './CreateAccount';
 import './App.css';
 
 function App() {
   return (
-    <section>
-      <Router>
-        <Switch>
-          <Route path = "/login" component = {Login} />
-          <PrivateRoute path = "/home" component = {Home} />
-          <Redirect from = "/" to = "/login" />
-        </Switch>
-      </Router>
-    </section>
+    <Router>
+      <section>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/create-account" element={<CreateAccount />} />
+        </Routes>
+      </section>
+    </Router>
   );
 }
 
