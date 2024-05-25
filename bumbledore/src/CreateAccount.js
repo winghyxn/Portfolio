@@ -4,6 +4,7 @@ import './CreateAccount.css';
 
 export default function CreateAccount() {
     const [inputs, setInputs] = useState({});
+    const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     const handleChange = (event) => {
@@ -14,20 +15,27 @@ export default function CreateAccount() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setError(null); // Clear previous error
 
-        const response = await fetch('http://localhost:3001/create-account', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(inputs)
-        });
+        try {
+            const response = await fetch('http://localhost:3001/create-account', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(inputs)
+            });
 
-        if (response.ok) {
-            alert('Account created successfully!');
-            navigate('/home');
-        } else {
-            alert('Failed to create account.');
+            if (response.ok) {
+                alert('Account created successfully!');
+                navigate('/');
+            } else {
+                const errorMessage = await response.text();
+                setError(errorMessage);
+            }
+        } catch (error) {
+            console.error('Request failed:', error);
+            setError('Failed to create account. Please try again.');
         }
     }
 
@@ -55,6 +63,7 @@ export default function CreateAccount() {
                 <br />
                 <input type="submit" id="submit-button" value="Create Account" />
             </form>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
         </section>
     );
 }
