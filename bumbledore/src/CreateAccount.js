@@ -28,7 +28,7 @@ export default function CreateAccount() {
 
             if (response.ok) {
                 alert('Account created successfully!');
-                navigate('/');
+                navigate('/login');
             } else {
                 const errorMessage = await response.text();
                 setError(errorMessage);
@@ -41,7 +41,9 @@ export default function CreateAccount() {
 
     return (
         <section>
-            <h1>Create Account</h1>
+            <h1>Bumbledore</h1>
+            <br></br>
+            <h2>Create Account</h2>
             <form onSubmit={handleSubmit}>
                 <label>Email:
                     <input

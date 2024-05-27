@@ -44,9 +44,12 @@ export default function Login() {
 
     return (
         <section>
-            <h1>Login</h1>
+            <h1>Bumbledore</h1>
+            <container>
+            <h2>Login</h2>
             <form onSubmit={handleSubmit}>
-                <label>Email:  
+                <br></br>
+                <label>Email:  </label>
                     <input 
                         type="email" 
                         name="email" 
@@ -54,9 +57,8 @@ export default function Login() {
                         onChange={handleChange} 
                         required 
                     />
-                </label>
                 <br />
-                <label>Password:  
+                <label>Password:  </label>
                     <input 
                         type="password" 
                         name="password" 
@@ -64,13 +66,14 @@ export default function Login() {
                         onChange={handleChange} 
                         required 
                     />
-                </label>
                 <br />
                 <input type="submit" id="submit-button" />
             </form>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
             <br />
+            <p>Don't have an account? </p>
             <button id="create-account" onClick={handleCreateAccount}>Create Account</button>
+            </container>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
         </section>
     );
 }

@@ -1,23 +1,72 @@
-h1 {
+/*--lavender-blush: #fef2f3ff;
+--sky-magenta: #d46ca5ff;
+--magenta-dye: #be3781ff;
+--goldenrod: #e1ac24ff;
+--maize: #f5eb44ff;
+--ivory: #fefdecff;
+--cool-gray: #8f97c5ff;
+--yinmn-blue: #47529bff;
+--charcoal: #454e64ff;
+--rich-black: #0b111dff;
+*/
+
+* {
     text-align: center;
+    background-color: #fefdecff;
+}
+
+h1 {
+    font-size: 1rem;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    margin: 50px;
+}
+
+h2 {
+    font-size:large
 }
 
 form {
-    text-align:center;
-}
-
-#submit-button {
-    background-color: mediumvioletred;
-    color: white;
-    text-align: center;
-    border-radius: 15px;
-}
-
-#submit-button:hover {
-    font-weight: bold;
+    margin: 0 auto;
+    padding: 2rem;
+    max-width: 400px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
     border-radius: 5px;
 }
 
+label {
+    background-color: #f9f9f9
+}
+
+input[type="email"],
+input[type="password"] {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 100%;
+    margin: 0.5rem;
+    text-align: left;
+    background-color: white
+}
+
+#submit-button {
+    background-color: #be3781ff;
+    padding: 5pt;
+    color: white;
+    text-align: center;
+    border-radius: 3px;
+}
+
+#submit-button:hover, 
+button:hover {
+    border-radius: 3px;
+    opacity: 70%;
+}
+
 #create-account {
-    text-align: center
+    text-align: center;
+    background-color: #fefdecff; 
+    border: 0px;
+    color: #47529bff;
 }

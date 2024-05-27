@@ -1,4 +1,17 @@
-section {
+ * {
+    text-align: center;
+}
+
+h1 {
+    font-size: 32pt;
+    margin: 50px
+}
+
+h2 {
+    font-size:large
+}
+
+/*section {
     margin: 0 auto;
     padding: 2rem;
     max-width: 400px;
@@ -47,3 +60,4 @@ input[type="submit"] {
 input[type="submit"]:hover {
     background-color: #0056b3;
 }
+*/
