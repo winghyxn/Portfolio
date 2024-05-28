@@ -10,7 +10,7 @@ export default function Login() {
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
-        setInputs(values => ({...values, [name]: value}));
+        setInputs(values => ({ ...values, [name]: value }));
     }
 
     const handleSubmit = async (event) => {
@@ -21,9 +21,9 @@ export default function Login() {
             const response = await fetch('http://localhost:3001/login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(inputs),
+                body: JSON.stringify(inputs)
             });
 
             if (response.ok) {
@@ -63,7 +63,7 @@ export default function Login() {
                         required 
                     />
                 <br />
-                <input type="submit" id="submit-button" />
+                <input type="submit" id="submit-button" value="Login" />
             </form>
             <br />
             <p>Don't have an account? <a href = "/create-account">Create Account</a></p>
