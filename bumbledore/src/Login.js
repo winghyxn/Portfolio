@@ -10,7 +10,7 @@ export default function Login() {
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
-        setInputs(values => ({...values, [name]: value}));
+        setInputs(values => ({ ...values, [name]: value }));
     }
 
     const handleSubmit = async (event) => {
@@ -21,9 +21,9 @@ export default function Login() {
             const response = await fetch('http://localhost:3001/login', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(inputs),
+                body: JSON.stringify(inputs)
             });
 
             if (response.ok) {
@@ -46,27 +46,25 @@ export default function Login() {
         <section>
             <h1>Login</h1>
             <form onSubmit={handleSubmit}>
-                <label>Email:  
-                    <input 
-                        type="email" 
-                        name="email" 
-                        value={inputs.email || ""} 
-                        onChange={handleChange} 
-                        required 
-                    />
+                <label>Email:
+                    <input
+                        type="email"
+                        name="email"
+                        value={inputs.email || ""}
+                        onChange={handleChange}
+                        required />
                 </label>
                 <br />
-                <label>Password:  
-                    <input 
-                        type="password" 
-                        name="password" 
-                        value={inputs.password || ""} 
-                        onChange={handleChange} 
-                        required 
-                    />
+                <label>Password:
+                    <input
+                        type="password"
+                        name="password"
+                        value={inputs.password || ""}
+                        onChange={handleChange}
+                        required />
                 </label>
                 <br />
-                <input type="submit" id="submit-button" />
+                <input type="submit" id="submit-button" value="Login" />
             </form>
             {error && <p style={{ color: 'red' }}>{error}</p>}
             <br />
