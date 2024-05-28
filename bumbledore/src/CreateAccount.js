@@ -1,3 +1,44 @@
+/*const { MongoClient } = require("mongodb");
+
+const uri = "mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital"
+const client = new MongoClient(uri);
+
+async function run() {
+    try {
+        // Connect to the Atlas cluster
+         await client.connect();
+         // Get the database and collection on which to run the operation
+         const db = client.db("bumbledore");
+         const col = db.collection("userAccountInfo");
+         // Create new documents                                                                                                                                         
+         const userAccountInfoDocuments = [
+           {
+             "email": "hello123@gmail.com",
+             "password": "qwertyuiop"
+           },
+           {
+            "email": "hello321@gmail.com",
+            "password": "asdfghjkl"
+           }
+         ]
+         // Insert the documents into the specified collection        
+         const p = await col.insertMany(userAccountInfoDocuments);
+         // Find the document
+         const filter = { "email": "hello123@gmail.com" };
+         const document = await col.findOne(filter);
+         // Print results
+         console.log("Document found:\n" + JSON.stringify(document));
+        } catch (err) {
+         console.log(err.stack);
+     }
+ 
+     finally {
+        await client.close();
+    }
+}
+run().catch(console.dir);
+*/
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CreateAccount.css';

@@ -38,10 +38,6 @@ export default function Login() {
         }
     }
 
-    const handleCreateAccount = () => {
-        navigate("/create-account");
-    }
-
     return (
         <section>
             <h1>Bumbledore</h1>
@@ -70,8 +66,7 @@ export default function Login() {
                 <input type="submit" id="submit-button" />
             </form>
             <br />
-            <p>Don't have an account? </p>
-            <button id="create-account" onClick={handleCreateAccount}>Create Account</button>
+            <p>Don't have an account? <a href = "/create-account">Create Account</a></p>
             </container>
             {error && <p style={{ color: 'red' }}>{error}</p>}
         </section>
