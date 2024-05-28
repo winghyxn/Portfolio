@@ -106,7 +106,7 @@ export default function CreateAccount() {
                 <br />
                 <input type="submit" id="submit-button" value="Create Account" />
             </form>
-            <p>Already have an account? <a href = "/create-account">Log in</a></p>
+            <p>Already have an account? <a href = "/">Log in</a></p>
             {error && <p style={{ color: 'red' }}>{error}</p>}
         </section>
     );

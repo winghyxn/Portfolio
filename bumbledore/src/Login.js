@@ -65,7 +65,6 @@ export default function Login() {
                 <br />
                 <input type="submit" id="submit-button" value="Login" />
             </form>
-            <br />
             <p>Don't have an account? <a href = "/create-account">Create Account</a></p>
             </container>
             {error && <p style={{ color: 'red' }}>{error}</p>}
