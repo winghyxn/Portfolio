@@ -18,7 +18,7 @@ export default function Login() {
         setError(null); // Clear previous error
 
         try {
-            const response = await fetch('http://localhost:3001/login', {
+            const response = await fetch('http://localhost:3000/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -38,37 +38,36 @@ export default function Login() {
         }
     }
 
-    const handleCreateAccount = () => {
-        navigate("/create-account");
-    }
-
     return (
         <section>
-            <h1>Login</h1>
+            <h1>Bumbledore</h1>
+            <container>
+            <h2>Login</h2>
             <form onSubmit={handleSubmit}>
-                <label>Email:
-                    <input
-                        type="email"
-                        name="email"
-                        value={inputs.email || ""}
-                        onChange={handleChange}
-                        required />
-                </label>
+                <label>Email:  </label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        value={inputs.email || ""} 
+                        onChange={handleChange} 
+                        required 
+                    />
                 <br />
-                <label>Password:
-                    <input
-                        type="password"
-                        name="password"
-                        value={inputs.password || ""}
-                        onChange={handleChange}
-                        required />
-                </label>
+                <label>Password:  </label>
+                    <input 
+                        type="password" 
+                        name="password" 
+                        value={inputs.password || ""} 
+                        onChange={handleChange} 
+                        required 
+                    />
                 <br />
                 <input type="submit" id="submit-button" value="Login" />
             </form>
+            </container>
+            <p>Don't have an account? <a href = "/create-account">Create Account</a></p>
             {error && <p style={{ color: 'red' }}>{error}</p>}
-            <br />
-            <button id="create-account" onClick={handleCreateAccount}>Create Account</button>
         </section>
     );
 }
+

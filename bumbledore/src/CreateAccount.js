@@ -18,7 +18,7 @@ export default function CreateAccount() {
         setError(null); // Clear previous error
 
         try {
-            const response = await fetch('http://localhost:3001/create-account', {
+            const response = await fetch('http://localhost:3000/create-account', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -28,7 +28,7 @@ export default function CreateAccount() {
 
             if (response.ok) {
                 alert('Account created successfully!');
-                navigate('/');
+                navigate('/login');
             } else {
                 const errorMessage = await response.text();
                 setError(errorMessage);
@@ -41,7 +41,8 @@ export default function CreateAccount() {
 
     return (
         <section>
-            <h1>Create Account</h1>
+            <h1>Bumbledore</h1>
+            <h2>Create Account</h2>
             <form onSubmit={handleSubmit}>
                 <label>Email:
                     <input
@@ -63,6 +64,7 @@ export default function CreateAccount() {
                 <br />
                 <input type="submit" id="submit-button" value="Create Account" />
             </form>
+            <p>Already have an account? <a href = "/login">Log in</a></p>
             {error && <p style={{ color: 'red' }}>{error}</p>}
         </section>
     );
