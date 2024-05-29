@@ -18,7 +18,7 @@ export default function Login() {
         setError(null); // Clear previous error
 
         try {
-            const response = await fetch('http://localhost:3001/login', {
+            const response = await fetch('http://localhost:3000/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -44,7 +44,6 @@ export default function Login() {
             <container>
             <h2>Login</h2>
             <form onSubmit={handleSubmit}>
-                <br></br>
                 <label>Email:  </label>
                     <input 
                         type="email" 
@@ -65,9 +64,10 @@ export default function Login() {
                 <br />
                 <input type="submit" id="submit-button" value="Login" />
             </form>
-            <p>Don't have an account? <a href = "/create-account">Create Account</a></p>
             </container>
+            <p>Don't have an account? <a href = "/create-account">Create Account</a></p>
             {error && <p style={{ color: 'red' }}>{error}</p>}
         </section>
     );
 }
+
