@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -6,8 +7,9 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const helmet = require('helmet');
 
 const app = express();
-const uri = "mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital";
-const port = 3000 || process.env.port;
+const uri = process.env.MONGODB_URI;
+//const uri = "mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital";
+const port = 3000 || process.env.PORT;
 
 const client = new MongoClient(uri, {
   serverApi: {
