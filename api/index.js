@@ -7,7 +7,7 @@ const helmet = require('helmet');
 
 const app = express();
 const uri = "mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital";
-const port = 3000;
+const port = 3000 || process.env.port;
 
 const client = new MongoClient(uri, {
   serverApi: {
