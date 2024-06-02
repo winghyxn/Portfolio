@@ -6,6 +6,7 @@ export default function Login() {
     const [inputs, setInputs] = useState({});
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const API_URL = process.env.REACT_APP_API_URL;
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -18,7 +19,7 @@ export default function Login() {
         setError(null); // Clear previous error
 
         try {
-            const response = await fetch("http://localhost:3000/login", {//fetch('', { https://bumbledore.vercel.app/login
+            const response = await fetch("${API_URL}/login", {//fetch('', { https://bumbledore.vercel.app/login http://localhost:3000/login
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

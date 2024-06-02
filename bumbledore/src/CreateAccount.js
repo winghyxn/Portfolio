@@ -6,6 +6,7 @@ export default function CreateAccount() {
     const [inputs, setInputs] = useState({});
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const API_URL = process.env.REACT_APP_API_URL;
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -18,7 +19,7 @@ export default function CreateAccount() {
         setError(null); // Clear previous error
 
         try {
-            const response = await fetch("http://localhost:3000/create-account", {// , https://bumbledore.vercel.app/create-account {
+            const response = await fetch("${API_URL}/create-account", {// , https://bumbledore.vercel.app/create-account http://localhost:3000/create-account {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
