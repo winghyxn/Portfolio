@@ -76,8 +76,8 @@ async function login(req, res) {
     }
 }
 
-app.post('/create-account', createAccount);
-app.post('/login', login);
+app.post("../bumbledore/src/create-account", createAccount);
+app.post('../bumbledore/src/login', login);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

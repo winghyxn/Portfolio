@@ -18,7 +18,7 @@ export default function CreateAccount() {
         setError(null); // Clear previous error
 
         try {
-            const response = await fetch('http://localhost:3000/create-account', {
+            const response = await fetch("https://bumbledore.vercel.app/create-account", {// 'http://localhost:3000/create-account', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
