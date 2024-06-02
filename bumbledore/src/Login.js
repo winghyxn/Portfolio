@@ -19,7 +19,7 @@ export default function Login() {
         setError(null); // Clear previous error
 
         try {
-            const response = await fetch("${API_URL}/login", {//fetch('', { https://bumbledore.vercel.app/login http://localhost:3000/login
+            const response = await fetch("`${API_URL}/login`", {//fetch('', { https://bumbledore.vercel.app/login http://localhost:3000/login
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
