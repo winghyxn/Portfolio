@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(helmet());
 
-async function createAccount(req, res) {
+app.post("create-account", async (req, res) => {
     const { email, password } = req.body;
 
     try {
@@ -50,6 +50,6 @@ async function createAccount(req, res) {
     } finally {
         await client.close();
     }
-}
+})
 
 module.exports = createAccount;

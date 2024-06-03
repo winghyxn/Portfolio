@@ -4,7 +4,7 @@
       { "src": "/api/*", "use": "@vercel/node" }
     ],
     "routes": [
-      { "src": "/api/create-account", "dest": "/api/create-account" },
-      { "src": "/api/login", "dest": "/api/login" }
+      { "src": "/api/create-account", "dest": "/api/CreateAccount.js" },
+      { "src": "/api/login", "dest": "/api/Login.js" }
     ]
   }

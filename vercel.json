@@ -1,0 +1,19 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "api/**/*.js",
+        "use": "@vercel/node"
+      },
+      {
+        "src": "bumbledore/package.json",
+        "use": "@vercel/static-build",
+        "config": { "distDir": "bumbledore/build" }
+      }
+    ],
+    "routes": [
+      { "src": "/api/(.*)", "dest": "/api/$1" },
+      { "src": "/(.*)", "dest": "/bumblefore/$1" }
+    ]
+  }
+  
