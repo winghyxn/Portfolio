@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(helmet());
 
-app.post("/login", async (req, res) => {
+async function login(req, res) {
     const { email, password } = req.body;
 
     try {
@@ -50,6 +50,6 @@ app.post("/login", async (req, res) => {
     } finally {
         await client.close();
     }
-});
+}
 
-module.exports = app;
+module.exports = login;
