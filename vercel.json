@@ -13,7 +13,7 @@
     ],
     "routes": [
       { "src": "/api/(.*)", "dest": "/api/$1" },
-      { "src": "/(.*)", "dest": "/bumblefore/$1" }
+      { "src": "/(.*)", "dest": "/bumbledore/$1" }
     ]
   }
   
