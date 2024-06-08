@@ -1,4 +1,4 @@
-/*require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -85,7 +85,7 @@ app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
 
-*/
+
 
 /*
 async function run() {
