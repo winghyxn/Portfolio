@@ -9,7 +9,7 @@ const helmet = require('helmet');
 const app = express();
 const uri = process.env.MONGODB_URI;
 //const uri = "mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital";
-const port = 3000 || process.env.PORT;
+const port = 8080 || process.env.PORT;
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -66,7 +66,7 @@ async function login(req, res) {
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (isMatch) {
-            return res.status(200).send('Login successful');
+            return res.status(200).send({token: "test123"});
         } else {
             return res.status(401).send('Invalid email or password');
         }
@@ -79,7 +79,7 @@ async function login(req, res) {
 }
 
 app.post("/create-account", createAccount);
-app.post('/login', login);
+app.post('/login', login)
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

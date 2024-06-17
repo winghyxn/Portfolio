@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Login.css';
+import './CreateAccount.css';
 
-export default function Login() {
+export default function CreateAccount() {
     const [inputs, setInputs] = useState({});
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -19,7 +19,7 @@ export default function Login() {
         setError(null); // Clear previous error
 
         try {
-            const response = await fetch("http://localhost:3000/login", {  //`${API_URL}/login`, {//fetch('', { https://bumbledore.vercel.app/login 
+            const response = await fetch("http://localhost:8080/create-account", { //`${API_URL}/create-account`, {// , https://bumbledore.vercel.app/create-account 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -28,45 +28,44 @@ export default function Login() {
             });
 
             if (response.ok) {
-                navigate('/home');
+                alert('Account created successfully!');
+                navigate('/login');
             } else {
                 const errorMessage = await response.text();
                 setError(errorMessage);
             }
         } catch (error) {
             console.error('Request failed:', error);
-            setError('Failed to login. Please try again.');
+            setError('Failed to create account. Please try again.');
         }
     }
 
     return (
         <section>
             <h1>Bumbledore</h1>
-            <container>
-            <h2>Login</h2>
+            <h2>Create Account</h2>
             <form onSubmit={handleSubmit}>
-                <label>Email:  </label>
-                    <input 
-                        type="email" 
-                        name="email" 
-                        value={inputs.email || ""} 
-                        onChange={handleChange} 
-                        required 
-                    />
+                <label>Email:
+                    <input
+                        type="email"
+                        name="email"
+                        value={inputs.email || ""}
+                        onChange={handleChange}
+                        required />
+                </label>
                 <br />
-                <label>Password:  </label>
-                    <input 
-                        type="password" 
-                        name="password" 
-                        value={inputs.password || ""} 
-                        onChange={handleChange} 
-                        required 
-                    />
+                <label>Password:
+                    <input
+                        type="password"
+                        name="password"
+                        value={inputs.password || ""}
+                        onChange={handleChange}
+                        required />
+                </label>
                 <br />
-                <input type="submit" id="submit-button" value="Login" />
+                <input type="submit" id="submit-button" value="Create Account" />
             </form>
-            </container>
-            <p>Don't have an account? <a href = "/create-account">Create Account</a></p>
+            <p>Already have an account? <a href = "/login">Log in</a></p>
             {error && <p style={{ color: 'red' }}>{error}</p>}
         </section>
     );
