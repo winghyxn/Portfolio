@@ -1,0 +1,28 @@
+.main-page {
+    grid-area: main-page;
+    text-align: center;
+    border: 3px solid black;
+    margin: 10px;
+}
+
+.search {
+    grid-area: search;
+    text-align: center;
+    border: 3px solid black;
+    margin: 10px;
+}
+
+.sidebar {
+    grid-area: sidebar;
+    margin: 10px;
+}
+
+
+.grid-container {
+    display: grid;
+    grid-template-areas:
+        'sidebar search'
+        'sidebar main-page';
+    grid-template-columns: min-content auto;
+    grid-template-rows: 20% 80%;
+}

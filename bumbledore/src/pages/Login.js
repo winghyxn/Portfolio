@@ -58,9 +58,9 @@ export default function Login({ setToken }) {
 
     return (
         <section>
-            <h1>Bumbledore</h1>
+            <h1 className = "login-title">Bumbledore</h1>
             <container>
-            <h2>Login</h2>
+            <h2 className = "login-subtitle">Login</h2>
             <form onSubmit={handleSubmit}>
                 <label>Email:  </label>
                     <input 
@@ -83,7 +83,7 @@ export default function Login({ setToken }) {
                 <input type="submit" id="submit-button" value="Login" />
             </form>
             </container>
-            <p>Don't have an account? <a href = "/create-account">Create Account</a></p>
+            <p id = "text1">Don't have an account? <a href = "/create-account">Create Account</a></p>
             {error && <p style={{ color: 'red' }}>{error}</p>}
         </section>
     );

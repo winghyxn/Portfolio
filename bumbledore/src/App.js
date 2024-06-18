@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes} from 'react-router-dom';
 import useToken from './components/useToken.js';
 import Login from "./pages/Login.js";
 import Home from "./pages/Home.js";
-import CreateAccount from './pages/CreateAccount.js';
+import CreateAccount from './CreateAccount.js';
 import Post from './pages/Post.js';
 import Messages from './pages/Messages.js';
 import Profile from './pages/Profile.js';

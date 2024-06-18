@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './CreateAccount.css';
+//import './CreateAccount.css';
 
 export default function CreateAccount() {
     const [inputs, setInputs] = useState({});
@@ -65,7 +65,7 @@ export default function CreateAccount() {
                 <br />
                 <input type="submit" id="submit-button" value="Create Account" />
             </form>
-            <p>Already have an account? <a href = "/login">Log in</a></p>
+            <p id = "text1">Already have an account? <a href = "/login">Log in</a></p>
             {error && <p style={{ color: 'red' }}>{error}</p>}
         </section>
     );
