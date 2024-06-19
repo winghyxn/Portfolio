@@ -7,11 +7,11 @@ export default function Home() {
             <div className = "sidebar">
                 <Sidebar></Sidebar>
             </div>
-            <div className = "search">
-                <p>search</p>
+            <div className = "header">
+                <p>header</p>
             </div>
             <div className = "main-page">
-                <p>main</p>
+                <p>feed</p>
             </div>
         </div>
     );

@@ -1,20 +1,50 @@
+/*--lavender-blush: #fef2f3ff;
+--sky-magenta: #d46ca5ff;
+--magenta-dye: #be3781ff;
+--goldenrod: #e1ac24ff;
+--maize: #f5eb44ff;
+--ivory: #fefdecff;
+--cool-gray: #8f97c5ff;
+--yinmn-blue: #47529bff;
+--charcoal: #454e64ff;
+--rich-black: #0b111dff;
+*/
+
+.content-text {
+    background-color: white;
+    text-align: left;
+}
+
+.content-box {
+    background-color: white;
+    margin: 2rem;
+    padding: 3rem;
+    width: 50rem;
+    height: 25rem;
+}
+
 .main-page {
+    display: flex;
+    justify-content: center;
+    align-content: center;
     grid-area: main-page;
     text-align: center;
     border: 3px solid black;
     margin: 10px;
+    overflow: auto;
 }
 
-.search {
+.header {
     grid-area: search;
-    text-align: center;
-    border: 3px solid black;
-    margin: 10px;
+    text-align: left;
+    padding-left: 2rem;
+    border-bottom: 1px solid #454e64ff;
+    font-size: 12pt;
+    font-family:Georgia, 'Times New Roman', Times, serif;
 }
 
 .sidebar {
     grid-area: sidebar;
-    margin: 10px;
 }
 
 
@@ -24,5 +54,5 @@
         'sidebar search'
         'sidebar main-page';
     grid-template-columns: min-content auto;
-    grid-template-rows: 20% 80%;
+    grid-template-rows: 15vh 85vh;
 }
