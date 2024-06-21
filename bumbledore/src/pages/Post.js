@@ -45,18 +45,24 @@ export default function Post() {
 
         try {
             const response = await axios.post('http://localhost:8080/posts', postData);
-            console.log('Post created:', response.data);
-            // Clear form fields after successful post
-            setTypeOfRequest('');
-            setCourseCode('');
-            setPay('');
-            setNumGroupmates('');
-            setDescription('');
-            setCharCount(0);
-            // Handle successful post (e.g., show success message)
+            if (response.status === 201) {
+                console.log('Post created:', response.data);
+                // Clear form fields after successful post
+                setTypeOfRequest('');
+                setCourseCode('');
+                setPay('');
+                setNumGroupmates('');
+                setDescription('');
+                setCharCount(0);
+                // Show success message
+                alert('Post created successfully!');
+            } else {
+                console.error('Failed to create post: Status code:', response.status);
+                alert('Failed to create post');
+            }
         } catch (error) {
             console.error('Failed to create post:', error);
-            // Handle error (e.g., show error message)
+            alert('Failed to create post');
         }
     };
 
@@ -132,4 +138,5 @@ export default function Post() {
         </div>
     );
 }
+
 
