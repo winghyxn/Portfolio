@@ -19,12 +19,13 @@
     background-color: white;
     margin: 2rem;
     padding: 3rem;
-    width: 50rem;
-    height: 25rem;
+    width: 45rem;
+    height: fit-content;
 }
 
 .main-page {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-content: center;
     grid-area: main-page;

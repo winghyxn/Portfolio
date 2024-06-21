@@ -8,7 +8,7 @@ export default function Home() {
                 <Sidebar></Sidebar>
             </div>
             <div className = "header">
-                <p>header</p>
+                <p>search bar</p>
             </div>
             <div className = "main-page">
                 <p>feed</p>

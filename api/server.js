@@ -78,8 +78,50 @@ async function login(req, res) {
     }
 }
 
+async function editProfile(req, res) {
+    const { email, year, major, description } = req.body;
+
+    try {
+        await client.connect();
+        const database = client.db('bumbledore');
+        const profiles = database.collection('userProfileInfo');
+
+        const hasProfile = await profiles.findOne({ email: email });
+        if (hasProfile) {
+            await profiles.replaceOne(
+                {
+                    "email": email
+                },
+                { 
+                "year": year, 
+                "major": major,
+                "description" : description
+                }
+            );
+        }
+
+        else {
+            await profiles.insertOne(
+                { 
+                "email": email,
+                "year": year, 
+                "major": major,
+                "description" : description
+                }
+            );
+        }
+        res.status(200).send('Profile edited successfully');
+    } catch (error) {
+        console.error('Error editing profile:', error);
+        res.status(500).send('Failed to edit profile');
+    } finally {
+        await client.close();
+    }
+}
+
 app.post("/create-account", createAccount);
 app.post('/login', login)
+app.post('/my-profile', editProfile)
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

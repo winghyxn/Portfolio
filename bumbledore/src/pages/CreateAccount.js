@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-//import './CreateAccount.css';
+import './Login.css';
 
 export default function CreateAccount() {
     const [inputs, setInputs] = useState({});
@@ -42,8 +42,8 @@ export default function CreateAccount() {
 
     return (
         <section>
-            <h1>Bumbledore</h1>
-            <h2>Create Account</h2>
+            <h1 className = "login-title">Bumbledore</h1>
+            <h2 className = "login-subtitle">Create Account</h2>
             <form onSubmit={handleSubmit}>
                 <label>Email:
                     <input
@@ -66,7 +66,7 @@ export default function CreateAccount() {
                 <input type="submit" id="submit-button" value="Create Account" />
             </form>
             <p id = "text1">Already have an account? <a href = "/login">Log in</a></p>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && <p id = "text1" style={{ color: 'red' }}>{error}</p>}
         </section>
     );
 }
