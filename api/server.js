@@ -95,7 +95,7 @@ async function createPost(req, res) {
     };
 
     const result = await posts.insertOne(newPost);
-    res.status(201).json({ id: result.insertedId, ...newPost }); // Return the inserted post
+    res.status(201).json(result.insertedId); // Return the inserted post ID
   } catch (error) {
     console.error('Error creating post:', error);
     res.status(500).send('Failed to create post');
@@ -104,16 +104,27 @@ async function createPost(req, res) {
   }
 }
 
+async function getPosts(req, res) {
+  try {
+    await client.connect();
+    const db = client.db("bumbledore");
+    const posts = db.collection("posts");
+
+    const allPosts = await posts.find({}).toArray();
+    res.status(200).json(allPosts);
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    res.status(500).send('Failed to fetch posts');
+  } finally {
+    await client.close();
+  }
+}
+
 app.post("/create-account", createAccount);
 app.post('/login', login);
 app.post('/posts', createPost);
+app.get('/posts', getPosts); // Add this line to handle GET requests for posts
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
-
-
-// Start the server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
