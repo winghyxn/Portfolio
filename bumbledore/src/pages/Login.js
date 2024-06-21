@@ -84,7 +84,7 @@ export default function Login({ setToken }) {
             </form>
             </container>
             <p id = "text1">Don't have an account? <a href = "/create-account">Create Account</a></p>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {error && <p id= "text1" style={{ color: 'red' }}>{error}</p>}
         </section>
     );
 }
