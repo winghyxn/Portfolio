@@ -102,3 +102,11 @@ button[type="submit"]:hover {
     background-color: #0056b3;
 }
 
+.postCard {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+}
+
