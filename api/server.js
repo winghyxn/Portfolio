@@ -51,7 +51,6 @@ async function createAccount(req, res) {
 
 async function login(req, res) {
   const { email, password } = req.body;
-
   try {
     await client.connect();
     const db = client.db("bumbledore");
@@ -71,6 +70,32 @@ async function login(req, res) {
   } catch (error) {
     console.error('Error logging in:', error);
     res.status(500).send('Failed to login');
+  } finally {
+    await client.close();
+  }
+}
+
+async function editProfile(req, res) {
+  const { email, year, major, description } = req.body;
+
+  try {
+    await client.connect();
+    const database = client.db('bumbledore');
+    const profiles = database.collection('userProfileInfo');
+
+    const hasProfile = await profiles.findOne({ email: email });
+    if (hasProfile) {
+      await profiles.replaceOne(
+        { email: email },
+        { email, year, major, description }
+      );
+    } else {
+      await profiles.insertOne({ email, year, major, description });
+    }
+    res.status(200).send('Profile edited successfully');
+  } catch (error) {
+    console.error('Error editing profile:', error);
+    res.status(500).send('Failed to edit profile');
   } finally {
     await client.close();
   }
@@ -122,6 +147,7 @@ async function getPosts(req, res) {
 
 app.post("/create-account", createAccount);
 app.post('/login', login);
+app.post('/my-profile', editProfile);
 app.post('/posts', createPost);
 app.get('/posts', getPosts); // Add this line to handle GET requests for posts
 
