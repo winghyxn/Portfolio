@@ -7,7 +7,7 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const helmet = require('helmet');
 
 const app = express();
-const uri = 'mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital'; // Ensure this variable is set in your .env file
+const uri = 'mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital';
 const port = process.env.PORT || 8080;
 
 const client = new MongoClient(uri, {
@@ -22,34 +22,12 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(helmet());
 
-// Connect to MongoDB
-async function connectToMongoDB() {
-  try {
-    await client.connect();
-    console.log('MongoDB connected');
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    process.exit(1); // Exit process on connection error
-  }
-}
-
-connectToMongoDB();
-
-// Error handler for MongoDB client
-client.on('error', (err) => {
-  console.error('MongoDB client error:', err);
-  client.close();
-  process.exit(1); // Exit process on client error
-});
-
-// Define routes and MongoDB collections
-
-// Example route for handling user account creation
-app.post("/create-account", async (req, res) => {
+async function createAccount(req, res) {
   const { email, password } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
+    await client.connect();
     const database = client.db('bumbledore');
     const users = database.collection('userAccountInfo');
 
@@ -58,19 +36,24 @@ app.post("/create-account", async (req, res) => {
       return res.status(400).send('Email already exists');
     }
 
-    const result = await users.insertOne({ "email": email, "password": hashedPassword });
+    await users.insertOne({
+      email: email,
+      password: hashedPassword
+    });
     res.status(200).send('Account created successfully');
   } catch (error) {
     console.error('Error creating account:', error);
     res.status(500).send('Failed to create account');
+  } finally {
+    await client.close();
   }
-});
+}
 
-// Example route for handling user login
-app.post('/login', async (req, res) => {
+async function login(req, res) {
   const { email, password } = req.body;
 
   try {
+    await client.connect();
     const db = client.db("bumbledore");
     const users = db.collection("userAccountInfo");
 
@@ -88,14 +71,16 @@ app.post('/login', async (req, res) => {
   } catch (error) {
     console.error('Error logging in:', error);
     res.status(500).send('Failed to login');
+  } finally {
+    await client.close();
   }
-});
+}
 
-// Example route for handling post creation
-app.post('/posts', async (req, res) => {
+async function createPost(req, res) {
   const { userId, typeOfRequest, courseCode, pay, numGroupmates, description } = req.body;
 
   try {
+    await client.connect();
     const db = client.db("bumbledore");
     const posts = db.collection("posts");
 
@@ -110,12 +95,23 @@ app.post('/posts', async (req, res) => {
     };
 
     const result = await posts.insertOne(newPost);
-    res.status(201).json(result.ops[0]); // Return the inserted post
+    res.status(201).json({ id: result.insertedId, ...newPost }); // Return the inserted post
   } catch (error) {
     console.error('Error creating post:', error);
     res.status(500).send('Failed to create post');
+  } finally {
+    await client.close();
   }
+}
+
+app.post("/create-account", createAccount);
+app.post('/login', login);
+app.post('/posts', createPost);
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
+
 
 // Start the server
 app.listen(port, () => {
