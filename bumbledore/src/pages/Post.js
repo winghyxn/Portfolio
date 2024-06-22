@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Sidebar from '../components/sidebar'; // Adjust the path as needed
-import styles from './Post.css';
+import './Home.css';
+import formStyles from '../components/form.module.css';
 
 export default function Post() {
     const [typeOfRequest, setTypeOfRequest] = useState('');
@@ -67,68 +68,75 @@ export default function Post() {
     };
 
     return (
-        <div className={styles.container}>
-            <Sidebar />
-            <div className={styles.postContainer}>
-                <h2>Create a Post</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className={styles.formGroup}>
-                        <label htmlFor="typeOfRequest">Type of Request:</label>
+        <div className="grid-container">
+            <div className = "sidebar">
+                <Sidebar />
+            </div>
+            <div className = "header">
+                <h1>Post</h1>
+            </div>
+            <div className = "main-page">
+                <form className = {formStyles.form} onSubmit={handleSubmit}>
+                    <div>
+                        <label className = {formStyles.label} htmlFor="typeOfRequest">Type of Request:</label>
                         <select
                             id="typeOfRequest"
                             value={typeOfRequest}
                             onChange={handleTypeChange}
+                            className = {formStyles.inputs}
                         >
                             <option value="">Select</option>
                             <option value="lookingForTutor">Looking for Tutor</option>
                             <option value="lookingForGroupmate">Looking for Groupmate</option>
                         </select>
                     </div>
-                    <div className={styles.formGroup}>
-                        <label htmlFor="courseCode">Course Code:</label>
+                    <div>
+                        <label className = {formStyles.label} htmlFor="courseCode">Course Code:</label>
                         <input
                             type="text"
                             id="courseCode"
                             value={courseCode}
                             onChange={(e) => setCourseCode(e.target.value)}
+                            className = {formStyles.inputs}
                         />
                     </div>
                     {typeOfRequest === 'lookingForTutor' && (
-                        <div className={styles.formGroup}>
-                            <label htmlFor="pay">Pay:</label>
-                            <div className={styles.inputWrapper}>
-                                <span className={styles.prefix}>$</span>
+                        <div>
+                            <label className = {formStyles.label} htmlFor="pay">Pay:</label>
+                            <div>
+                                <span>$</span>
                                 <input
                                     type="number"
                                     id="pay"
                                     value={pay}
                                     onChange={(e) => setPay(e.target.value)}
-                                    className={styles.inputWithSuffix}
+                                    className = {formStyles.inputs}
                                 />
-                                <span className={styles.suffix}>/h</span>
+                                <span>/h</span>
                             </div>
                         </div>
                     )}
                     {typeOfRequest === 'lookingForGroupmate' && (
-                        <div className={styles.formGroup}>
-                            <label htmlFor="numGroupmates">Number of Groupmates Needed:</label>
+                        <div>
+                            <label className = {formStyles.label} htmlFor="numGroupmates">Number of Groupmates Needed:</label>
                             <input
                                 type="number"
                                 id="numGroupmates"
                                 value={numGroupmates}
                                 onChange={(e) => setNumGroupmates(e.target.value)}
+                                className = {formStyles.inputs}
                             />
                         </div>
                     )}
-                    <div className={styles.formGroup}>
-                        <label htmlFor="description">Description:</label>
+                    <div>
+                        <label className = {formStyles.label} htmlFor="description">Description:</label>
                         <textarea
                             id="description"
                             value={description}
                             onChange={handleDescriptionChange}
-                            className={styles.textarea}
+                            className = {formStyles.inputs}
                         />
-                        <div className={styles.charCount}>
+                        <div>
                             {charCount} / 2000 characters
                         </div>
                     </div>

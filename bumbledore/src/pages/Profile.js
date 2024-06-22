@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import Sidebar from "../components/sidebar.js";
+import formStyles from "../components/form.module.css"
 import './Home.css';
 
 export default function Profile() {
     const [showForm, setShowForm] = useState(false);
     const [inputs, setInputs] = useState({});
     const [error, setError] = useState(null);
-    //const API_URL = process.env.REACT_APP_API_URL;
+    // const [profile, setProfile] = useState([]);
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -29,6 +30,7 @@ export default function Profile() {
 
             if (response.ok) {
                 alert('Profile created successfully!');
+                setShowForm(false);
             } else {
                 const errorMessage = await response.text();
                 setError(errorMessage);
@@ -38,6 +40,20 @@ export default function Profile() {
             setError('Failed to create profile. Please try again.');
         }
     }
+
+    /*useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/posts');
+                setProfile(response.data);
+            } catch (error) {
+                console.error('Failed to fetch profile:', error);
+            }
+        };
+
+        fetchProfile();
+    }, []);
+    */
 
 
     return (
@@ -51,42 +67,41 @@ export default function Profile() {
             {showForm 
                 ? 
                 <div className = "main-page">
-                    <div className = "content-box">
-                        <form onSubmit = {handleSubmit}>
-                            <label>Email: 
-                                <input 
-                                    type = "email"
-                                    name = "email"
-                                    value = {inputs.email || ""}
-                                    onChange = {handleChange}></input>
-                            </label>
-                            <label>Year: 
-                                <input 
-                                    type = "number"
-                                    name = "year"
-                                    value = {inputs.year || ""}
-                                    onChange = {handleChange}></input>
-                            </label>
-                            <label>Major: 
-                                <input 
-                                    type = "text" 
-                                    name = "major"
-                                    value = {inputs.major || ""}
-                                    onChange = {handleChange}>
-                                </input>
-                            </label>
-                            <label>Description of yourself: 
-                                <input 
-                                    type = "text" 
-                                    name = "description"
-                                    value = {inputs.description || ""}
-                                    onChange = {handleChange}>
-                                </input>
-                            </label>
-                            <input type="submit" value="Edit Profile" />
-                        </form>
-                        {error && <p id = "text1" style={{ color: 'red' }}>{error}</p>}
-                    </div>
+                    <form className = {formStyles.form} onSubmit = {handleSubmit}>
+                        <label className = {formStyles.label}>Email: 
+                            <input 
+                                type = "email"
+                                name = "email"
+                                value = {inputs.email || ""}
+                                onChange = {handleChange}></input>
+                        </label>
+                        <label className = {formStyles.label}>Year: 
+                            <input 
+                                type = "number"
+                                name = "year"
+                                value = {inputs.year || ""}
+                                onChange = {handleChange}
+                                className = {formStyles.inputs} />
+                        </label>
+                        <label className = {formStyles.label}>Major: 
+                            <input 
+                                type = "text" 
+                                name = "major"
+                                value = {inputs.major || ""}
+                                onChange = {handleChange}
+                                className = {formStyles.inputs} />
+                        </label>
+                        <label className = {formStyles.label}>Description of yourself: 
+                            <input 
+                                type = "text" 
+                                name = "description"
+                                value = {inputs.description || ""}
+                                onChange = {handleChange}
+                                className = {formStyles.inputs} />
+                        </label>
+                        <input type="submit" value="Edit Profile"/>
+                    </form>
+                    {error && <p id = "text1" style={{ color: 'red' }}>{error}</p>}
                     <div className = "button1">
                         <button className = "button1" onClick = {() => {setShowForm(false)}}>
                             Back

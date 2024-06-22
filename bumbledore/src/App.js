@@ -18,7 +18,7 @@ function App() {
     return (<div>
       <BrowserRouter>
         <Routes>
-        <Route path = "/" element = {<Home/>} />
+          <Route path = "/" element = {<Home/>} />
           <Route index element = {<Login setToken={setToken}/>} /> 
           <Route path = "/login" element = {<Login setToken={setToken}/>} />
           <Route path = "/create-account" element = {<CreateAccount/>} />
