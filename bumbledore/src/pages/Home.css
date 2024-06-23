@@ -30,8 +30,7 @@
     align-content: center;
     grid-area: main-page;
     text-align: center;
-    border: 3px solid black;
-    margin: 10px;
+    margin: 1rem;
     overflow: auto;
 }
 
