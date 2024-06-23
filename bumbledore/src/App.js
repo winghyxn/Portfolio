@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes} from 'react-router-dom';
 import useToken from './components/useToken.js';
 import Login from "./pages/Login.js";
 import Home from "./pages/Home.js";
-import CreateAccount from './CreateAccount.js';
+import CreateAccount from './pages/CreateAccount.js';
 import Post from './pages/Post.js';
 import Messages from './pages/Messages.js';
 import Profile from './pages/Profile.js';
@@ -18,7 +18,7 @@ function App() {
     return (<div>
       <BrowserRouter>
         <Routes>
-        <Route path = "/" element = {<Home/>} />
+          <Route path = "/" element = {<Home/>} />
           <Route index element = {<Login setToken={setToken}/>} /> 
           <Route path = "/login" element = {<Login setToken={setToken}/>} />
           <Route path = "/create-account" element = {<CreateAccount/>} />
@@ -45,4 +45,3 @@ function App() {
 }
 
 export default App;
-
