@@ -63,7 +63,8 @@ async function login(req, res) {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
-      return res.status(200).send({ token: "test123" });
+      return res.status(200).send({ token: email });
+      // change email token to username, i think safer
     } else {
       return res.status(401).send('Invalid email or password');
     }
@@ -101,21 +102,24 @@ async function editProfile(req, res) {
   }
 }
 
-/*async function getProfile(req, res) {
+async function getProfile(req, res, next) {
+  const token = req.query.token;
+
   try {
     await client.connect();
     const db = client.db("bumbledore");
     const posts = db.collection("userProfileInfo");
 
-    const allPosts = await posts.find({}).toArray();
-    res.status(200).json(allPosts);
+    const profile = await posts.find({ email: token }).toArray();
+    res.status(200).json(profile);
   } catch (error) {
     console.error('Error fetching posts:', error);
     res.status(500).send('Failed to fetch posts');
   } finally {
     await client.close();
   }
-}*/
+}
+
 
 async function createPost(req, res) {
   const { userId, typeOfRequest, courseCode, pay, numGroupmates, description } = req.body;
@@ -164,7 +168,7 @@ async function getPosts(req, res) {
 app.post("/create-account", createAccount);
 app.post('/login', login);
 app.post('/my-profile', editProfile);
-//app.get('/profile', getProfile);
+app.get('/profile', getProfile);
 app.post('/posts', createPost);
 app.get('/posts', getPosts); // Add this line to handle GET requests for posts
 

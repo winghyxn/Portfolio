@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Sidebar from "../components/sidebar.js";
-import formStyles from "../components/form.module.css"
+import formStyles from "../components/form.module.css";
+import useToken from "../components/useToken.js";
 import './Home.css';
 
 export default function Profile() {
     const [showForm, setShowForm] = useState(false);
     const [inputs, setInputs] = useState({});
     const [error, setError] = useState(null);
-    // const [profile, setProfile] = useState([]);
+    const [profile, setProfile] = useState([])
+    const {token, setToken} = useToken();
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -29,7 +32,7 @@ export default function Profile() {
             });
 
             if (response.ok) {
-                alert('Profile created successfully!');
+                alert('Profile edited successfully!');
                 setShowForm(false);
             } else {
                 const errorMessage = await response.text();
@@ -41,11 +44,15 @@ export default function Profile() {
         }
     }
 
-    /*useEffect(() => {
+    useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/posts');
+                const response = await axios.get(
+                    'http://localhost:8080/profile',
+                    {params: { token: token }}
+            );
                 setProfile(response.data);
+                console.log(response.data);
             } catch (error) {
                 console.error('Failed to fetch profile:', error);
             }
@@ -53,9 +60,8 @@ export default function Profile() {
 
         fetchProfile();
     }, []);
-    */
 
-
+// change the username {token} part to the actual username when it gets included in database
     return (
         <div className = "grid-container">
             <div className = "sidebar">
@@ -110,13 +116,15 @@ export default function Profile() {
                 </div>
                 : 
                 <div className = "main-page">
-                    <div className = "content-box">
-                        <p className = "content-text">Username: </p>
-                        <p className = "content-text">Year: </p>
-                        <p className = "content-text">Major: </p>
-                        <p className = "content-text">Description of yourself: </p>
-                        <p className = "content-text">Review score: </p>
+                    {profile.map((p) =>
+                        <div key = {p._id} className = "content-box">
+                            <p className = "content-text">Username: {token} </p> 
+                            <p className = "content-text">Year: {p.year} </p>
+                            <p className = "content-text">Major: {p.major} </p>
+                            <p className = "content-text">Description of yourself: {p.description} </p>
+                            <p className = "content-text">Review score: 0000</p>
                     </div>
+                    )}
                     <div className = "button1">
                         <button onClick = {() => {setShowForm(true)}}>
                             Edit profile
