@@ -116,7 +116,7 @@ export default function Profile() {
                 </div>
                 : 
                 <div className = "main-page">
-                    {profile != []
+                    {profile == []
                     ? profile.map((p) =>
                         <div key = {p._id} className = "content-box">
                             <p className = "content-text">Username: {token} </p> 
