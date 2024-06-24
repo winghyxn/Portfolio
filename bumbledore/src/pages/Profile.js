@@ -116,15 +116,25 @@ export default function Profile() {
                 </div>
                 : 
                 <div className = "main-page">
-                    {profile.map((p) =>
+                    {profile == []
+                    ? profile.map((p) =>
                         <div key = {p._id} className = "content-box">
                             <p className = "content-text">Username: {token} </p> 
                             <p className = "content-text">Year: {p.year} </p>
                             <p className = "content-text">Major: {p.major} </p>
                             <p className = "content-text">Description of yourself: {p.description} </p>
                             <p className = "content-text">Review score: 0000</p>
+                        </div>
+                    )
+                    : 
+                    <div className = "content-box">
+                        <p className = "content-text">Username: {token} </p> 
+                        <p className = "content-text">Year: </p>
+                        <p className = "content-text">Major: </p>
+                        <p className = "content-text">Description of yourself: </p>
+                        <p className = "content-text">Review score: </p>
                     </div>
-                    )}
+                    }
                     <div className = "button1">
                         <button onClick = {() => {setShowForm(true)}}>
                             Edit profile
