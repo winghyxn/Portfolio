@@ -1,139 +1,113 @@
-// Profile.js
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Sidebar from "../components/sidebar.js";
 import formStyles from "../components/form.module.css";
+import useToken from "../components/useToken.js";
 import './Home.css';
 
 export default function Profile() {
-  const [showForm, setShowForm] = useState(false);
-  const [inputs, setInputs] = useState({});
-  const [error, setError] = useState(null);
-  const [profile, setProfile] = useState({});
+    const [showForm, setShowForm] = useState(false);
+    const [inputs, setInputs] = useState({});
+    const [error, setError] = useState(null);
+    const [profile, setProfile] = useState({})
+    const { token, setToken } = useToken();
 
-  const handleChange = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setInputs(values => ({ ...values, [name]: value }));
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setError(null); // Clear previous error
-
-    try {
-      const response = await fetch("http://localhost:8080/my-profile", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(inputs)
-      });
-
-      if (response.ok) {
-        alert('Profile updated successfully!');
-        setShowForm(false);
-        fetchProfile(); // Fetch updated profile data
-      } else {
-        const errorMessage = await response.text();
-        setError(errorMessage);
-      }
-    } catch (error) {
-      console.error('Request failed:', error);
-      setError('Failed to update profile. Please try again.');
+    const handleChange = (event) => {
+        const name = event.target.name;
+        const value = event.target.value;
+        setInputs(values => ({ ...values, [name]: value }));
     }
-  };
 
-  const fetchProfile = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/my-profile');
-      if (response.ok) {
-        const profileData = await response.json();
-        setProfile(profileData);
-        setInputs(profileData); // Update form inputs with fetched data
-      } else {
-        console.error('Failed to fetch profile:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Failed to fetch profile:', error);
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setError(null); // Clear previous error
+
+        try {
+            const response = await fetch("http://localhost:8080/my-profile", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: token, // Changed from email to username
+                    year: inputs.year,
+                    major: inputs.major,
+                    description: inputs.description
+                })
+            });
+
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                throw new Error(errorMessage || 'Something went wrong');
+            }
+
+            setShowForm(false); // Close the form after successful submission
+        } catch (error) {
+            setError(error.message);
+        }
     }
-  };
 
-  useEffect(() => {
-    fetchProfile();
-  }, []); // Fetch profile data on component mount
+    const fetchProfile = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/my-profile?token=${token}`);
+            setProfile(response.data)
+        } catch (error) {
+            console.error('Error fetching profile:', error);
+        }
+    }
 
-  return (
-    <div className="grid-container">
-      <div className="sidebar">
-        <Sidebar />
-      </div>
-      <div className="header">
-        <h1>My Profile</h1>
-      </div>
-      {showForm ? (
-        <div className="main-page">
-          <form className={formStyles.form} onSubmit={handleSubmit}>
-            <label className={formStyles.label}>Email:
-              <input
-                type="email"
-                name="email"
-                value={profile.email || ""}
-                readOnly // Email should not be editable
-              />
-            </label>
-            <label className={formStyles.label}>Year:
-              <input
-                type="number"
-                name="year"
-                value={inputs.year || ""}
-                onChange={handleChange}
-                className={formStyles.inputs}
-              />
-            </label>
-            <label className={formStyles.label}>Major:
-              <input
-                type="text"
-                name="major"
-                value={inputs.major || ""}
-                onChange={handleChange}
-                className={formStyles.inputs}
-              />
-            </label>
-            <label className={formStyles.label}>Description of yourself:
-              <input
-                type="text"
-                name="description"
-                value={inputs.description || ""}
-                onChange={handleChange}
-                className={formStyles.inputs}
-              />
-            </label>
-            <input type="submit" value="Save Changes" />
-          </form>
-          {error && <p id="text1" style={{ color: 'red' }}>{error}</p>}
-          <div className="button1">
-            <button className="button1" onClick={() => setShowForm(false)}>
-              Back
-            </button>
-          </div>
+    useEffect(() => {
+        fetchProfile();
+    }, []);
+
+    return (
+        <div className="App">
+            <Sidebar />
+            <header className="App-header">
+                <h1>Profile Page</h1>
+                <h2>Welcome, {token}!</h2> {/* Display username */}
+                <p>Year: {profile.year}</p>
+                <p>Major: {profile.major}</p>
+                <p>Description: {profile.description}</p>
+                <div className="Home">
+                    <button onClick={() => setShowForm(true)}>Edit Profile</button>
+                </div>
+                {showForm && (
+                    <form onSubmit={handleSubmit} className={formStyles.form}>
+                        <label>
+                            Year:
+                            <input
+                                type="text"
+                                name="year"
+                                value={inputs.year || ''}
+                                onChange={handleChange}
+                            />
+                        </label>
+                        <label>
+                            Major:
+                            <input
+                                type="text"
+                                name="major"
+                                value={inputs.major || ''}
+                                onChange={handleChange}
+                            />
+                        </label>
+                        <label>
+                            Description:
+                            <input
+                                type="text"
+                                name="description"
+                                value={inputs.description || ''}
+                                onChange={handleChange}
+                            />
+                        </label>
+                        {error && <div className="error">{error}</div>}
+                        <button type="submit">Submit</button>
+                        <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
+                    </form>
+                )}
+            </header>
         </div>
-      ) : (
-        <div className="main-page">
-          <div className="content-box">
-            <p className="content-text">Username: {profile.username}</p>
-            <p className="content-text">Year: {profile.year}</p>
-            <p className="content-text">Major: {profile.major}</p>
-            <p className="content-text">Description: {profile.description}</p>
-            <p className="content-text">Review score: </p>
-          </div>
-          <div className="button1">
-            <button onClick={() => setShowForm(true)}>
-              Edit profile
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+    );
 }
 
