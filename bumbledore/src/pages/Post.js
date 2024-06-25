@@ -39,15 +39,15 @@ export default function Post() {
         const postData = {
             typeOfRequest,
             courseCode,
+            description,
             pay: typeOfRequest === 'lookingForTutor' ? `${pay}/h` : undefined,
             numGroupmates: typeOfRequest === 'lookingForGroupmate' ? numGroupmates : undefined,
-            description,
         };
 
         try {
-            const response = await axios.post('http://localhost:8080/posts', postData);
-            if (response.status === 201) {
-                console.log('Post created:', response.data);
+            const response = await axios.post('http://localhost:8080/create-post', postData);
+            if (response.status === 200) {
+                console.log('Post created successfully:', response.data);
                 // Clear form fields after successful post
                 setTypeOfRequest('');
                 setCourseCode('');
@@ -62,28 +62,28 @@ export default function Post() {
                 alert('Failed to create post');
             }
         } catch (error) {
-            console.error('Failed to create post:', error);
+            console.error('Error creating post:', error);
             alert('Failed to create post');
         }
     };
 
     return (
         <div className="grid-container">
-            <div className = "sidebar">
+            <div className="sidebar">
                 <Sidebar />
             </div>
-            <div className = "header">
+            <div className="header">
                 <h1>Post</h1>
             </div>
-            <div className = "main-page">
-                <form className = {formStyles.form} onSubmit={handleSubmit}>
+            <div className="main-page">
+                <form className={formStyles.form} onSubmit={handleSubmit}>
                     <div>
-                        <label className = {formStyles.label} htmlFor="typeOfRequest">Type of Request:</label>
+                        <label className={formStyles.label} htmlFor="typeOfRequest">Type of Request:</label>
                         <select
                             id="typeOfRequest"
                             value={typeOfRequest}
                             onChange={handleTypeChange}
-                            className = {formStyles.inputs}
+                            className={formStyles.inputs}
                         >
                             <option value="">Select</option>
                             <option value="lookingForTutor">Looking for Tutor</option>
@@ -91,18 +91,18 @@ export default function Post() {
                         </select>
                     </div>
                     <div>
-                        <label className = {formStyles.label} htmlFor="courseCode">Course Code:</label>
+                        <label className={formStyles.label} htmlFor="courseCode">Course Code:</label>
                         <input
                             type="text"
                             id="courseCode"
                             value={courseCode}
                             onChange={(e) => setCourseCode(e.target.value)}
-                            className = {formStyles.inputs}
+                            className={formStyles.inputs}
                         />
                     </div>
                     {typeOfRequest === 'lookingForTutor' && (
                         <div>
-                            <label className = {formStyles.label} htmlFor="pay">Pay:</label>
+                            <label className={formStyles.label} htmlFor="pay">Pay:</label>
                             <div>
                                 <span>$</span>
                                 <input
@@ -110,7 +110,7 @@ export default function Post() {
                                     id="pay"
                                     value={pay}
                                     onChange={(e) => setPay(e.target.value)}
-                                    className = {formStyles.inputs}
+                                    className={formStyles.inputs}
                                 />
                                 <span>/h</span>
                             </div>
@@ -118,23 +118,23 @@ export default function Post() {
                     )}
                     {typeOfRequest === 'lookingForGroupmate' && (
                         <div>
-                            <label className = {formStyles.label} htmlFor="numGroupmates">Number of Groupmates Needed:</label>
+                            <label className={formStyles.label} htmlFor="numGroupmates">Number of Groupmates Needed:</label>
                             <input
                                 type="number"
                                 id="numGroupmates"
                                 value={numGroupmates}
                                 onChange={(e) => setNumGroupmates(e.target.value)}
-                                className = {formStyles.inputs}
+                                className={formStyles.inputs}
                             />
                         </div>
                     )}
                     <div>
-                        <label className = {formStyles.label} htmlFor="description">Description:</label>
+                        <label className={formStyles.label} htmlFor="description">Description:</label>
                         <textarea
                             id="description"
                             value={description}
                             onChange={handleDescriptionChange}
-                            className = {formStyles.inputs}
+                            className={formStyles.inputs}
                         />
                         <div>
                             {charCount} / 2000 characters
@@ -146,5 +146,3 @@ export default function Post() {
         </div>
     );
 }
-
-
