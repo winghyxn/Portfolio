@@ -54,9 +54,22 @@ function generateUsername() {
   return `${adjective}${animal}`;
 }
 
+async function isUsernameTaken(username, collection) {
+  const existingUser = await collection.findOne({ username });
+  return !!existingUser;
+}
+
+async function generateUniqueUsername(usersCollection) {
+  let username = generateUsername();
+  while (await isUsernameTaken(username, usersCollection)) {
+    username = generateUsername();
+  }
+  return username;
+}
+
+
 app.post('/create-account', async (req, res) => {
   const { email, password } = req.body;
-  const username = generateUsername();
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -65,10 +78,7 @@ app.post('/create-account', async (req, res) => {
     const users = database.collection('userAccountInfo');
     const profiles = database.collection('userProfileInfo');
 
-    const existingUser = await users.findOne({ email: email });
-    if (existingUser) {
-      return res.status(400).send('Email already exists');
-    }
+    let username = await generateUniqueUsername(users);
 
     await users.insertOne({
       email: email,
@@ -176,7 +186,7 @@ app.get('/posts', async (req, res) => {
 });
 
 app.post('/create-post', async (req, res) => {
-  const { typeOfRequest, courseCode, description, pay, numGroupmates } = req.body;
+  const { typeOfRequest, courseCode, description, pay, numGroupmates, username } = req.body;
 
   try {
       await client.connect();
@@ -190,6 +200,7 @@ app.post('/create-post', async (req, res) => {
           pay: typeOfRequest === 'lookingForTutor' ? pay : undefined,
           numGroupmates: typeOfRequest === 'lookingForGroupmate' ? numGroupmates : undefined,
           createdAt: new Date(),
+          username, // Add the username to the post
       };
 
       await posts.insertOne(post);
@@ -202,6 +213,27 @@ app.post('/create-post', async (req, res) => {
       await client.close();
   }
 });
+
+app.get('/user-profile', async (req, res) => {
+  const username = req.query.username;
+  try {
+      await client.connect();
+      const db = client.db("bumbledore");
+      const profiles = db.collection("userProfileInfo");
+
+      const profile = await profiles.findOne({ username: username });
+      if (!profile) {
+          return res.status(404).send('User profile not found');
+      }
+      res.status(200).json(profile);
+  } catch (error) {
+      console.error('Error fetching profile:', error);
+      res.status(500).send('Failed to fetch profile');
+  } finally {
+      await client.close();
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
