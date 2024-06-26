@@ -3,6 +3,7 @@ import axios from 'axios';
 import Sidebar from '../components/sidebar'; // Adjust the path as needed
 import './Home.css';
 import formStyles from '../components/form.module.css';
+import useToken from '../components/useToken.js'; // Ensure you have this hook to retrieve the token
 
 export default function Post() {
     const [typeOfRequest, setTypeOfRequest] = useState('');
@@ -11,6 +12,7 @@ export default function Post() {
     const [numGroupmates, setNumGroupmates] = useState('');
     const [description, setDescription] = useState('');
     const [charCount, setCharCount] = useState(0);
+    const { token } = useToken(); // Get the token from the custom hook
 
     const handleTypeChange = (e) => {
         setTypeOfRequest(e.target.value);
@@ -42,6 +44,7 @@ export default function Post() {
             description,
             pay: typeOfRequest === 'lookingForTutor' ? `${pay}/h` : undefined,
             numGroupmates: typeOfRequest === 'lookingForGroupmate' ? numGroupmates : undefined,
+            username: token, // Add the username to the post data
         };
 
         try {
@@ -146,3 +149,4 @@ export default function Post() {
         </div>
     );
 }
+
