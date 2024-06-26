@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Sidebar from '../components/sidebar'; // Adjust the path as needed
 import './Home.css';
@@ -32,7 +33,9 @@ export default function Home() {
                 {posts.length > 0 ? (
                     posts.map((post) => (
                         <div key={post._id} className={styles.post}>
-                            <h3 className={styles.header}>Posted by: {post.username}</h3>
+                            <h3 className={styles.header}>
+                                Posted by: <Link to={`/profile/${post.username}`}>{post.username}</Link>
+                            </h3>
                             <p className={styles.text}>Course Code: {post.courseCode}</p>
                             <p className={styles.text}>Type of Request: {post.typeOfRequest}</p>
                             <p className={styles.text}>Description: {post.description}</p>
