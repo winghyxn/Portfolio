@@ -154,21 +154,21 @@ app.post('/my-profile', async (req, res) => {
 
 app.get('/my-profile', async (req, res) => {
   const token = req.query.token;
-
+  
   try {
     await client.connect();
     const db = client.db("bumbledore");
-    const profiles = db.collection("userProfileInfo");
+    const posts = db.collection("userProfileInfo");
 
-    const profile = await profiles.findOne({ username: token });
+    const profile = await posts.find({ email: token }).toArray();
     res.status(200).json(profile);
   } catch (error) {
-    console.error('Error fetching profile:', error);
-    res.status(500).send('Failed to fetch profile');
+    console.error('Error fetching posts:', error);
+    res.status(500).send('Failed to fetch posts');
   } finally {
     await client.close();
   }
-});
+}
 
 app.get('/posts', async (req, res) => {
   try {
@@ -234,7 +234,7 @@ app.get('/user-profile', async (req, res) => {
   }
 });
 
-
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
+
