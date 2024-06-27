@@ -49,8 +49,8 @@ export default function Profile() {
 
     const fetchProfile = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/my-profile?token=${token}`);
-            setProfile(response.data)
+            const response = await axios.get(`http://localhost:8080/my-profile?username=${token}`);
+            setProfile(response.data);
         } catch (error) {
             console.error('Error fetching profile:', error);
         }
@@ -61,52 +61,62 @@ export default function Profile() {
     }, []);
 
     return (
-        <div className="App">
-            <Sidebar />
-            <header className="App-header">
-                <h1>Profile Page</h1>
-                <h2>Welcome, {token}!</h2> {/* Display username */}
-                <p>Year: {profile.year}</p>
-                <p>Major: {profile.major}</p>
-                <p>Description: {profile.description}</p>
-                <div className="Home">
-                    <button onClick={() => setShowForm(true)}>Edit Profile</button>
-                </div>
-                {showForm && (
+        <div className="grid-container">
+            <div className="sidebar">
+                <Sidebar />
+            </div>
+            <div className="header">
+                <h1>My Profile</h1>
+            </div>
+                {showForm ? (
+                <div className="main-page">
                     <form onSubmit={handleSubmit} className={formStyles.form}>
-                        <label>
+                        <label className={formStyles.label}>
                             Year:
                             <input
                                 type="text"
                                 name="year"
                                 value={inputs.year || ''}
                                 onChange={handleChange}
+                                className={formStyles.inputs}
                             />
                         </label>
-                        <label>
+                        <label className={formStyles.label}>
                             Major:
                             <input
                                 type="text"
                                 name="major"
                                 value={inputs.major || ''}
                                 onChange={handleChange}
+                                className={formStyles.inputs}
                             />
                         </label>
-                        <label>
+                        <label className={formStyles.label}>
                             Description:
                             <input
                                 type="text"
                                 name="description"
                                 value={inputs.description || ''}
                                 onChange={handleChange}
+                                className={formStyles.inputs}
                             />
                         </label>
                         {error && <div className="error">{error}</div>}
                         <button type="submit">Submit</button>
-                        <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
                     </form>
-                )}
-            </header>
-        </div>
+                    <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
+                </div>
+                ) : (
+                <div className="main-page">
+                    <h2>Welcome, {token}!</h2> {/* Display username */}
+                    <div className="content-box">
+                        <p className="content-text">Year: {profile.year}</p>
+                        <p className="content-text">Major: {profile.major}</p>
+                        <p className="content-text">Description: {profile.description}</p>
+                    </div>
+                    <button onClick={() => setShowForm(true)}>Edit Profile</button>
+                </div>
+                )} 
+            </div>
     );
 }

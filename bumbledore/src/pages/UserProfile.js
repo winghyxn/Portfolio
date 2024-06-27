@@ -41,9 +41,11 @@ export default function UserProfile() {
                 <h1>{profile.username}'s Profile</h1>
             </div>
             <div className="main-page">
-                <p>Year: {profile.year}</p>
-                <p>Major: {profile.major}</p>
-                <p>Description: {profile.description}</p>
+                <div className="content-box">
+                    <p className="content-text">Year: {profile.year}</p>
+                    <p className="content-text">Major: {profile.major}</p>
+                    <p className="content-text">Description: {profile.description}</p>
+                </div>
             </div>
         </div>
     );

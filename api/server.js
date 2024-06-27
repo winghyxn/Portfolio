@@ -153,14 +153,14 @@ app.post('/my-profile', async (req, res) => {
 });
 
 app.get('/my-profile', async (req, res) => {
-  const token = req.query.token;
+  const username = req.query.username;
   
   try {
     await client.connect();
     const db = client.db("bumbledore");
-    const posts = db.collection("userProfileInfo");
+    const profiles = db.collection("userProfileInfo");
 
-    const profile = await posts.find({ email: token }).toArray();
+    const profile = await profiles.findOne({ username: username });
     res.status(200).json(profile);
   } catch (error) {
     console.error('Error fetching posts:', error);
@@ -168,7 +168,7 @@ app.get('/my-profile', async (req, res) => {
   } finally {
     await client.close();
   }
-}
+});
 
 app.get('/posts', async (req, res) => {
   try {
