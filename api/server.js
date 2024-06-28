@@ -335,7 +335,12 @@ app.get('/messages', async (req, res) => {
       const allMessages = db.collection("messages");
 
       const sort = { createdAt: 1 };
-      const messages = await allMessages.find({ sender: { $in: [sender, recipient]} }).sort(sort).toArray(); 
+      const messages = await allMessages.find({
+        $or: [
+          { $and: [ {sender: sender}, {recipient: recipient}] },
+          { $and: [ {sender: recipient}, {recipient: sender}]}
+        ]
+      }).sort(sort).toArray(); 
       res.status(200).json(messages);
   } catch (error) {
       console.error('Error fetching messages:', error);
