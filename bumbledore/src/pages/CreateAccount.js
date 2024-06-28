@@ -42,29 +42,36 @@ export default function CreateAccount() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className={formStyles.form}>
-      <label>
-        Email:
-        <input
-          type="email"
-          name="email"
-          value={inputs.email || ''}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      <label>
-        Password:
-        <input
-          type="password"
-          name="password"
-          value={inputs.password || ''}
-          onChange={handleChange}
-          required
-        />
-      </label>
-      {error && <div className="error">{error}</div>}
-      <button type="submit">Create Account</button>
-    </form>
+    <div>
+      <h1 className = "login-title">Bumbledore</h1>
+      <div>
+        <h2 className = "login-subtitle">Login</h2>
+        <form onSubmit={handleSubmit}>
+          <label>
+            Email:
+            <input
+              type="email"
+              name="email"
+              value={inputs.email || ''}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <label>
+            Password:
+            <input
+              type="password"
+              name="password"
+              value={inputs.password || ''}
+              onChange={handleChange}
+              required
+            />
+          </label>
+          <input type="submit" id="submit-button" value="Create Account" />
+        </form>
+      </div>
+      <p id = "text1">Already have an account? <a href = "/login">Login</a></p>
+      {error && <p id= "text1" style={{ color: 'red' }}>{error}</p>}
+    </div>
   );
 }
