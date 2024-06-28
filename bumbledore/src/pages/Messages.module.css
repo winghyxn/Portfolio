@@ -9,30 +9,8 @@
     padding: 3rem;
     width: 45rem;
     height: fit-content;
-}
-
-.mainPage {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-content: center;
-    grid-area: main-page;
-    text-align: center;
-    margin: 1rem;
-    overflow: auto;
-}
-
-.header {
-    grid-area: header;
-    text-align: left;
-    padding-left: 2rem;
-    border-bottom: 1px solid #454e64ff;
-    font-size: 12pt;
-    font-family:Georgia, 'Times New Roman', Times, serif;
-}
-
-.sidebar {
-    grid-area: sidebar;
+    border-radius: 1rem;
+    border: 1px solid #454e64ff;
 }
 
 .textBar {
@@ -56,15 +34,64 @@
     margin: 1rem;
 }
 
+.messages {
+    overflow-y: auto;
+    box-sizing: border-box; 
+}
+
+.mainPage {
+    display: flex; 
+    flex-direction: column; 
+    justify-content: flex-start;  
+    align-content: center; 
+    grid-area: main-page; 
+    overflow-y: auto;  
+    box-sizing: border-box; 
+    margin: 1rem; 
+    text-align: center; 
+    height: 100%;  
+}
+
+.header {
+    grid-area: header;
+    text-align: left;
+    padding-left: 2rem;
+    border-bottom: 1px solid #454e64ff;
+    font-size: 12pt;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+}
+
+.sidebarText {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    grid-area: sidebar;
+    border-right: 1px solid #454e64ff;
+}
+
 
 .gridContainer {
     display: grid;
     grid-template-areas:
         'sidebar header'
-        'sidebar main-page'
-        'sidebar text-bar';
-    grid-template-columns: min-content auto;
-    grid-template-rows: 15vh 70vh 10vh;
+        'sidebar main-page';
+    grid-template-columns: min-content 1fr;
+    grid-template-rows: 15vh 1fr;
     height: 100vh;
     width: 100vw;
+    overflow: auto;
+    margin: 0;
+    padding: 0;  
 }
+
+body { 
+    overflow: auto;  
+    margin: 0;  
+    padding: 0;  
+} 

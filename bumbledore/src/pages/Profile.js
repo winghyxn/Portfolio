@@ -8,7 +8,6 @@ import './Home.css';
 export default function Profile() {
     const [showForm, setShowForm] = useState(false);
     const [inputs, setInputs] = useState({});
-    const [error, setError] = useState(null);
     const [profile, setProfile] = useState({})
     const { token, setToken } = useToken();
 
@@ -20,7 +19,6 @@ export default function Profile() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setError(null); // Clear previous error
 
         try {
             const response = await fetch("http://localhost:8080/my-profile", {
@@ -37,13 +35,14 @@ export default function Profile() {
             });
 
             if (!response.ok) {
-                const errorMessage = await response.text();
-                throw new Error(errorMessage || 'Something went wrong');
+                console.error('Failed to edit profile: Status code:', response.status);
+                alert('Failed to edit profile');
             }
 
             setShowForm(false); // Close the form after successful submission
         } catch (error) {
-            setError(error.message);
+            console.error("Failed to edit profile: ", error);
+            alert('Failed to edit profile');
         }
     }
 
@@ -101,7 +100,6 @@ export default function Profile() {
                                 className={formStyles.inputs}
                             />
                         </label>
-                        {error && <div className="error">{error}</div>}
                         <button type="submit">Submit</button>
                     </form>
                     <button type="button" onClick={() => setShowForm(false)}>Cancel</button>

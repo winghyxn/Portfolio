@@ -4,24 +4,128 @@ import useToken from "../components/useToken.js";
 import styles from './Messages.module.css';
 
 export default function Messages() {
+    const [userChats, setUserChats] = useState([]);
+    const [messages, setMessages] = useState([]);
+    const [showChat, setShowChat] = useState("");
+    const [input, setInput] = useState("");
+    const { token } = useToken();
+
+    const handleMessage = async (e) => {
+        e.preventDefault();
+        const sender = e.target.dataset.sender;
+        const recipient = e.target.dataset.recipient;
+        
+        const messageData = {
+            sender: sender,
+            recipient: recipient,
+            message: input
+        };
+
+        try {
+            const response = await axios.post('http://localhost:8080/messages', messageData);
+            if (response.status === 200) {
+                console.log('Message sent:', response.data);
+            } 
+        } catch (error) {
+            console.error("Failed to send message", error);
+        }
+        setInput('');
+    };
+
+    const fetchMessages = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/messages?sender=${token}&&recipient=${showChat}`);
+            console.log('Fetched messages:', response.data);
+            setMessages(response.data);
+        } catch (error) {
+            console.error('Failed to fetch messages:', error);
+        }
+    };
+
+    useEffect(() => {
+        const fetchUserChats = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/chats?username=${token}`);
+                console.log('Fetched chats:', response.data);
+                setUserChats(response.data);
+            } catch (error) {
+                console.error('Failed to fetch chats:', error);
+            }
+        };
+
+        fetchUserChats();
+
+    }, [token]);
+
     return (
         <div className={styles.gridContainer}>
             <div className={styles.sidebar}>
-                <a href = "/home">Back</a>
-                <p>messagesssssssssssssssssss</p>
+                <a className={styles.sidebarText} href = "/home">Back</a>
+                {userChats.chats ? (
+                    userChats.chats.map((chat) => (
+                        <div className={styles.sidebarText} key={chat}>
+                            <button onClick={() => {
+                                setShowChat(chat); 
+                                fetchMessages();
+                                }}>
+                                    {chat}
+                            </button>
+                        </div>
+                    ))
+                ) : (
+                    <p>no chatssssssssssssssssss</p>
+                )}
             </div>
             <div className={styles.header}>
-                <p>username</p>
+                {showChat === "" ? (
+                    <h1>Messages</h1>
+                ) : (
+                    <h1>{showChat}</h1>
+                )}
             </div>
-            <div className={styles.mainPage}>
-                <p>texts</p>
-            </div>
-            <div className={styles.textBar}>
-                <form className={styles.textBarForm}>
-                    <textarea className={styles.textBarFormInputs} />
-                    <button className={styles.textBarFormIputs} type="submit">Submit</button>
-                </form>
-            </div>
+            
+            {showChat === "" ? (
+                <div className={styles.mainPage}>
+                    <div className={styles.messages}>
+                        <p>Click on a username to access chat</p>
+                    </div>
+                </div>
+            ) : (
+                <div className={styles.mainPage}>
+                    <div className={styles.messages}>
+                        {messages.map((message) => (
+                            <div key={message._id} className={styles.textbox}>
+                                <h3 className={styles.text}>{message.sender}</h3>
+                                <p className={styles.text}>{message.message}</p>
+                                <p className={styles.text}>{message.createdAt}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <div className={styles.textBar}>
+                        <form 
+                            className={styles.textBarForm} 
+                            onSubmit={handleMessage}
+                            data-sender={token}
+                            data-recipient={showChat}
+                        >
+                            <textarea 
+                                className={styles.textBarFormInputs}                                    name="messageInput"
+                                row="2"
+                                cols="40"
+                                value={input} 
+                                onChange={e => setInput(e.target.value)}
+                            >
+                           </textarea>
+                            <button 
+                                className={styles.textBarFormIputs} 
+                                type="submit"
+                                >
+                                    Submit
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
