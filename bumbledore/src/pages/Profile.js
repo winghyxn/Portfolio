@@ -9,7 +9,6 @@ export default function Profile() {
     const [showForm, setShowForm] = useState(false);
     const [inputs, setInputs] = useState({});
     const [profile, setProfile] = useState({})
-    const { token, setToken } = useToken();
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -57,7 +56,7 @@ export default function Profile() {
 
     useEffect(() => {
         fetchProfile();
-    }, []);
+    }, [fetchProfile]);
 
     return (
         <div className="grid-container">
