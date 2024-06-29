@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './Login.css';
 
 async function Authentication(credentials) {
-    return fetch("http://localhost:8080/login", {  //`${API_URL}/login`, {//fetch('', { https://bumbledore.vercel.app/login 
+    return fetch("https://bumbledore-server-git-weien-branch-kohweiens-projects.vercel.app/login", {  //`${API_URL}/login`, {//fetch('', { https://bumbledore.vercel.app/login 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

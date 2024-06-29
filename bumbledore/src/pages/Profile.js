@@ -21,7 +21,7 @@ export default function Profile() {
         event.preventDefault();
 
         try {
-            const response = await fetch("http://localhost:8080/my-profile", {
+            const response = await fetch("https://bumbledore-server-git-weien-branch-kohweiens-projects.vercel.app/my-profile", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -49,7 +49,7 @@ export default function Profile() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/my-profile?username=${token}`);
+                const response = await axios.get(`https://bumbledore-server-git-weien-branch-kohweiens-projects.vercel.app/my-profile?username=${token}`);
                 setProfile(response.data);
             } catch (error) {
                 console.error('Error fetching profile:', error);

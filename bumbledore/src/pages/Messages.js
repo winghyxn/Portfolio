@@ -22,7 +22,7 @@ export default function Messages() {
         };
 
         try {
-            const response = await axios.post('http://localhost:8080/messages', messageData);
+            const response = await axios.post('https://bumbledore-server-git-weien-branch-kohweiens-projects.vercel.app/messages', messageData);
             if (response.status === 200) {
                 console.log('Message sent:', response.data);
                 fetchMessages(showChat);
