@@ -6,6 +6,7 @@ import useToken from "../components/useToken.js";
 import './Home.css';
 
 export default function Profile() {
+    const { token } = useToken(); // Use the token from the useToken hook
     const [showForm, setShowForm] = useState(false);
     const [inputs, setInputs] = useState({});
     const [profile, setProfile] = useState({})
@@ -56,7 +57,7 @@ export default function Profile() {
 
     useEffect(() => {
         fetchProfile();
-    }, [fetchProfile]);
+    }, [token]); // Add token to dependency array
 
     return (
         <div className="grid-container">
@@ -66,7 +67,7 @@ export default function Profile() {
             <div className="header">
                 <h1>My Profile</h1>
             </div>
-                {showForm ? (
+            {showForm ? (
                 <div className="main-page">
                     <form onSubmit={handleSubmit} className={formStyles.form}>
                         <label className={formStyles.label}>
@@ -103,7 +104,7 @@ export default function Profile() {
                     </form>
                     <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
                 </div>
-                ) : (
+            ) : (
                 <div className="main-page">
                     <h2>Welcome, {token}!</h2> {/* Display username */}
                     <div className="content-box">
@@ -113,7 +114,7 @@ export default function Profile() {
                     </div>
                     <button onClick={() => setShowForm(true)}>Edit Profile</button>
                 </div>
-                )} 
-            </div>
+            )} 
+        </div>
     );
 }
