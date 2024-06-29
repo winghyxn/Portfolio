@@ -67,6 +67,9 @@ async function generateUniqueUsername(usersCollection) {
   return username;
 }
 
+app.get('/', async(req, res) => {
+  res.send('hello!');
+});
 
 app.post('/create-account', async (req, res) => {
   const { email, password } = req.body;

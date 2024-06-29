@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import Sidebar from '../components/sidebar'; // Adjust the path as needed
+import Sidebar from '../components/sidebar.js'; // Adjust the path as needed
 import useToken from "../components/useToken.js";
 import './Home.css';
 import styles from '../components/post.module.css';
