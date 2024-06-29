@@ -6,16 +6,16 @@ import useToken from "../components/useToken.js";
 import './Home.css';
 
 export default function Profile() {
+    const { token } = useToken();
     const [showForm, setShowForm] = useState(false);
     const [inputs, setInputs] = useState({});
-    const [profile, setProfile] = useState({})
-    const { token, setToken } = useToken();
+    const [profile, setProfile] = useState({});
 
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
         setInputs(values => ({ ...values, [name]: value }));
-    }
+    };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -27,7 +27,7 @@ export default function Profile() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    username: token, // Changed from email to username
+                    username: token,
                     year: inputs.year,
                     major: inputs.major,
                     description: inputs.description
@@ -44,20 +44,20 @@ export default function Profile() {
             console.error("Failed to edit profile: ", error);
             alert('Failed to edit profile');
         }
-    }
-
-    const fetchProfile = async () => {
-        try {
-            const response = await axios.get(`http://localhost:8080/my-profile?username=${token}`);
-            setProfile(response.data);
-        } catch (error) {
-            console.error('Error fetching profile:', error);
-        }
-    }
+    };
 
     useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/my-profile?username=${token}`);
+                setProfile(response.data);
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+            }
+        };
+
         fetchProfile();
-    }, []);
+    }, [token]); // Only run when token changes
 
     return (
         <div className="grid-container">
@@ -67,7 +67,7 @@ export default function Profile() {
             <div className="header">
                 <h1>My Profile</h1>
             </div>
-                {showForm ? (
+            {showForm ? (
                 <div className="main-page">
                     <form onSubmit={handleSubmit} className={formStyles.form}>
                         <label className={formStyles.label}>
@@ -104,7 +104,7 @@ export default function Profile() {
                     </form>
                     <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
                 </div>
-                ) : (
+            ) : (
                 <div className="main-page">
                     <h2>Welcome, {token}!</h2> {/* Display username */}
                     <div className="content-box">
@@ -114,7 +114,8 @@ export default function Profile() {
                     </div>
                     <button onClick={() => setShowForm(true)}>Edit Profile</button>
                 </div>
-                )} 
-            </div>
+            )}
+        </div>
     );
 }
+

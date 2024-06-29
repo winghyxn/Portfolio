@@ -25,6 +25,7 @@ export default function Messages() {
             const response = await axios.post('http://localhost:8080/messages', messageData);
             if (response.status === 200) {
                 console.log('Message sent:', response.data);
+                fetchMessages(showChat);
             } 
         } catch (error) {
             console.error("Failed to send message", error);
@@ -32,9 +33,9 @@ export default function Messages() {
         setInput('');
     };
 
-    const fetchMessages = async () => {
+    const fetchMessages = async (chat) => {
         try {
-            const response = await axios.get(`http://localhost:8080/messages?sender=${token}&&recipient=${showChat}`);
+            const response = await axios.get(`http://localhost:8080/messages?sender=${token}&&recipient=${chat}`);
             console.log('Fetched messages:', response.data);
             setMessages(response.data);
         } catch (error) {
@@ -57,6 +58,11 @@ export default function Messages() {
 
     }, [token]);
 
+    const handleChatClick = (chat) => {
+        setShowChat(chat);
+        fetchMessages(chat);
+    };
+
     return (
         <div className={styles.gridContainer}>
             <div className={styles.sidebar}>
@@ -64,16 +70,13 @@ export default function Messages() {
                 {userChats.chats ? (
                     userChats.chats.map((chat) => (
                         <div className={styles.sidebarText} key={chat}>
-                            <button onClick={() => {
-                                setShowChat(chat); 
-                                fetchMessages();
-                                }}>
-                                    {chat}
+                            <button onClick={() => handleChatClick(chat)}>
+                                {chat}
                             </button>
                         </div>
                     ))
                 ) : (
-                    <p>no chatssssssssssssssssss</p>
+                    <p>No chats</p>
                 )}
             </div>
             <div className={styles.header}>

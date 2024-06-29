@@ -122,7 +122,6 @@ export default function Post() {
                     {typeOfRequest === 'lookingForGroupmate' && (
                         <div>
                             <label className={formStyles.label} htmlFor="numGroupmates">Number of Groupmates Needed:</label>
-                            <label className = {formStyles.label} htmlFor="numGroupmates">Number of Groupmates Needed:</label>
                             <input
                                 type="number"
                                 id="numGroupmates"

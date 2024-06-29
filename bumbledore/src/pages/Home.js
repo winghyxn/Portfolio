@@ -11,6 +11,9 @@ export default function Home() {
     const { token } = useToken();
     const navigate = useNavigate();
 
+    // Assuming token contains the username directly
+    const username = token;
+
     useEffect(() => {
         const fetchPosts = async () => {
             try {
@@ -26,12 +29,11 @@ export default function Home() {
 
     const handleMessageRequest = async (e) => {
         e.preventDefault();
-        const username = e.target.dataset.username;
-        const profile = e.target.dataset.profile;
-        
+        const postUsername = e.target.dataset.username;
+
         const userData = {
-            username: username,
-            profile: profile
+            username: postUsername,
+            profile: postUsername
         };
 
         try {
@@ -39,7 +41,6 @@ export default function Home() {
             if (response.status === 200) {
                 console.log('Chat created successfully:', response.data);
                 navigate('/messages');
-                
             } else {
                 console.error('Failed to create chat: Status code:', response.status);
             }
@@ -69,13 +70,15 @@ export default function Home() {
                             {post.pay && <p className={styles.text}>Pay: {post.pay}</p>}
                             {post.numGroupmates && <p className={styles.text}>Number of Groupmates Needed: {post.numGroupmates}</p>}
                             <p className={styles.text}>Created At: {new Date(post.createdAt).toLocaleString()}</p>
-                            <button 
-                                onClick={handleMessageRequest} 
-                                type="button"
-                                data-username={token}
-                                data-profile={post.username}>
-                                    Message
-                            </button>
+                            {post.username !== username && (
+                                <button 
+                                    onClick={handleMessageRequest} 
+                                    type="button"
+                                    data-username={post.username}
+                                    data-profile={post.username}>
+                                        Message
+                                </button>
+                            )}
                         </div>
                     ))
                 ) : (
@@ -85,3 +88,4 @@ export default function Home() {
         </div>
     );
 }
+

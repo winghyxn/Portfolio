@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import formStyles from "../components/form.module.css";
 import './Login.css';
 
 export default function CreateAccount() {
@@ -75,3 +74,4 @@ export default function CreateAccount() {
     </div>
   );
 }
+
