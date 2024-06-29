@@ -14,14 +14,15 @@
     background-color: #fefdecff;
 }
 
-h1 {
-    font-size: 1rem;
+.login-title {
+    font-size: 32pt;
+    margin: 50px;
     text-align: center;
     font-family:Georgia, 'Times New Roman', Times, serif;
     margin: 50px;
 }
 
-h2 {
+.login-subtitle {
     font-size: 1rem;
     text-align: center;
 }
@@ -70,9 +71,6 @@ button:hover {
     opacity: 70%;
 }
 
-/*#create-account {
+#text1 {
     text-align: center;
-    background-color: #fefdecff; 
-    border: 0px;
-    color: #47529bff;
-}*/
+}

@@ -1,0 +1,41 @@
+/*--lavender-blush: #fef2f3ff;
+--sky-magenta: #d46ca5ff;
+--magenta-dye: #be3781ff;
+--goldenrod: #e1ac24ff;
+--maize: #f5eb44ff;
+--ivory: #fefdecff;
+--cool-gray: #8f97c5ff;
+--yinmn-blue: #47529bff;
+--charcoal: #454e64ff;
+--rich-black: #0b111dff;
+*/
+
+.menu {
+    text-align: left;
+    padding: 40px;
+    border-right: 1px solid #454e64ff;
+    height: 85vh;
+}
+
+.title {
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-size: 32pt;
+}
+
+.items {
+    font-size: 18pt;
+    line-height: 3rem;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:link, a:visited {
+    color: #454e64ff;
+}
+
+a:hover, a:active {
+    opacity: 80%;
+}
+
