@@ -38,7 +38,8 @@ export default function Home() {
         };
 
         try {
-            const response = await axios.post('http://localhost:8080/new-chat', userData);
+            const response = await axios.post('mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital
+/new-chat', userData);
             if (response.status === 200) {
                 console.log('Chat created successfully:', response.data);
                 navigate('/messages');
