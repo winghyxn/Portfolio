@@ -17,7 +17,7 @@ export default function Home() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await axios.get('https://bumbledore-server-git-weien-branch-kohweiens-projects.vercel.app/posts');
+                const response = await axios.get('https://bumbledore-server.vercel.app/posts');
                 setPosts(response.data);
             } catch (error) {
                 console.error('Failed to fetch posts:', error);
