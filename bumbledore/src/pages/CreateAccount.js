@@ -44,7 +44,7 @@ export default function CreateAccount() {
     <div>
       <h1 className = "login-title">Bumbledore</h1>
       <div>
-        <h2 className = "login-subtitle">Login</h2>
+        <h2 className = "login-subtitle">Create Account</h2>
         <form onSubmit={handleSubmit}>
           <label>
             Email:
