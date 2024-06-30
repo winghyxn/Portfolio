@@ -18,8 +18,9 @@ function App() {
       <div>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Login setToken={setToken} />} />
+            <Route path="/" element={<Home />} />
             <Route index element={<Login setToken={setToken} />} />
+            <Route path="login" element={<Login setToken={setToken} />} />
             <Route path="/create-account" element={<CreateAccount />} />
           </Routes>
         </BrowserRouter>
