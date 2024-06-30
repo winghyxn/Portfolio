@@ -28,8 +28,8 @@ export default function Login({ setToken }) {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setError(null); // Clear previous error  
-        const response = await Authentication(inputs);      
+        setError(null); // Clear previous error
+        const response = await Authentication(inputs);
 
         try {
             /*const response = await fetch("http://localhost:3000/login", {  //`${API_URL}/login`, {//fetch('', { https://bumbledore.vercel.app/login 
@@ -39,6 +39,7 @@ export default function Login({ setToken }) {
                 },
                 body: JSON.stringify(inputs)
             });*/
+            const response = await Authentication(inputs);
 
             if (response.ok) {
                 setToken(response);
