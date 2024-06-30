@@ -21,7 +21,7 @@ export default function Profile() {
         event.preventDefault();
 
         try {
-            const response = await fetch("http://localhost:8080/my-profile", {
+            const response = await fetch("mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital/my-profile", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -49,7 +49,7 @@ export default function Profile() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/my-profile?username=${token}`);
+                const response = await axios.get(`mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital/my-profile?username=${token}`);
                 setProfile(response.data);
             } catch (error) {
                 console.error('Error fetching profile:', error);
