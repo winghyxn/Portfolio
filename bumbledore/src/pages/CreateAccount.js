@@ -35,7 +35,7 @@ export default function CreateAccount() {
       }
       
       alert('Account created successfully!')
-      navigate('/login'); // Redirect to login page after successful account creation
+      navigate('/'); // Redirect to login page after successful account creation
     } catch (error) {
       setError(error.message);
     }
