@@ -127,7 +127,7 @@ app.post('/login', async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
-      return res.status(200).send({ token: user.username });
+      return res.status(200).send(username);
     } else {
       return res.status(401).send('Invalid email or password');
     }

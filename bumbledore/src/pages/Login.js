@@ -43,10 +43,7 @@ export default function Login({ setToken }) {
             if (response.ok) {
                 setToken(response);
                 navigate('/home');
-            } else {
-                const errorMessage = await response.text();
-                setError(errorMessage);
-            } 
+            }
 
         } catch (error) {
             setError(response);
