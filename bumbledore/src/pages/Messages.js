@@ -117,6 +117,7 @@ export default function Messages() {
                                 cols="40"
                                 value={input} 
                                 onChange={e => setInput(e.target.value)}
+                                required
                             >
                            </textarea>
                             <button 

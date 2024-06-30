@@ -87,16 +87,22 @@ app.post('/create-account', async (req, res) => {
 
     let username = await generateUniqueUsername(users);
 
-    await users.insertOne({
-      email: email,
-      username: username,
-      password: hashedPassword
-    });
+    const user = await users.findOne({ email: email });
 
-    await profiles.insertOne({
-      email: email,
-      username: username
-    });
+    if (!user) {
+      await users.insertOne({
+        email: email,
+        username: username,
+        password: hashedPassword
+      });
+  
+      await profiles.insertOne({
+        email: email,
+        username: username
+      });
+    } else {
+      res.status(400).send('User already exists')
+    }
 
     res.status(200).send('Account created successfully');
   } catch (error) {
@@ -116,7 +122,7 @@ app.post('/login', async (req, res) => {
 
     const user = await users.findOne({ email: email });
     if (!user) {
-      return res.status(401).send('Invalid email or password');
+      return res.status(401).send('User not found');
     }
 
     const isMatch = await bcrypt.compare(password, user.password);

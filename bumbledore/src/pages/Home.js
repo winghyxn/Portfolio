@@ -29,11 +29,11 @@ export default function Home() {
 
     const handleMessageRequest = async (e) => {
         e.preventDefault();
-        const postUsername = e.target.dataset.username;
+        const profile = e.target.dataset.profile;
 
         const userData = {
             username: username,
-            profile: postUsername
+            profile: profile
         };
 
         try {

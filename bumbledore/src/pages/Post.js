@@ -87,6 +87,7 @@ export default function Post() {
                             value={typeOfRequest}
                             onChange={handleTypeChange}
                             className={formStyles.inputs}
+                            required
                         >
                             <option value="">Select</option>
                             <option value="lookingForTutor">Looking for Tutor</option>
@@ -101,6 +102,7 @@ export default function Post() {
                             value={courseCode}
                             onChange={(e) => setCourseCode(e.target.value)}
                             className={formStyles.inputs}
+                            required
                         />
                     </div>
                     {typeOfRequest === 'lookingForTutor' && (
@@ -114,6 +116,7 @@ export default function Post() {
                                     value={pay}
                                     onChange={(e) => setPay(e.target.value)}
                                     className={formStyles.inputs}
+                                    required
                                 />
                                 <span>/h</span>
                             </div>
@@ -128,6 +131,7 @@ export default function Post() {
                                 value={numGroupmates}
                                 onChange={(e) => setNumGroupmates(e.target.value)}
                                 className={formStyles.inputs}
+                                required
                             />
                         </div>
                     )}
@@ -138,6 +142,7 @@ export default function Post() {
                             value={description}
                             onChange={handleDescriptionChange}
                             className={formStyles.inputs}
+                            required
                         />
                         <div>
                             {charCount} / 2000 characters
