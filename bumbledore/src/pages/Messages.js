@@ -35,7 +35,7 @@ export default function Messages() {
 
     const fetchMessages = async (chat) => {
         try {
-            const response = await axios.get(`http://localhost:8080/messages?sender=${token}&&recipient=${chat}`);
+            const response = await axios.get(`https://bumbledore-server.vercel.app/messages?sender=${token}&&recipient=${chat}`);
             console.log('Fetched messages:', response.data);
             setMessages(response.data);
         } catch (error) {
@@ -46,7 +46,7 @@ export default function Messages() {
     useEffect(() => {
         const fetchUserChats = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/chats?username=${token}`);
+                const response = await axios.get(`https://bumbledore-server.vercel.app/chats?username=${token}`);
                 console.log('Fetched chats:', response.data);
                 setUserChats(response.data);
             } catch (error) {
