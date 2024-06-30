@@ -48,7 +48,7 @@ export default function Post() {
         };
 
         try {
-            const response = await axios.post('http://localhost:8080/create-post', postData);
+            const response = await axios.post('mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital/create-post', postData);
             if (response.status === 200) {
                 console.log('Post created successfully:', response.data);
                 // Clear form fields after successful post
