@@ -100,11 +100,12 @@ app.post('/create-account', async (req, res) => {
         email: email,
         username: username
       });
+      
+      res.status(200).send('Account created successfully');
+
     } else {
       res.status(400).send('User already exists')
     }
-
-    res.status(200).send('Account created successfully');
   } catch (error) {
     console.error('Error creating account:', error);
     res.status(500).send('Failed to create account');

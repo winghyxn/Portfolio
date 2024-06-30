@@ -39,7 +39,6 @@ export default function Login({ setToken }) {
                 },
                 body: JSON.stringify(inputs)
             });*/
-            const response = await Authentication(inputs);
 
             if (response.ok) {
                 setToken(response);
