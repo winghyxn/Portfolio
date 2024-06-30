@@ -17,7 +17,8 @@ export default function Home() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/posts');
+                const response = await axios.get('mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital
+/posts');
                 setPosts(response.data);
             } catch (error) {
                 console.error('Failed to fetch posts:', error);
