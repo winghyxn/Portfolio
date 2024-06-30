@@ -12,7 +12,7 @@ export default function UserProfile() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/user-profile?username=${username}`);
+                const response = await axios.get(`mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital/user-profile?username=${username}`);
                 console.log('Fetched profile:', response.data);
                 setProfile(response.data);
             } catch (error) {
