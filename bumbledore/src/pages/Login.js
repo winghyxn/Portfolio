@@ -41,18 +41,18 @@ export default function Login({ setToken }) {
                 body: JSON.stringify(inputs)
             });*/
             const response = await Authentication(inputs);
-            setToken(response);
-            navigate('/home')
 
-            /*if (response.ok) {
+            if (response.ok) {
+                setToken(response);
                 navigate('/home');
             } else {
                 const errorMessage = await response.text();
                 setError(errorMessage);
-            } */
+            } 
+
         } catch (error) {
+            setError(response);
             console.error('Request failed:', error);
-            setError('Failed to login. Please try again.');
         }
     }
 

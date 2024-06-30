@@ -33,7 +33,8 @@ export default function CreateAccount() {
         const errorMessage = await response.text();
         throw new Error(errorMessage || 'Something went wrong');
       }
-
+      
+      alert('Account created successfully!')
       navigate('/login'); // Redirect to login page after successful account creation
     } catch (error) {
       setError(error.message);
