@@ -18,8 +18,7 @@ export default function CreateAccount() {
     setError(null); // Clear previous error
 
     try {
-      const response = await fetch("mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital
-/create-account", {
+      const response = await fetch("mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital/create-account", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
