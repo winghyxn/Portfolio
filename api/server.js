@@ -9,9 +9,13 @@ const port = 8080;
 
 const uri = "mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || 'https://bumbledore.vercel.app'
+};
 
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors(corsOptions));
+
 
 const adjectives = [
   "Silly", "Angry", "Happy", "Sad", "Brave", "Clever", "Curious", "Gentle",
