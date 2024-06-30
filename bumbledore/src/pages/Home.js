@@ -32,7 +32,7 @@ export default function Home() {
         const postUsername = e.target.dataset.username;
 
         const userData = {
-            username: postUsername,
+            username: username,
             profile: postUsername
         };
 
@@ -74,7 +74,7 @@ export default function Home() {
                                 <button 
                                     onClick={handleMessageRequest} 
                                     type="button"
-                                    data-username={post.username}
+                                    data-username={username}
                                     data-profile={post.username}>
                                         Message
                                 </button>
