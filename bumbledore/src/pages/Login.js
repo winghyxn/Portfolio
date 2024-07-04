@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import useToken from "../components/useToken.js";
 import './Login.css';
 
 async function Authentication(credentials) {
@@ -17,6 +18,7 @@ async function Authentication(credentials) {
 export default function Login({ setToken }) {
     const [inputs, setInputs] = useState({});
     const [error, setError] = useState(null);
+    const { token, setToken } = useToken();
     const navigate = useNavigate();
     //const API_URL = process.env.REACT_APP_API_URL;
 
@@ -42,6 +44,7 @@ export default function Login({ setToken }) {
 
             if (response.ok) {
                 setToken(response);
+                console.log(token);
                 navigate('/home');
 
             } else {
