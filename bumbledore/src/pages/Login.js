@@ -29,7 +29,6 @@ export default function Login({ setToken }) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError(null); // Clear previous error
-        //setToken(response);
         const response = await Authentication(inputs);
 
         try {
@@ -43,15 +42,16 @@ export default function Login({ setToken }) {
 
             if (response.ok) {
                 setToken(response);
+                console.log(token);
                 navigate('/home');
 
             } else {
             // const errorMessage = await response.text()
-            setError(response);
+            setError(response.error);
         }
 
         } catch (error) {
-            setError(response);
+            setError(response.error);
             console.error('Request failed:', error);
         }
     }
