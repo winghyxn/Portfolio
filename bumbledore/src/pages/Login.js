@@ -43,6 +43,7 @@ export default function Login({ setToken }) {
             });*/
 
             if (response.ok) {
+                console.log("running");
                 setToken(response);
                 console.log(token);
                 navigate('/home');
