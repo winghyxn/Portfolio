@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import useToken from "../components/useToken.js";
 import './Login.css';
 
 async function Authentication(credentials) {
