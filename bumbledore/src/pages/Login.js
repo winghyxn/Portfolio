@@ -42,7 +42,6 @@ export default function Login({ setToken }) {
 
             if (response.ok) {
                 setToken(response);
-                console.log(token);
                 navigate('/home');
 
             } else {
