@@ -46,8 +46,8 @@ export default function Login({ setToken }) {
                 navigate('/home');
 
             } else {
-            // const errorMessage = await response.text()
-            setError(response.error);
+                // const errorMessage = await response.text()
+                setError(response.error);
         }
 
         } catch (error) {
