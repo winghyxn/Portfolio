@@ -18,7 +18,6 @@ async function Authentication(credentials) {
 export default function Login({ setToken }) {
     const [inputs, setInputs] = useState({});
     const [error, setError] = useState(null);
-    const { token } = useToken();
     const navigate = useNavigate();
     //const API_URL = process.env.REACT_APP_API_URL;
 
