@@ -9,8 +9,21 @@ const port = 8080;
 
 const uri = "mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'https://bumbledore.vercel.app' || 'https://bumbledore-git-weien-branch-kohweiens-projects.vercel.app'
+const allowedOrigins = [
+  process.env.FRONTEND_URL, 
+  'https://bumbledore.vercel.app', 
+  'https://bumbledore-git-weien-branch-kohweiens-projects.vercel.app'
+]; 
+const corsOptions = { 
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }, 
+  methods: 'GET, POST, PUT, DELETE, OPTIONS',
+  allowedHeaders: 'Content-Type, Authorization'
 };
 
 app.use(bodyParser.json());
