@@ -47,7 +47,7 @@ export default function Login({ setToken }) {
 
             } else {
             //const errorMessage = await response.text();
-            setError(errorMessage);
+            setError(response);
         }
 
         } catch (error) {
