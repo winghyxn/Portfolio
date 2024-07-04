@@ -30,7 +30,6 @@ export default function Login({ setToken }) {
         event.preventDefault();
         setError(null); // Clear previous error
         const response = await Authentication(inputs);
-        setToken(response);
 
         try {
             /*const response = await fetch("http://localhost:3000/login", {  //`${API_URL}/login`, {//fetch('', { https://bumbledore.vercel.app/login 
