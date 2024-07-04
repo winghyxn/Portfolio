@@ -10,7 +10,7 @@ const port = 8080;
 const uri = "mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'https://bumbledore.vercel.app' || 'bumbledore-git-weien-branch-kohweiens-projects.vercel.app'
+  origin: process.env.FRONTEND_URL || 'https://bumbledore.vercel.app' || 'https://bumbledore-git-weien-branch-kohweiens-projects.vercel.app'
 };
 
 app.use(bodyParser.json());
