@@ -136,18 +136,18 @@ app.post('/login', async (req, res) => {
 
     const user = await users.findOne({ email: email });
     if (!user) {
-      return res.status(401).send('User not found');
+      return res.status(401).send({ error: 'User not found'});
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
       return res.status(200).send({ token: user.username });
     } else {
-      return res.status(401).send('Invalid email or password');
+      return res.status(401).send({ error: 'Invalid email or password'});
     }
   } catch (error) {
     console.error('Error logging in:', error);
-    res.status(500).send('Failed to login');
+    res.status(500).send({ error: 'Failed to login'});
   } finally {
     await client.close();
   }
