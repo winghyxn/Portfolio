@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './Login.css';
 
 async function Authentication(credentials) {
-    return fetch("mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital/login", {  //`${API_URL}/login`, {//fetch('', { https://bumbledore.vercel.app/login 
+    return fetch("https://bumbledore-server.vercel.app/login", { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -33,26 +33,25 @@ export default function Login({ setToken }) {
         setToken(response);
 
         try {
-            /*const response = await fetch("mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital/login", {  //`${API_URL}/login`, {//fetch('', { https://bumbledore.vercel.app/login 
+            /*const response = await fetch("http://localhost:3000/login", {  //`${API_URL}/login`, {//fetch('', { https://bumbledore.vercel.app/login 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(inputs)
             });*/
-            const response = await Authentication(inputs);
-            setToken(response);
-            navigate('/home')
 
-            /*if (response.ok) {
+            if (response.ok) {
                 navigate('/home');
+
             } else {
-                const errorMessage = await response.text();
-                setError(errorMessage);
-            } */
+                // const errorMessage = await response.text()
+                setError(response.error);
+        }
+
         } catch (error) {
+            setError(response.error);
             console.error('Request failed:', error);
-            setError('Failed to login. Please try again.');
         }
     }
 
