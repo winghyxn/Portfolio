@@ -61,7 +61,10 @@ export default function Home() {
                 <h1>All Posts</h1>
             </div>
             {loading ? (
-                <div className={loaderStyles.loader}></div>
+                <div className="main-page">
+                    <div className={loaderStyles.loader}></div>
+                    <p>loading...</p>
+                </div>
                 ) : (
                     <div className="main-page">
                         {posts.length > 0 ? (
