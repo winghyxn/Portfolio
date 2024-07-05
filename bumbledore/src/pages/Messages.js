@@ -100,7 +100,7 @@ export default function Messages() {
                             <div key={message._id} className={styles.textbox}>
                                 <h3 className={styles.text}>{message.sender}</h3>
                                 <p className={styles.text}>{message.message}</p>
-                                <p className={styles.text}>{message.createdAt}</p>
+                                <p className={styles.text}>{new Date(message.createdAt).toLocaleString()}</p>
                             </div>
                         ))}
                     </div>
