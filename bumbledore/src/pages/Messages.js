@@ -22,7 +22,7 @@ export default function Messages() {
         };
 
         try {
-            const response = await axios.post('mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital/messages', messageData);
+            const response = await axios.post('https://bumbledore-server.vercel.app/messages', messageData);
             if (response.status === 200) {
                 console.log('Message sent:', response.data);
                 fetchMessages(showChat);
@@ -35,7 +35,7 @@ export default function Messages() {
 
     const fetchMessages = async (chat) => {
         try {
-            const response = await axios.get(`mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital/messages?sender=${token}&&recipient=${chat}`);
+            const response = await axios.get(`https://bumbledore-server.vercel.app/messages?sender=${token}&&recipient=${chat}`);
             console.log('Fetched messages:', response.data);
             setMessages(response.data);
         } catch (error) {
@@ -46,7 +46,7 @@ export default function Messages() {
     useEffect(() => {
         const fetchUserChats = async () => {
             try {
-                const response = await axios.get(`mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital/chats?username=${token}`);
+                const response = await axios.get(`https://bumbledore-server.vercel.app/chats?username=${token}`);
                 console.log('Fetched chats:', response.data);
                 setUserChats(response.data);
             } catch (error) {
@@ -117,6 +117,7 @@ export default function Messages() {
                                 cols="40"
                                 value={input} 
                                 onChange={e => setInput(e.target.value)}
+                                required
                             >
                            </textarea>
                             <button 
