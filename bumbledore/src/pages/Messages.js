@@ -71,7 +71,7 @@ export default function Messages() {
                 {userChats ? (
                     userChats.map((chat) => (
                         <div className={styles.sidebarText} key={chat.other}>
-                            <button onClick={() => handleChatClick(chat.other, chat.chats)}>
+                            <button onClick={() => handleChatClick(chat)}>
                                {chat.other}
                             </button>
                         </div>

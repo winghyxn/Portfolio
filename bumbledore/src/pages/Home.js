@@ -42,6 +42,7 @@ export default function Home() {
         };
 
         try {
+            console.log(userData);
             const response = await axios.post('https://bumbledore-server.vercel.app/new-chat', userData);
             if (response.status === 200) {
                 console.log('Chat created successfully:', response.data);
