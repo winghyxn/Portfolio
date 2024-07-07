@@ -34,6 +34,7 @@ export default function Home() {
         e.preventDefault();
         const profile = e.target.dataset.profile;
         const postID = e.target.dataset.postID;
+        console.log(postID);
 
         const userData = {
             username: username,
@@ -89,7 +90,7 @@ export default function Home() {
                                             type="button"
                                             data-username={username}
                                             data-profile={post.username}
-                                            data-postID={post._id}>
+                                            data-postID={post._id.toString()}>
                                                 Message
                                         </button>
                                     )}
