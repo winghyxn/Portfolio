@@ -22,7 +22,7 @@ export default function Messages() {
         };
 
         try {
-            const response = await axios.post('http://localhost:8080/messages', messageData);
+            const response = await axios.post('https://bumbledore-server.vercel.app/messages', messageData);
             if (response.status === 200) {
                 console.log('Message sent:', response.data);
                 fetchMessages(showChat);
@@ -35,7 +35,7 @@ export default function Messages() {
 
     const fetchMessages = async (chat) => {
         try {
-            const response = await axios.get(`http://localhost:8080/messages?sender=${token}&&recipient=${chat}`);
+            const response = await axios.get(`https://bumbledore-server.vercel.app/messages?sender=${token}&&recipient=${chat}`);
             console.log('Fetched messages:', response.data);
             setMessages(response.data);
         } catch (error) {
@@ -46,7 +46,7 @@ export default function Messages() {
     useEffect(() => {
         const fetchUserChats = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/chats?username=${token}`);
+                const response = await axios.get(`https://bumbledore-server.vercel.app/chats?username=${token}`);
                 console.log('Fetched chats:', response.data);
                 setUserChats(response.data);
             } catch (error) {
@@ -100,7 +100,7 @@ export default function Messages() {
                             <div key={message._id} className={styles.textbox}>
                                 <h3 className={styles.text}>{message.sender}</h3>
                                 <p className={styles.text}>{message.message}</p>
-                                <p className={styles.text}>{message.createdAt}</p>
+                                <p className={styles.text}>{new Date(message.createdAt).toLocaleString()}</p>
                             </div>
                         ))}
                     </div>
@@ -117,6 +117,7 @@ export default function Messages() {
                                 cols="40"
                                 value={input} 
                                 onChange={e => setInput(e.target.value)}
+                                required
                             >
                            </textarea>
                             <button 
