@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import useToken from "../components/useToken.js";
 import styles from './Messages.module.css';
+// import loaderStyles from '../components/loader.module.css';
 
 export default function Messages() {
     const [userChats, setUserChats] = useState([]);
@@ -24,7 +25,7 @@ export default function Messages() {
         try {
             const response = await axios.post('https://bumbledore-server.vercel.app/messages', messageData);
             if (response.status === 200) {
-                console.log('Message sent:', response.data);
+                // console.log('Message sent:', response.data);
                 fetchMessages(showChat);
             } 
         } catch (error) {

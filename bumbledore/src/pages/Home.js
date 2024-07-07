@@ -70,6 +70,7 @@ export default function Home() {
                         {posts.length > 0 ? (
                             posts.map((post) => (
                                 <div key={post._id} className={styles.post}>
+                                    <h3 className={styles.header}>{post._id}</h3>
                                     <h3 className={styles.header}>
                                         Posted by: <Link className={styles.text} to={`/profile/${post.username}`}>{post.username}</Link>
                                     </h3>
