@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import formStyles from "../components/form.module.css";
 import './Login.css';
 
 export default function CreateAccount() {
@@ -19,7 +18,7 @@ export default function CreateAccount() {
     setError(null); // Clear previous error
 
     try {
-      const response = await fetch("http://localhost:8080/create-account", {
+      const response = await fetch("https://bumbledore-server.vercel.app/create-account", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -34,8 +33,9 @@ export default function CreateAccount() {
         const errorMessage = await response.text();
         throw new Error(errorMessage || 'Something went wrong');
       }
-
-      navigate('/login'); // Redirect to login page after successful account creation
+      
+      alert('Account created successfully!')
+      navigate('/'); // Redirect to login page after successful account creation
     } catch (error) {
       setError(error.message);
     }
@@ -45,7 +45,7 @@ export default function CreateAccount() {
     <div>
       <h1 className = "login-title">Bumbledore</h1>
       <div>
-        <h2 className = "login-subtitle">Login</h2>
+        <h2 className = "login-subtitle">Create Account</h2>
         <form onSubmit={handleSubmit}>
           <label>
             Email:
@@ -70,7 +70,7 @@ export default function CreateAccount() {
           <input type="submit" id="submit-button" value="Create Account" />
         </form>
       </div>
-      <p id = "text1">Already have an account? <a href = "/login">Login</a></p>
+      <p id = "text1">Already have an account? <a href = "/">Login</a></p>
       {error && <p id= "text1" style={{ color: 'red' }}>{error}</p>}
     </div>
   );
