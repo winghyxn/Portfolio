@@ -9,9 +9,26 @@ const port = 8080;
 
 const uri = "mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const allowedOrigins = [
+  process.env.FRONTEND_URL, 
+  'https://bumbledore.vercel.app', 
+  'https://bumbledore-git-weien-branch-kohweiens-projects.vercel.app'
+]; 
+const corsOptions = { 
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }, 
+  methods: 'GET, POST, PUT, DELETE, OPTIONS',
+  allowedHeaders: 'Content-Type, Authorization'
+};
 
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors(corsOptions));
+
 
 const adjectives = [
   "Silly", "Angry", "Happy", "Sad", "Brave", "Clever", "Curious", "Gentle",
@@ -67,6 +84,9 @@ async function generateUniqueUsername(usersCollection) {
   return username;
 }
 
+app.get('/', async(req, res) => {
+  res.send('hello!');
+});
 
 app.post('/create-account', async (req, res) => {
   const { email, password } = req.body;
@@ -80,18 +100,25 @@ app.post('/create-account', async (req, res) => {
 
     let username = await generateUniqueUsername(users);
 
-    await users.insertOne({
-      email: email,
-      username: username,
-      password: hashedPassword
-    });
+    const user = await users.findOne({ email: email });
 
-    await profiles.insertOne({
-      email: email,
-      username: username
-    });
+    if (!user) {
+      await users.insertOne({
+        email: email,
+        username: username,
+        password: hashedPassword
+      });
+  
+      await profiles.insertOne({
+        email: email,
+        username: username
+      });
+      
+      res.status(200).send('Account created successfully');
 
-    res.status(200).send('Account created successfully');
+    } else {
+      res.status(400).send('User already exists')
+    }
   } catch (error) {
     console.error('Error creating account:', error);
     res.status(500).send('Failed to create account');
@@ -109,18 +136,17 @@ app.post('/login', async (req, res) => {
 
     const user = await users.findOne({ email: email });
     if (!user) {
-      return res.status(401).send('Invalid email or password');
+      return res.status(401).send({ error: 'User not found'});
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
       return res.status(200).send({ token: user.username });
     } else {
-      return res.status(401).send('Invalid email or password');
+      return res.status(401).send({ error: 'Invalid email or password'});
     }
   } catch (error) {
-    console.error('Error logging in:', error);
-    res.status(500).send('Failed to login');
+    res.status(500).send({ error: 'Failed to login'});
   } finally {
     await client.close();
   }
@@ -354,3 +380,4 @@ app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
 
+module.exports = app;
