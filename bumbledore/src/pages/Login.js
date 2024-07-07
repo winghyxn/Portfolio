@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './Login.css';
 
 async function Authentication(credentials) {
-    return fetch("http://localhost:8080/login", {  //`${API_URL}/login`, {//fetch('', { https://bumbledore.vercel.app/login 
+    return fetch("https://bumbledore-server.vercel.app/login", { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -40,19 +40,18 @@ export default function Login({ setToken }) {
                 },
                 body: JSON.stringify(inputs)
             });*/
-            const response = await Authentication(inputs);
-            setToken(response);
-            navigate('/home')
 
-            /*if (response.ok) {
+            if (response.ok) {
                 navigate('/home');
+
             } else {
-                const errorMessage = await response.text();
-                setError(errorMessage);
-            } */
+                // const errorMessage = await response.text()
+                setError(response.error);
+        }
+
         } catch (error) {
+            setError(response.error);
             console.error('Request failed:', error);
-            setError('Failed to login. Please try again.');
         }
     }
 
