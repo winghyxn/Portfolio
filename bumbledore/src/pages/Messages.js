@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import useToken from "../components/useToken.js";
 import styles from './Messages.module.css';
-// import loaderStyles from '../components/loader.module.css';
+//import loaderStyles from '../components/loader.module.css';
 
 export default function Messages() {
     const [userChats, setUserChats] = useState([]);
@@ -68,8 +68,8 @@ export default function Messages() {
         <div className={styles.gridContainer}>
             <div className={styles.sidebar}>
                 <a className={styles.sidebarText} href = "/home">Back</a>
-                {userChats.chats ? (
-                    userChats.chats.map((chat) => (
+                {userChats ? (
+                    userChats.map((chat) => (
                         <div className={styles.sidebarText} key={chat}>
                             <button onClick={() => handleChatClick(chat)}>
                                 {chat}

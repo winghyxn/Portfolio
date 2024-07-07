@@ -33,10 +33,12 @@ export default function Home() {
     const handleMessageRequest = async (e) => {
         e.preventDefault();
         const profile = e.target.dataset.profile;
+        const postID = e.target.dataset.postID;
 
         const userData = {
             username: username,
-            profile: profile
+            profile: profile,
+            postID: postID
         };
 
         try {
@@ -85,7 +87,8 @@ export default function Home() {
                                             onClick={handleMessageRequest} 
                                             type="button"
                                             data-username={username}
-                                            data-profile={post.username}>
+                                            data-profile={post.username}
+                                            data-postID={post._id}>
                                                 Message
                                         </button>
                                     )}

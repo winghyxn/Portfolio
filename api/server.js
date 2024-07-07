@@ -261,32 +261,38 @@ app.get('/user-profile', async (req, res) => {
 });
 
 app.post('/new-chat', async (req, res) => {
-  const { username, profile } = req.body;
+  const { username, profile, postID } = req.body;
 
   try {
       await client.connect();
       const database = client.db('bumbledore');
       const allChats = database.collection('chats');
 
-      const selfHasChats = await allChats.findOne({ username: username });
-      const otherHasChats = await allChats.findOne({ username: profile });
+      const selfHasChats = await allChats.findOne({
+        $and: [{ username: username }, {other: profile}]
+      });
+      const otherHasChats = await allChats.findOne({
+        $and: [{ username: profile }, {other: username}]
+      });
 
       if (!selfHasChats) {
         await allChats.insertOne({
           username: username, 
-          chats: [profile]
+          other: profile,
+          chats: [postID]
         });
       } else {
         await allChats.updateOne(
           { username: username },
-          { $addToSet: { chats: profile } }
+          { $addToSet: { chats: [postID] } }
         );
       }
 
       if (!otherHasChats){
         await allChats.insertOne({
           username: profile,
-          chats: [username]
+          other: username,
+          chats: [postID]
         });
       } else {
         await allChats.updateOne(
@@ -312,7 +318,7 @@ app.get('/chats', async (req, res) => {
       const db = client.db("bumbledore");
       const allChats = db.collection("chats");
 
-      const chats = await allChats.findOne({ username: username });
+      const chats = await allChats.find({ username: username }).toArray();
       /*if (!profile) {
           return res.status(404).send('User profile not found');
       }*/
