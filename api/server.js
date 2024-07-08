@@ -19,16 +19,11 @@ const allowedOrigins = [
   'https://api.vercel.app'
 ]; 
 const corsOptions = { 
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  }, 
+  origin: '*',
   methods: 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
   allowedHeaders: 'Content-Type, Authorization'
 };
+
 
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
@@ -277,37 +272,33 @@ app.post('/new-chat', async (req, res) => {
       const database = client.db('bumbledore');
       const allChats = database.collection('chats');
 
-      const selfHasChats = await allChats.findOne({
-        $and: [{ username: username }, {other: profile}]
-      });
-      const otherHasChats = await allChats.findOne({
-        $and: [{ username: profile }, {other: username}]
-      });
+      const selfHasChats = await allChats.findOne({ username: username, other: profile });
+      const otherHasChats = await allChats.findOne({ username: profile, other: username });
 
       if (!selfHasChats) {
-        await allChats.insertOne({
-          username: username, 
-          other: profile,
-          chats: [postID]
-        });
+          await allChats.insertOne({
+              username: username,
+              other: profile,
+              chats: [postID]
+          });
       } else {
-        await allChats.updateOne(
-          { username: username },
-          { $addToSet: { chats: [postID] } }
-        );
+          await allChats.updateOne(
+              { username: username, other: profile },
+              { $addToSet: { chats: postID } }
+          );
       }
 
-      if (!otherHasChats){
-        await allChats.insertOne({
-          username: profile,
-          other: username,
-          chats: [postID]
-        });
+      if (!otherHasChats) {
+          await allChats.insertOne({
+              username: profile,
+              other: username,
+              chats: [postID]
+          });
       } else {
-        await allChats.updateOne(
-          { username: profile },
-          { $addToSet: { chats: username } }
-        );
+          await allChats.updateOne(
+              { username: profile, other: username },
+              { $addToSet: { chats: postID } }
+          );
       }
 
       res.status(200).send('Chats updated successfully');
