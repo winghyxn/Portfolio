@@ -19,7 +19,7 @@ export default function Home() {
     useEffect(() => {
         const fetchPosts = async () => {
           try {
-            const response = await axios.get('https://bumbledore-server.vercel.app/posts');
+            const response = await axios.get('https://api-wing-s-projects.vercel.app/posts');
             const openPosts = response.data.filter(post => post.status === 'open');
             setPosts(openPosts);
             setLoading(false);
@@ -35,18 +35,16 @@ export default function Home() {
     const handleMessageRequest = async (e) => {
         e.preventDefault();
         const profile = e.target.dataset.profile;
-        const postID = e.target.dataset.postID;
-        console.log(postID);
-
+        const postID = e.target.dataset.postid;
+    
         const userData = {
             username: username,
             profile: profile,
             postID: postID
         };
-
+    
         try {
-            console.log(userData);
-            const response = await axios.post('https://bumbledore-server.vercel.app/new-chat', userData);
+            const response = await axios.post('https://api-wing-s-projects.vercel.app/new-chat', userData);
             if (response.status === 200) {
                 console.log('Chat created successfully:', response.data);
                 navigate('/messages');
@@ -92,7 +90,7 @@ export default function Home() {
                                             type="button"
                                             data-username={username}
                                             data-profile={post.username}
-                                            data-postID={post._id.toString()}>
+                                            data-postid={post._id.toString()}>
                                                 Message
                                         </button>
                                     )}
