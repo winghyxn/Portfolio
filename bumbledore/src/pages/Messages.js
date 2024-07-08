@@ -22,7 +22,7 @@ export default function Messages() {
         };
 
         try {
-            const response = await axios.post('https://bumbledore-server.vercel.app/messages', messageData);
+            const response = await axios.post('https://api-wing-s-projects.vercel.app/messages', messageData);
             if (response.status === 200) {
                 console.log('Message sent:', response.data);
                 fetchMessages(showChat);
@@ -100,7 +100,7 @@ export default function Messages() {
                             <div key={message._id} className={styles.textbox}>
                                 <h3 className={styles.text}>{message.sender}</h3>
                                 <p className={styles.text}>{message.message}</p>
-                                <p className={styles.text}>{new Date(message.createdAt).toLocaleString()}</p>
+                                <p className={styles.text}>{message.createdAt}</p>
                             </div>
                         ))}
                     </div>
