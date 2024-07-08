@@ -264,6 +264,7 @@ app.get('/user-profile', async (req, res) => {
   }
 });
 
+
 app.post('/new-chat', async (req, res) => {
   const { username, profile, postID } = req.body;
 
@@ -272,33 +273,25 @@ app.post('/new-chat', async (req, res) => {
       const database = client.db('bumbledore');
       const allChats = database.collection('chats');
 
-      const selfHasChats = await allChats.findOne({ username: username, other: profile });
-      const otherHasChats = await allChats.findOne({ username: profile, other: username });
+      const selfHasChats = await allChats.findOne({ username: username, other: profile, postID: postID });
+      const otherHasChats = await allChats.findOne({ username: profile, other: username, postID: postID });
 
       if (!selfHasChats) {
           await allChats.insertOne({
               username: username,
               other: profile,
-              chats: [postID]
+              postID: postID,
+              chats: []
           });
-      } else {
-          await allChats.updateOne(
-              { username: username, other: profile },
-              { $addToSet: { chats: postID } }
-          );
       }
 
       if (!otherHasChats) {
           await allChats.insertOne({
               username: profile,
               other: username,
-              chats: [postID]
+              postID: postID,
+              chats: []
           });
-      } else {
-          await allChats.updateOne(
-              { username: profile, other: username },
-              { $addToSet: { chats: postID } }
-          );
       }
 
       res.status(200).send('Chats updated successfully');
@@ -319,20 +312,18 @@ app.get('/chats', async (req, res) => {
       const allChats = db.collection("chats");
 
       const chats = await allChats.find({ username: username }).toArray();
-      /*if (!profile) {
-          return res.status(404).send('User profile not found');
-      }*/
       res.status(200).json(chats);
   } catch (error) {
-      console.error('Error fetching profile:', error);
-      res.status(500).send('Failed to fetch profile');
+      console.error('Error fetching chats:', error);
+      res.status(500).send('Failed to fetch chats');
   } finally {
       await client.close();
   }
 });
 
+
 app.post('/messages', async (req, res) => {
-  const { sender, recipient, message } = req.body;
+  const { sender, recipient, message, postID } = req.body; // Include postID in the destructuring
 
   try {
       await client.connect();
@@ -342,13 +333,14 @@ app.post('/messages', async (req, res) => {
       const messageInfo = {
         sender: sender,
         recipient: recipient,
+        postID: postID, // Add postID to the message document
         message: message,
         createdAt: new Date(),
       };
 
       await allMessages.insertOne(messageInfo);
 
-      res.status(200).send({messageInfo});
+      res.status(200).send({ messageInfo });
   } catch (error) {
       console.error('Error sending message:', error);
       res.status(500).send('Failed to send message');
@@ -360,6 +352,7 @@ app.post('/messages', async (req, res) => {
 app.get('/messages', async (req, res) => {
   const sender = req.query.sender;
   const recipient = req.query.recipient;
+  const postID = req.query.postID;
 
   try {
       await client.connect();
@@ -368,11 +361,16 @@ app.get('/messages', async (req, res) => {
 
       const sort = { createdAt: 1 };
       const messages = await allMessages.find({
-        $or: [
-          { $and: [ {sender: sender}, {recipient: recipient}] },
-          { $and: [ {sender: recipient}, {recipient: sender}]}
+        $and: [
+          { postID: postID },
+          {
+            $or: [
+              { $and: [{ sender: sender }, { recipient: recipient }] },
+              { $and: [{ sender: recipient }, { recipient: sender }] }
+            ]
+          }
         ]
-      }).sort(sort).toArray(); 
+      }).sort(sort).toArray();
       res.status(200).json(messages);
   } catch (error) {
       console.error('Error fetching messages:', error);
@@ -381,6 +379,7 @@ app.get('/messages', async (req, res) => {
       await client.close();
   }
 });
+
 
 app.get('/posts/my-posts', async (req, res) => {
   const { username } = req.query;
