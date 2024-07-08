@@ -44,7 +44,8 @@ export default function Post() {
             description,
             pay: typeOfRequest === 'lookingForTutor' ? `${pay}/h` : undefined,
             numGroupmates: typeOfRequest === 'lookingForGroupmate' ? numGroupmates : undefined,
-            username: token, // Add the username to the post data
+            username: token, 
+            status: 'open'
         };
 
         try {
@@ -154,4 +155,3 @@ export default function Post() {
         </div>
     );
 }
-

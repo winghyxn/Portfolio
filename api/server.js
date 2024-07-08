@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 
 const app = express();
 const port = 8080;
@@ -11,8 +11,12 @@ const uri = "mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 const allowedOrigins = [
   process.env.FRONTEND_URL, 
-  'https://bumbledore.vercel.app', 
-  'https://bumbledore-git-weien-branch-kohweiens-projects.vercel.app'
+  'https://bumbledore.vercel.app',
+  'https://api-wing-s-projects.vercel.app', 
+  'https://orbital-wing-s-projects.vercel.app',
+  'https://bumbledore-git-weien-branch-kohweiens-projects.vercel.app',
+  'https://orbital-git-main-winghyxn-wing-s-projects.vercel.app',
+  'https://api.vercel.app'
 ]; 
 const corsOptions = { 
   origin: function (origin, callback) {
@@ -22,7 +26,7 @@ const corsOptions = {
       callback(new Error('Not allowed by CORS'));
     }
   }, 
-  methods: 'GET, POST, PUT, DELETE, OPTIONS',
+  methods: 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
   allowedHeaders: 'Content-Type, Authorization'
 };
 
@@ -127,6 +131,8 @@ app.post('/create-account', async (req, res) => {
   }
 });
 
+app.options('/login', cors(corsOptions));
+
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -201,8 +207,9 @@ app.get('/posts', async (req, res) => {
     await client.connect();
     const database = client.db('bumbledore');
     const posts = database.collection('posts');
-    const allPosts = await posts.find({}).toArray();
-    res.status(200).json(allPosts);
+    const openPosts = await posts.find({ status: 'open' }).toArray();
+    
+    res.status(200).json(openPosts);
   } catch (error) {
     console.error('Error fetching posts:', error);
     res.status(500).send('Failed to fetch posts');
@@ -210,6 +217,7 @@ app.get('/posts', async (req, res) => {
     await client.close();
   }
 });
+
 
 app.post('/create-post', async (req, res) => {
   const { typeOfRequest, courseCode, description, pay, numGroupmates, username } = req.body;
@@ -226,7 +234,8 @@ app.post('/create-post', async (req, res) => {
           pay: typeOfRequest === 'lookingForTutor' ? pay : undefined,
           numGroupmates: typeOfRequest === 'lookingForGroupmate' ? numGroupmates : undefined,
           createdAt: new Date(),
-          username, // Add the username to the post
+          username, 
+          status: 'open'
       };
 
       await posts.insertOne(post);
@@ -377,6 +386,46 @@ app.get('/messages', async (req, res) => {
   } catch (error) {
       console.error('Error fetching messages:', error);
       res.status(500).send('Failed to fetch messages');
+  } finally {
+      await client.close();
+  }
+});
+
+app.get('/posts/my-posts', async (req, res) => {
+  const { username } = req.query;
+
+  try {
+    await client.connect();
+    const database = client.db('bumbledore');
+    const posts = database.collection('posts');
+    const myPosts = await posts.find({ username }).toArray();
+    res.status(200).json(myPosts);
+  } catch (error) {
+    console.error('Error fetching my posts:', error);
+    res.status(500).send('Failed to fetch my posts');
+  } finally {
+    await client.close();
+  }
+});
+
+app.patch('/posts/:id/close', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      await client.connect();
+      const database = client.db('bumbledore');
+      const posts = database.collection('posts');
+
+      const result = await posts.updateOne({ _id: new ObjectId(id) }, { $set: { status: 'closed' } });
+
+      if (result.modifiedCount === 1) {
+          res.status(200).send('Post closed successfully');
+      } else {
+          res.status(404).send('Post not found');
+      }
+  } catch (error) {
+      console.error('Error closing post:', error);
+      res.status(500).send('Failed to close post');
   } finally {
       await client.close();
   }

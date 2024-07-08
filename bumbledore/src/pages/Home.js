@@ -18,17 +18,19 @@ export default function Home() {
 
     useEffect(() => {
         const fetchPosts = async () => {
-            try {
-                const response = await axios.get('https://bumbledore-server.vercel.app/posts');
-                setPosts(response.data);
-                setLoading(false);
-            } catch (error) {
-                console.error('Failed to fetch posts:', error);
-            }
+          try {
+            const response = await axios.get('https://bumbledore-server.vercel.app/posts');
+            const openPosts = response.data.filter(post => post.status === 'open');
+            setPosts(openPosts);
+            setLoading(false);
+          } catch (error) {
+            console.error('Failed to fetch posts:', error);
+          }
         };
-
+      
         fetchPosts();
-    }, []);
+      }, []);
+      
 
     const handleMessageRequest = async (e) => {
         e.preventDefault();
@@ -104,4 +106,3 @@ export default function Home() {
         </div>
     );
 }
-
