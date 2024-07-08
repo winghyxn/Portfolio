@@ -18,17 +18,19 @@ export default function Home() {
 
     useEffect(() => {
         const fetchPosts = async () => {
-            try {
-                const response = await axios.get('https://bumbledore-server.vercel.app/posts');
-                setPosts(response.data);
-                setLoading(false);
-            } catch (error) {
-                console.error('Failed to fetch posts:', error);
-            }
+          try {
+            const response = await axios.get('https://api-wing-s-projects.vercel.app/posts');
+            const openPosts = response.data.filter(post => post.status === 'open');
+            setPosts(openPosts);
+            setLoading(false);
+          } catch (error) {
+            console.error('Failed to fetch posts:', error);
+          }
         };
-
+      
         fetchPosts();
-    }, []);
+      }, []);
+      
 
     const handleMessageRequest = async (e) => {
         e.preventDefault();
@@ -40,7 +42,7 @@ export default function Home() {
         };
 
         try {
-            const response = await axios.post('https://bumbledore-server.vercel.app/new-chat', userData);
+            const response = await axios.post('https://api-wing-s-projects.vercel.app/new-chat', userData);
             if (response.status === 200) {
                 console.log('Chat created successfully:', response.data);
                 navigate('/messages');
@@ -70,6 +72,7 @@ export default function Home() {
                         {posts.length > 0 ? (
                             posts.map((post) => (
                                 <div key={post._id} className={styles.post}>
+                                    <h3 className={styles.header}>{post._id}</h3>
                                     <h3 className={styles.header}>
                                         Posted by: <Link className={styles.text} to={`/profile/${post.username}`}>{post.username}</Link>
                                     </h3>
@@ -98,4 +101,3 @@ export default function Home() {
         </div>
     );
 }
-
