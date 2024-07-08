@@ -293,7 +293,7 @@ app.post('/new-chat', async (req, res) => {
       } else {
         await allChats.updateOne(
           { username: username },
-          { $addToSet: { chats: [postID] } }
+          { $addToSet: { chats: postID } }
         );
       }
 
@@ -306,7 +306,7 @@ app.post('/new-chat', async (req, res) => {
       } else {
         await allChats.updateOne(
           { username: profile },
-          { $addToSet: { chats: username } }
+          { $addToSet: { chats: postID } }
         );
       }
 
