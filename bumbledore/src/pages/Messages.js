@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import useToken from "../components/useToken.js";
 import styles from './Messages.module.css';
+//import loaderStyles from '../components/loader.module.css';
 
 export default function Messages() {
     const [userChats, setUserChats] = useState([]);
@@ -22,9 +23,9 @@ export default function Messages() {
         };
 
         try {
-            const response = await axios.post('https://api-wing-s-projects.vercel.app/messages', messageData);
+            const response = await axios.post('https://bumbledore-server.vercel.app/messages', messageData);
             if (response.status === 200) {
-                console.log('Message sent:', response.data);
+                // console.log('Message sent:', response.data);
                 fetchMessages(showChat);
             } 
         } catch (error) {
@@ -67,11 +68,11 @@ export default function Messages() {
         <div className={styles.gridContainer}>
             <div className={styles.sidebar}>
                 <a className={styles.sidebarText} href = "/home">Back</a>
-                {userChats.chats ? (
-                    userChats.chats.map((chat) => (
-                        <div className={styles.sidebarText} key={chat}>
+                {userChats ? (
+                    userChats.map((chat) => (
+                        <div className={styles.sidebarText} key={chat.other}>
                             <button onClick={() => handleChatClick(chat)}>
-                                {chat}
+                               {chat.other}
                             </button>
                         </div>
                     ))
@@ -100,7 +101,7 @@ export default function Messages() {
                             <div key={message._id} className={styles.textbox}>
                                 <h3 className={styles.text}>{message.sender}</h3>
                                 <p className={styles.text}>{message.message}</p>
-                                <p className={styles.text}>{message.createdAt}</p>
+                                <p className={styles.text}>{new Date(message.createdAt).toLocaleString()}</p>
                             </div>
                         ))}
                     </div>

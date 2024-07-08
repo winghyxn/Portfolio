@@ -49,7 +49,7 @@ export default function Post() {
         };
 
         try {
-            const response = await axios.post('https://api-wing-s-projects.vercel.app/create-post', postData);
+            const response = await axios.post('https://bumbledore-server.vercel.app/create-post', postData);
             if (response.status === 200) {
                 console.log('Post created successfully:', response.data);
                 // Clear form fields after successful post

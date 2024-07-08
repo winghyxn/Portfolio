@@ -18,7 +18,7 @@ export default function CreateAccount() {
     setError(null); // Clear previous error
 
     try {
-      const response = await fetch("https://api-wing-s-projects.vercel.app/create-account", {
+      const response = await fetch("https://bumbledore-server.vercel.app/create-account", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -75,3 +75,4 @@ export default function CreateAccount() {
     </div>
   );
 }
+
