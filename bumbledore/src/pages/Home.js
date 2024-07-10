@@ -56,12 +56,42 @@ export default function Home() {
         }
     };
 
-    const handleApplyRequest = async (postId) => {
+    const handleApplyRequest = async (postId, poster) => {
         try {
-            const response = await axios.patch(`https://api-wing-s-projects.vercel.app/posts/${postId}/apply`, { username });
+            console.log(`Applying to post: ${postId}`); // Log the postId
+            const url = `https://api-wing-s-projects.vercel.app/posts/${postId}/apply`;
+            console.log(`Request URL: ${url}`); // Log the URL
+    
+            // Apply to the post
+            const response = await axios.patch(url, { username });
             if (response.status === 200) {
                 console.log('Applied successfully');
                 setAppliedPosts(prevState => ({ ...prevState, [postId]: true }));
+    
+                // Create a chat and send an automatic message
+                const chatResponse = await axios.post('https://api-wing-s-projects.vercel.app/new-chat', {
+                    username: username,
+                    profile: poster,
+                    postID: postId
+                });
+    
+                if (chatResponse.status === 200) {
+                    const messageResponse = await axios.post('https://api-wing-s-projects.vercel.app/messages', {
+                        sender: username,
+                        recipient: poster,
+                        postID: postId,
+                        message: "Hi! I have applied for your post!"
+                    });
+    
+                    if (messageResponse.status === 200) {
+                        console.log('Message sent successfully');
+                        navigate('/messages');
+                    } else {
+                        console.error('Failed to send message: Status code:', messageResponse.status);
+                    }
+                } else {
+                    console.error('Failed to create chat: Status code:', chatResponse.status);
+                }
             } else {
                 console.error('Failed to apply:', response.status);
             }
@@ -69,6 +99,7 @@ export default function Home() {
             console.error('Failed to apply:', error);
         }
     };
+    
 
     return (
         <div className="grid-container">
@@ -112,7 +143,7 @@ export default function Home() {
                                             <p>Post applied successfully</p>
                                         ) : (
                                             <button
-                                                onClick={() => handleApplyRequest(post._id)}
+                                                onClick={() => handleApplyRequest(post._id, post.username)}
                                                 type="button"
                                             >
                                                 Apply
@@ -130,3 +161,4 @@ export default function Home() {
         </div>
     );
 }
+
