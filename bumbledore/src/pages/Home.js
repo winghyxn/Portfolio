@@ -56,6 +56,20 @@ export default function Home() {
         }
     };
 
+    const handleApplyRequest = async (postId) => {
+        try {
+            const response = await axios.patch(`https://api-wing-s-projects.vercel.app/posts/${postId}/apply`, { username });
+            if (response.status === 200) {
+                console.log('Applied successfully');
+                // Optionally, you can refresh the posts list after applying.
+            } else {
+                console.error('Failed to apply:', response.status);
+            }
+        } catch (error) {
+            console.error('Failed to apply:', error);
+        }
+    };
+
     return (
         <div className="grid-container">
             <div className="sidebar">
@@ -85,14 +99,22 @@ export default function Home() {
                                     {post.numGroupmates && <p className={styles.text}>Number of Groupmates Needed: {post.numGroupmates}</p>}
                                     <p className={styles.text}>Created At: {new Date(post.createdAt).toLocaleString()}</p>
                                     {post.username !== username && (
-                                        <button 
-                                            onClick={handleMessageRequest} 
-                                            type="button"
-                                            data-username={username}
-                                            data-profile={post.username}
-                                            data-postid={post._id.toString()}>
-                                                Message
-                                        </button>
+                                        <>
+                                            <button 
+                                                onClick={handleMessageRequest} 
+                                                type="button"
+                                                data-username={username}
+                                                data-profile={post.username}
+                                                data-postid={post._id.toString()}>
+                                                    Message
+                                            </button>
+                                            <button
+                                                onClick={() => handleApplyRequest(post._id)}
+                                                type="button"
+                                            >
+                                                Apply
+                                            </button>
+                                        </>
                                     )}
                                 </div>
                             ))
