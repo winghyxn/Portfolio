@@ -230,7 +230,8 @@ app.post('/create-post', async (req, res) => {
           numGroupmates: typeOfRequest === 'lookingForGroupmate' ? numGroupmates : undefined,
           createdAt: new Date(),
           username, 
-          status: 'open'
+          status: 'open',
+          applicants: []
       };
 
       await posts.insertOne(post);
@@ -418,6 +419,112 @@ app.patch('/posts/:id/close', async (req, res) => {
       res.status(500).send('Failed to close post');
   } finally {
       await client.close();
+  }
+});
+
+app.patch('/posts/:id/apply', async (req, res) => {
+  const { id } = req.params;
+  const { username } = req.body;
+
+  try {
+      await client.connect();
+      const database = client.db('bumbledore');
+      const posts = database.collection('posts');
+
+      const result = await posts.updateOne(
+          { _id: new ObjectId(id) },
+          { $addToSet: { applicants: username } }
+      );
+
+      if (result.modifiedCount === 1) {
+          res.status(200).send('Applied successfully');
+      } else {
+          res.status(404).send('Post not found');
+      }
+  } catch (error) {
+      console.error('Error applying to post:', error);
+      res.status(500).send('Failed to apply to post');
+  } finally {
+      await client.close();
+  }
+});
+
+app.get('/posts/my-applications', async (req, res) => {
+  const { username } = req.query;
+
+  try {
+    await client.connect();
+    const database = client.db('bumbledore');
+    const posts = database.collection('posts');
+    const myApplications = await posts.find({
+      $or: [
+        { applicants: { $exists: true, $elemMatch: { $eq: username } } },
+        { acceptedApplicants: { $exists: true, $elemMatch: { $eq: username } } }
+      ]
+    }).toArray();
+
+    const modifiedApplications = myApplications.map(post => {
+      if (post.acceptedApplicants.includes(username)) {
+        return { ...post, status: 'successful' };
+      } else {
+        return { ...post, status: 'closed' };
+      }
+    });
+
+    res.status(200).json(modifiedApplications);
+  } catch (error) {
+    console.error('Error fetching my applications:', error);
+    res.status(500).send('Failed to fetch my applications');
+  } finally {
+    await client.close();
+  }
+});
+
+app.patch('/posts/:id/accept', async (req, res) => {
+  const { id } = req.params;
+  const { applicant } = req.body;
+
+  try {
+    await client.connect();
+    const database = client.db('bumbledore');
+    const posts = database.collection('posts');
+
+    const post = await posts.findOne({ _id: new ObjectId(id) });
+
+    if (!post) {
+      res.status(404).send('Post not found');
+      return;
+    }
+
+    // Update post status and accepted applicant
+    const result = await posts.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: { status: 'successful' },
+        $addToSet: { acceptedApplicants: applicant },
+        $pull: { applicants: applicant }
+      }
+    );
+
+    // Update status to 'closed' for rejected applicants only
+    if (post.applicants.length > 1) {
+      await posts.updateMany(
+        { _id: new ObjectId(id), 'applicants': { $nin: [applicant] } },
+        { $set: { 'applicants.$[elem].status': 'closed' } },
+        { arrayFilters: [{ 'elem': { $nin: [applicant] } }] }
+      );
+    }
+
+    if (result.modifiedCount === 1) {
+      res.status(200).send('Applicant accepted successfully');
+    } else {
+      res.status(404).send('Post not found');
+    }
+  } catch (error) {
+    console.error('Error accepting applicant:', error);
+    res.status(500).send('Failed to accept applicant');
+  } finally {
+    await client.close();
   }
 });
 
