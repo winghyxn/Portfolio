@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';  // Import Link component
 import useToken from "../components/useToken.js";
 import styles from './Messages.module.css';
 
@@ -16,7 +17,7 @@ export default function Messages() {
         const recipient = e.target.dataset.recipient;
         const postID = e.target.dataset.postid;
 
-        const messageData = {
+        const messageData = {   
             sender: sender,
             recipient: recipient,
             postID: postID,
@@ -82,7 +83,9 @@ export default function Messages() {
                 {showChat.other === "" ? (
                     <h1>Messages</h1>
                 ) : (
-                    <h1>{showChat.other} - {showChat.postID}</h1>
+                    <h1>
+                        <Link className={styles.text} to={`/profile/${showChat.other}`}>{showChat.other}</Link> - {showChat.postID}
+                    </h1>
                 )}
             </div>
 
