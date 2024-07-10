@@ -55,7 +55,7 @@ export default function MyPosts() {
     const handleConfirmApplicant = async (postId) => {
         const applicant = selectedApplicant[postId];
         if (!applicant) return;
-
+    
         try {
             const response = await axios.patch(`https://api-wing-s-projects.vercel.app/posts/${postId}/accept`, { applicant });
             if (response.status === 200) {
@@ -64,13 +64,14 @@ export default function MyPosts() {
                 ));
                 setConfirmSelection(prev => ({ ...prev, [postId]: true }));
                 console.log('Applicant accepted successfully');
+                window.location.reload(); // Reload the page
             } else {
                 console.error('Failed to accept applicant: Status code:', response.status);
             }
         } catch (error) {
             console.error("Failed to accept applicant", error);
         }
-    };
+    };    
 
     return (
         <div className="grid-container">
@@ -143,3 +144,4 @@ export default function MyPosts() {
         </div>
     );
 }
+
