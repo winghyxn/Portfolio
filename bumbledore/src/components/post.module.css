@@ -17,6 +17,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    background-color: white;
 }
 
 .request {
@@ -28,6 +29,7 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     margin: 1rem;
+    background-color: white;
 }
 
 .apply {
@@ -36,6 +38,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    background-color: white;
 
 }
 
