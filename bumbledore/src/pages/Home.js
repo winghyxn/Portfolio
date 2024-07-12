@@ -77,21 +77,34 @@ export default function Home() {
                             posts.map((post) => (
                                 <div key={post._id} className={styles.post}>
                                     <div className={styles.username}>
-                                        <h3 className={styles.header}>{post._id}</h3>
-                                        <h3 className={styles.header}>
+                                        <div></div><h3 className={styles.header}>{post._id}</h3>
+                                        <div></div><h3 className={styles.header}>
                                             Posted by: <Link className={styles.text} to={`/profile/${post.username}`}>{post.username}</Link>
                                         </h3>
                                     </div>
                                     <div className={styles.request}>
-                                        <p className={styles.text}>Course Code: {post.courseCode}</p>
-                                        <p className={styles.text}>Type of Request: {post.typeOfRequest}</p>
-                                        <p className={styles.text}>Description: {post.description}</p>
-                                        {post.pay && <p className={styles.text}>Pay: {post.pay}</p>}
-                                        {post.numGroupmates && <p className={styles.text}>Number of Groupmates Needed: {post.numGroupmates}</p>}
+                                        <div>
+                                            <p className={styles.text}>Course Code: {post.courseCode}</p>
+                                        </div>
+                                        <div>
+                                            <p className={styles.text}>Type of Request: {post.typeOfRequest}</p>
+                                        </div>
+                                        <div>
+                                            <p className={styles.text}>Description: {post.description}</p>
+                                        </div>
+                                        <div>
+                                            {post.pay && <p className={styles.text}>Pay: {post.pay}</p>}    
+                                        </div>
+                                        <div>
+                                            {post.numGroupmates && <p className={styles.text}>Number of Groupmates Needed: {post.numGroupmates}</p>}
+                                        </div>
                                     </div>
                                     <div className={styles.apply}>
-                                        <p className={styles.text}>Created At: {new Date(post.createdAt).toLocaleString()}</p>
-                                        {post.username !== username && (
+                                        <div>
+                                            <p className={styles.text}>Posted At: {new Date(post.createdAt).toLocaleString()}</p>
+                                            </div>
+                                        <div>
+                                            {post.username !== username && (
                                             <button 
                                                 onClick={handleMessageRequest} 
                                                 type="button"
@@ -101,6 +114,7 @@ export default function Home() {
                                                     Message
                                             </button>
                                         )}
+                                        </div>
                                     </div>
                                 </div>
                             ))
