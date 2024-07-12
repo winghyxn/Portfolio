@@ -464,10 +464,16 @@ app.get('/posts/my-applications', async (req, res) => {
     }).toArray();
 
     const modifiedApplications = myApplications.map(post => {
-      if (post.acceptedApplicants.includes(username)) {
-        return { ...post, status: 'successful' };
+      const isAccepted = Array.isArray(post.acceptedApplicants) && post.acceptedApplicants.includes(username);
+      
+      if (post.status === 'successful') {
+        if (isAccepted) {
+          return { ...post, status: 'successful' };
+        } else {
+          return { ...post, status: 'closed' };
+        }
       } else {
-        return { ...post, status: 'closed' };
+        return post;
       }
     });
 
@@ -523,6 +529,47 @@ app.patch('/posts/:id/accept', async (req, res) => {
   } catch (error) {
     console.error('Error accepting applicant:', error);
     res.status(500).send('Failed to accept applicant');
+  } finally {
+    await client.close();
+  }
+});
+
+app.post('/reviews', async (req, res) => {
+  const { postID, rating, text, reviewer } = req.body;
+  const review = {
+    postID,
+    rating,
+    text,
+    reviewer,
+    createdAt: new Date(),
+  };
+
+  try {
+    await client.connect();
+    const db = client.db('bumbledore');
+    const reviews = db.collection('reviews');
+    await reviews.insertOne(review);
+    res.status(200).json(review);
+  } catch (error) {
+    console.error('Error submitting review:', error);
+    res.status(500).send('Failed to submit review');
+  } finally {
+    await client.close();
+  }
+});
+
+app.get('/reviews', async (req, res) => {
+  const username = req.query.username;
+
+  try {
+    await client.connect();
+    const db = client.db('bumbledore');
+    const reviews = db.collection('reviews');
+    const userReviews = await reviews.find({ reviewer: username }).toArray();
+    res.status(200).json(userReviews);
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    res.status(500).send('Failed to fetch reviews');
   } finally {
     await client.close();
   }
