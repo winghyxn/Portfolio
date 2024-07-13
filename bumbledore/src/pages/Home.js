@@ -11,7 +11,7 @@ export default function Home() {
     const [posts, setPosts] = useState([]);
     const { token } = useToken();
     const [loading, setLoading] = useState(true);
-    const [appliedPosts, setAppliedPosts] = useState({});
+    //const [appliedPosts, setAppliedPosts] = useState({});
     const navigate = useNavigate();
 
     // Assuming token contains the username directly
@@ -56,7 +56,7 @@ export default function Home() {
         }
     };
 
-    const handleApplyRequest = async (postId, poster) => {
+    /*const handleApplyRequest = async (postId, poster) => {
         try {
             console.log(`Applying to post: ${postId}`); // Log the postId
             const url = `https://api-wing-s-projects.vercel.app/posts/${postId}/apply`;
@@ -98,7 +98,7 @@ export default function Home() {
         } catch (error) {
             console.error('Failed to apply:', error);
         }
-    };
+    }; */
     
 
     return (
