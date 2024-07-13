@@ -19,16 +19,11 @@ const allowedOrigins = [
   'https://api.vercel.app'
 ]; 
 const corsOptions = { 
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  }, 
+  origin: '*',
   methods: 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
   allowedHeaders: 'Content-Type, Authorization'
 };
+
 
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
@@ -235,7 +230,8 @@ app.post('/create-post', async (req, res) => {
           numGroupmates: typeOfRequest === 'lookingForGroupmate' ? numGroupmates : undefined,
           createdAt: new Date(),
           username, 
-          status: 'open'
+          status: 'open',
+          applicants: []
       };
 
       await posts.insertOne(post);
@@ -269,6 +265,7 @@ app.get('/user-profile', async (req, res) => {
   }
 });
 
+
 app.post('/new-chat', async (req, res) => {
   const { username, profile, postID } = req.body;
 
@@ -277,37 +274,25 @@ app.post('/new-chat', async (req, res) => {
       const database = client.db('bumbledore');
       const allChats = database.collection('chats');
 
-      const selfHasChats = await allChats.findOne({
-        $and: [{ username: username }, {other: profile}]
-      });
-      const otherHasChats = await allChats.findOne({
-        $and: [{ username: profile }, {other: username}]
-      });
+      const selfHasChats = await allChats.findOne({ username: username, other: profile, postID: postID });
+      const otherHasChats = await allChats.findOne({ username: profile, other: username, postID: postID });
 
       if (!selfHasChats) {
-        await allChats.insertOne({
-          username: username, 
-          other: profile,
-          chats: [postID]
-        });
-      } else {
-        await allChats.updateOne(
-          { username: username },
-          { $addToSet: { chats: postID } }
-        );
+          await allChats.insertOne({
+              username: username,
+              other: profile,
+              postID: postID,
+              chats: []
+          });
       }
 
-      if (!otherHasChats){
-        await allChats.insertOne({
-          username: profile,
-          other: username,
-          chats: [postID]
-        });
-      } else {
-        await allChats.updateOne(
-          { username: profile },
-          { $addToSet: { chats: postID } }
-        );
+      if (!otherHasChats) {
+          await allChats.insertOne({
+              username: profile,
+              other: username,
+              postID: postID,
+              chats: []
+          });
       }
 
       res.status(200).send('Chats updated successfully');
@@ -328,20 +313,18 @@ app.get('/chats', async (req, res) => {
       const allChats = db.collection("chats");
 
       const chats = await allChats.find({ username: username }).toArray();
-      /*if (!profile) {
-          return res.status(404).send('User profile not found');
-      }*/
       res.status(200).json(chats);
   } catch (error) {
-      console.error('Error fetching profile:', error);
-      res.status(500).send('Failed to fetch profile');
+      console.error('Error fetching chats:', error);
+      res.status(500).send('Failed to fetch chats');
   } finally {
       await client.close();
   }
 });
 
+
 app.post('/messages', async (req, res) => {
-  const { sender, recipient, message } = req.body;
+  const { sender, recipient, message, postID } = req.body; // Include postID in the destructuring
 
   try {
       await client.connect();
@@ -351,13 +334,14 @@ app.post('/messages', async (req, res) => {
       const messageInfo = {
         sender: sender,
         recipient: recipient,
+        postID: postID, // Add postID to the message document
         message: message,
         createdAt: new Date(),
       };
 
       await allMessages.insertOne(messageInfo);
 
-      res.status(200).send({messageInfo});
+      res.status(200).send({ messageInfo });
   } catch (error) {
       console.error('Error sending message:', error);
       res.status(500).send('Failed to send message');
@@ -369,6 +353,7 @@ app.post('/messages', async (req, res) => {
 app.get('/messages', async (req, res) => {
   const sender = req.query.sender;
   const recipient = req.query.recipient;
+  const postID = req.query.postID;
 
   try {
       await client.connect();
@@ -377,11 +362,16 @@ app.get('/messages', async (req, res) => {
 
       const sort = { createdAt: 1 };
       const messages = await allMessages.find({
-        $or: [
-          { $and: [ {sender: sender}, {recipient: recipient}] },
-          { $and: [ {sender: recipient}, {recipient: sender}]}
+        $and: [
+          { postID: postID },
+          {
+            $or: [
+              { $and: [{ sender: sender }, { recipient: recipient }] },
+              { $and: [{ sender: recipient }, { recipient: sender }] }
+            ]
+          }
         ]
-      }).sort(sort).toArray(); 
+      }).sort(sort).toArray();
       res.status(200).json(messages);
   } catch (error) {
       console.error('Error fetching messages:', error);
@@ -390,6 +380,7 @@ app.get('/messages', async (req, res) => {
       await client.close();
   }
 });
+
 
 app.get('/posts/my-posts', async (req, res) => {
   const { username } = req.query;
@@ -428,6 +419,159 @@ app.patch('/posts/:id/close', async (req, res) => {
       res.status(500).send('Failed to close post');
   } finally {
       await client.close();
+  }
+});
+
+app.patch('/posts/:id/apply', async (req, res) => {
+  const { id } = req.params;
+  const { username } = req.body;
+
+  try {
+      await client.connect();
+      const database = client.db('bumbledore');
+      const posts = database.collection('posts');
+
+      const result = await posts.updateOne(
+          { _id: new ObjectId(id) },
+          { $addToSet: { applicants: username } }
+      );
+
+      if (result.modifiedCount === 1) {
+          res.status(200).send('Applied successfully');
+      } else {
+          res.status(404).send('Post not found');
+      }
+  } catch (error) {
+      console.error('Error applying to post:', error);
+      res.status(500).send('Failed to apply to post');
+  } finally {
+      await client.close();
+  }
+});
+
+app.get('/posts/my-applications', async (req, res) => {
+  const { username } = req.query;
+
+  try {
+    await client.connect();
+    const database = client.db('bumbledore');
+    const posts = database.collection('posts');
+    const myApplications = await posts.find({
+      $or: [
+        { applicants: { $exists: true, $elemMatch: { $eq: username } } },
+        { acceptedApplicants: { $exists: true, $elemMatch: { $eq: username } } }
+      ]
+    }).toArray();
+
+    const modifiedApplications = myApplications.map(post => {
+      const isAccepted = Array.isArray(post.acceptedApplicants) && post.acceptedApplicants.includes(username);
+      
+      if (post.status === 'successful') {
+        if (isAccepted) {
+          return { ...post, status: 'successful' };
+        } else {
+          return { ...post, status: 'closed' };
+        }
+      } else {
+        return post;
+      }
+    });
+
+    res.status(200).json(modifiedApplications);
+  } catch (error) {
+    console.error('Error fetching my applications:', error);
+    res.status(500).send('Failed to fetch my applications');
+  } finally {
+    await client.close();
+  }
+});
+
+app.patch('/posts/:id/accept', async (req, res) => {
+  const { id } = req.params;
+  const { applicant } = req.body;
+
+  try {
+    await client.connect();
+    const database = client.db('bumbledore');
+    const posts = database.collection('posts');
+
+    const post = await posts.findOne({ _id: new ObjectId(id) });
+
+    if (!post) {
+      res.status(404).send('Post not found');
+      return;
+    }
+
+    // Update post status and accepted applicant
+    const result = await posts.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: { status: 'successful' },
+        $addToSet: { acceptedApplicants: applicant },
+        $pull: { applicants: applicant }
+      }
+    );
+
+    // Update status to 'closed' for rejected applicants only
+    if (post.applicants.length > 1) {
+      await posts.updateMany(
+        { _id: new ObjectId(id), 'applicants': { $nin: [applicant] } },
+        { $set: { 'applicants.$[elem].status': 'closed' } },
+        { arrayFilters: [{ 'elem': { $nin: [applicant] } }] }
+      );
+    }
+
+    if (result.modifiedCount === 1) {
+      res.status(200).send('Applicant accepted successfully');
+    } else {
+      res.status(404).send('Post not found');
+    }
+  } catch (error) {
+    console.error('Error accepting applicant:', error);
+    res.status(500).send('Failed to accept applicant');
+  } finally {
+    await client.close();
+  }
+});
+
+app.post('/reviews', async (req, res) => {
+  const { postID, rating, text, reviewer } = req.body;
+  const review = {
+    postID,
+    rating,
+    text,
+    reviewer,
+    createdAt: new Date(),
+  };
+
+  try {
+    await client.connect();
+    const db = client.db('bumbledore');
+    const reviews = db.collection('reviews');
+    await reviews.insertOne(review);
+    res.status(200).json(review);
+  } catch (error) {
+    console.error('Error submitting review:', error);
+    res.status(500).send('Failed to submit review');
+  } finally {
+    await client.close();
+  }
+});
+
+app.get('/reviews', async (req, res) => {
+  const username = req.query.username;
+
+  try {
+    await client.connect();
+    const db = client.db('bumbledore');
+    const reviews = db.collection('reviews');
+    const userReviews = await reviews.find({ reviewer: username }).toArray();
+    res.status(200).json(userReviews);
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    res.status(500).send('Failed to fetch reviews');
+  } finally {
+    await client.close();
   }
 });
 

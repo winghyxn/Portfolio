@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';  // Import Link component
 import useToken from "../components/useToken.js";
 import styles from './Messages.module.css';
-//import loaderStyles from '../components/loader.module.css';
 
 export default function Messages() {
     const [userChats, setUserChats] = useState([]);
     const [messages, setMessages] = useState([]);
-    const [showChat, setShowChat] = useState("");
+    const [showChat, setShowChat] = useState({ other: "", postID: "" });
     const [input, setInput] = useState("");
     const { token } = useToken();
 
@@ -15,17 +15,18 @@ export default function Messages() {
         e.preventDefault();
         const sender = e.target.dataset.sender;
         const recipient = e.target.dataset.recipient;
-        
-        const messageData = {
+        const postID = e.target.dataset.postid;
+
+        const messageData = {   
             sender: sender,
             recipient: recipient,
+            postID: postID,
             message: input
         };
 
         try {
-            const response = await axios.post('https://bumbledore-server.vercel.app/messages', messageData);
+            const response = await axios.post('https://api-wing-s-projects.vercel.app/messages', messageData);
             if (response.status === 200) {
-                // console.log('Message sent:', response.data);
                 fetchMessages(showChat);
             } 
         } catch (error) {
@@ -36,7 +37,7 @@ export default function Messages() {
 
     const fetchMessages = async (chat) => {
         try {
-            const response = await axios.get(`https://bumbledore-server.vercel.app/messages?sender=${token}&&recipient=${chat}`);
+            const response = await axios.get(`https://api-wing-s-projects.vercel.app/messages?sender=${token}&&recipient=${chat.other}&&postID=${chat.postID}`);
             console.log('Fetched messages:', response.data);
             setMessages(response.data);
         } catch (error) {
@@ -47,8 +48,7 @@ export default function Messages() {
     useEffect(() => {
         const fetchUserChats = async () => {
             try {
-                const response = await axios.get(`https://bumbledore-server.vercel.app/chats?username=${token}`);
-                console.log('Fetched chats:', response.data);
+                const response = await axios.get(`https://api-wing-s-projects.vercel.app/chats?username=${token}`);
                 setUserChats(response.data);
             } catch (error) {
                 console.error('Failed to fetch chats:', error);
@@ -56,7 +56,6 @@ export default function Messages() {
         };
 
         fetchUserChats();
-
     }, [token]);
 
     const handleChatClick = (chat) => {
@@ -67,12 +66,12 @@ export default function Messages() {
     return (
         <div className={styles.gridContainer}>
             <div className={styles.sidebar}>
-                <a className={styles.sidebarText} href = "/home">Back</a>
+                <a className={styles.sidebarText} href="/home">Back</a>
                 {userChats ? (
                     userChats.map((chat) => (
-                        <div className={styles.sidebarText} key={chat.other}>
+                        <div className={styles.sidebarText} key={`${chat.other}-${chat.postID}`}>
                             <button onClick={() => handleChatClick(chat)}>
-                               {chat.other}
+                                {chat.other} - {chat.postID}
                             </button>
                         </div>
                     ))
@@ -81,14 +80,16 @@ export default function Messages() {
                 )}
             </div>
             <div className={styles.header}>
-                {showChat === "" ? (
+                {showChat.other === "" ? (
                     <h1>Messages</h1>
                 ) : (
-                    <h1>{showChat}</h1>
+                    <h1>
+                        <Link className={styles.text} to={`/profile/${showChat.other}`}>{showChat.other}</Link> - {showChat.postID}
+                    </h1>
                 )}
             </div>
-            
-            {showChat === "" ? (
+
+            {showChat.other === "" ? (
                 <div className={styles.mainPage}>
                     <div className={styles.messages}>
                         <p>Click on a username to access chat</p>
@@ -110,22 +111,24 @@ export default function Messages() {
                             className={styles.textBarForm} 
                             onSubmit={handleMessage}
                             data-sender={token}
-                            data-recipient={showChat}
+                            data-recipient={showChat.other}
+                            data-postid={showChat.postID}
                         >
                             <textarea 
-                                className={styles.textBarFormInputs}                                    name="messageInput"
+                                className={styles.textBarFormInputs}
+                                name="messageInput"
                                 row="2"
                                 cols="40"
                                 value={input} 
                                 onChange={e => setInput(e.target.value)}
                                 required
                             >
-                           </textarea>
+                            </textarea>
                             <button 
                                 className={styles.textBarFormIputs} 
                                 type="submit"
-                                >
-                                    Submit
+                            >
+                                Submit
                             </button>
                         </form>
                     </div>
@@ -134,3 +137,4 @@ export default function Messages() {
         </div>
     );
 }
+

@@ -37,7 +37,7 @@ export default function Post() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         const postData = {
             typeOfRequest,
             courseCode,
@@ -45,11 +45,12 @@ export default function Post() {
             pay: typeOfRequest === 'lookingForTutor' ? `${pay}/h` : undefined,
             numGroupmates: typeOfRequest === 'lookingForGroupmate' ? numGroupmates : undefined,
             username: token, 
-            status: 'open'
+            status: 'open',
+            applicants: [] // Initialize applicants array
         };
-
+    
         try {
-            const response = await axios.post('https://bumbledore-server.vercel.app/create-post', postData);
+            const response = await axios.post('https://api-wing-s-projects.vercel.app/create-post', postData);
             if (response.status === 200) {
                 console.log('Post created successfully:', response.data);
                 // Clear form fields after successful post
@@ -69,7 +70,7 @@ export default function Post() {
             console.error('Error creating post:', error);
             alert('Failed to create post');
         }
-    };
+    };    
 
     return (
         <div className="grid-container">

@@ -11,6 +11,7 @@ export default function Home() {
     const [posts, setPosts] = useState([]);
     const { token } = useToken();
     const [loading, setLoading] = useState(true);
+    const [appliedPosts, setAppliedPosts] = useState({});
     const navigate = useNavigate();
 
     // Assuming token contains the username directly
@@ -18,25 +19,23 @@ export default function Home() {
 
     useEffect(() => {
         const fetchPosts = async () => {
-          try {
-            const response = await axios.get('https://bumbledore-server.vercel.app/posts');
-            const openPosts = response.data.filter(post => post.status === 'open');
-            setPosts(openPosts);
-            setLoading(false);
-          } catch (error) {
-            console.error('Failed to fetch posts:', error);
-          }
+            try {
+                const response = await axios.get('https://api-wing-s-projects.vercel.app/posts');
+                const openPosts = response.data.filter(post => post.status === 'open');
+                setPosts(openPosts);
+                setLoading(false);
+            } catch (error) {
+                console.error('Failed to fetch posts:', error);
+            }
         };
-      
+
         fetchPosts();
-      }, []);
-      
+    }, []);
 
     const handleMessageRequest = async (e) => {
         e.preventDefault();
         const profile = e.target.dataset.profile;
-        const postID = e.target.dataset.postID;
-        console.log(postID);
+        const postID = e.target.dataset.postid;
 
         const userData = {
             username: username,
@@ -45,8 +44,7 @@ export default function Home() {
         };
 
         try {
-            console.log(userData);
-            const response = await axios.post('https://bumbledore-server.vercel.app/new-chat', userData);
+            const response = await axios.post('https://api-wing-s-projects.vercel.app/new-chat', userData);
             if (response.status === 200) {
                 console.log('Chat created successfully:', response.data);
                 navigate('/messages');
@@ -57,6 +55,51 @@ export default function Home() {
             console.error("Failed to create chat", error);
         }
     };
+
+    const handleApplyRequest = async (postId, poster) => {
+        try {
+            console.log(`Applying to post: ${postId}`); // Log the postId
+            const url = `https://api-wing-s-projects.vercel.app/posts/${postId}/apply`;
+            console.log(`Request URL: ${url}`); // Log the URL
+    
+            // Apply to the post
+            const response = await axios.patch(url, { username });
+            if (response.status === 200) {
+                console.log('Applied successfully');
+                setAppliedPosts(prevState => ({ ...prevState, [postId]: true }));
+    
+                // Create a chat and send an automatic message
+                const chatResponse = await axios.post('https://api-wing-s-projects.vercel.app/new-chat', {
+                    username: username,
+                    profile: poster,
+                    postID: postId
+                });
+    
+                if (chatResponse.status === 200) {
+                    const messageResponse = await axios.post('https://api-wing-s-projects.vercel.app/messages', {
+                        sender: username,
+                        recipient: poster,
+                        postID: postId,
+                        message: "Hi! I have applied for your post!"
+                    });
+    
+                    if (messageResponse.status === 200) {
+                        console.log('Message sent successfully');
+                        navigate('/messages');
+                    } else {
+                        console.error('Failed to send message: Status code:', messageResponse.status);
+                    }
+                } else {
+                    console.error('Failed to create chat: Status code:', chatResponse.status);
+                }
+            } else {
+                console.error('Failed to apply:', response.status);
+            }
+        } catch (error) {
+            console.error('Failed to apply:', error);
+        }
+    };
+    
 
     return (
         <div className="grid-container">
@@ -69,7 +112,7 @@ export default function Home() {
             {loading ? (
                 <div className="main-page">
                     <div className={loaderStyles.loader}></div>
-                    <p>loading...</p>
+                    <p>Loading...</p>
                 </div>
                 ) : (
                     <div className="main-page">
@@ -122,3 +165,4 @@ export default function Home() {
         </div>
     );
 }
+
