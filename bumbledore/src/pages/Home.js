@@ -114,50 +114,54 @@ export default function Home() {
                     <div className={loaderStyles.loader}></div>
                     <p>Loading...</p>
                 </div>
-            ) : (
-                <div className="main-page">
-                    {posts.length > 0 ? (
-                        posts.map((post) => (
-                            <div key={post._id} className={styles.post}>
-                                <h3 className={styles.header}>{post._id}</h3>
-                                <h3 className={styles.header}>
-                                    Posted by: <Link className={styles.text} to={`/profile/${post.username}`}>{post.username}</Link>
-                                </h3>
-                                <p className={styles.text}>Course Code: {post.courseCode}</p>
-                                <p className={styles.text}>Type of Request: {post.typeOfRequest}</p>
-                                <p className={styles.text}>Description: {post.description}</p>
-                                {post.pay && <p className={styles.text}>Pay: {post.pay}</p>}
-                                {post.numGroupmates && <p className={styles.text}>Number of Groupmates Needed: {post.numGroupmates}</p>}
-                                <p className={styles.text}>Created At: {new Date(post.createdAt).toLocaleString()}</p>
-                                {post.username !== username && (
-                                    <>
-                                        <button 
-                                            onClick={handleMessageRequest} 
-                                            type="button"
-                                            data-username={username}
-                                            data-profile={post.username}
-                                            data-postid={post._id.toString()}>
-                                                Message
-                                        </button>
-                                        {appliedPosts[post._id] ? (
-                                            <p>Post applied successfully</p>
-                                        ) : (
-                                            <button
-                                                onClick={() => handleApplyRequest(post._id, post.username)}
+                ) : (
+                    <div className="main-page">
+                        {posts.length > 0 ? (
+                            posts.map((post) => (
+                                <div key={post._id} className={styles.post}>
+                                    <div className={styles.username}>
+                                        <div className={styles.header}>
+                                            @<Link className={styles.header} to={`/profile/${post.username}`}>{post.username}</Link>
+                                        </div>
+                                        <div className={styles.header}>
+                                            #{post._id}
+                                        </div>
+                                    </div>
+                                    <div className={styles.request}>
+                                        <div className={styles.text}>
+                                            Course Code: {post.courseCode}
+                                        </div>
+                                        <div className={styles.text}>
+                                            Type of Request: {post.typeOfRequest}
+                                        </div>
+                                        <div className={styles.text}>
+                                            Description: {post.description}
+                                        </div>    
+                                        {post.pay && <div className={styles.text}>Pay: {post.pay}</div>} 
+                                        {post.numGroupmates && <div className={styles.text}>Number of Groupmates Needed: {post.numGroupmates}</div>}    
+                                    </div>
+                                    <div className={styles.apply}>
+                                        <div className={styles.text}>Posted At: {new Date(post.createdAt).toLocaleString()}</div>
+                                        <div>
+                                            {post.username !== username && (
+                                            <button 
+                                                onClick={handleMessageRequest} 
                                                 type="button"
-                                            >
-                                                Apply
+                                                data-username={username}
+                                                data-profile={post.username}
+                                                data-postID={post._id.toString()}>
+                                                    Message
                                             </button>
                                         )}
-                                    </>
-                                )}
-                            </div>
-                        ))
-                    ) : (
-                        <p>No posts available</p>
-                    )}
-                </div>
-            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p>No posts available</p>
+                        )}
+                    </div>
+                )}
         </div>
     );
 }
