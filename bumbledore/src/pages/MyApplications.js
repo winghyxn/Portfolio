@@ -17,7 +17,7 @@ export default function MyApplications() {
     useEffect(() => {
         const fetchMyApplications = async () => {
             try {
-                const response = await axios.get('https://api-wing-s-projects.vercel.app/posts/my-applications', {
+                const response = await axios.get('https://bumbledore-server.vercel.app/posts/my-applications', {
                     params: { username }
                 });
                 setAppliedPosts(response.data);

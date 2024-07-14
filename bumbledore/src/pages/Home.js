@@ -11,7 +11,7 @@ export default function Home() {
     const [posts, setPosts] = useState([]);
     const { token } = useToken();
     const [loading, setLoading] = useState(true);
-    //const [appliedPosts, setAppliedPosts] = useState({});
+    const [appliedPosts, setAppliedPosts] = useState({});
     const navigate = useNavigate();
 
     // Assuming token contains the username directly
@@ -20,7 +20,7 @@ export default function Home() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await axios.get('https://api-wing-s-projects.vercel.app/posts');
+                const response = await axios.get('bumbledore-server.vercel.app/posts');
                 const openPosts = response.data.filter(post => post.status === 'open');
                 setPosts(openPosts);
                 setLoading(false);
@@ -44,7 +44,7 @@ export default function Home() {
         };
 
         try {
-            const response = await axios.post('https://api-wing-s-projects.vercel.app/new-chat', userData);
+            const response = await axios.post('https://bumbledore-server.vercel.app/new-chat', userData);
             if (response.status === 200) {
                 console.log('Chat created successfully:', response.data);
                 navigate('/messages');
@@ -56,11 +56,11 @@ export default function Home() {
         }
     };
 
-    /*const handleApplyRequest = async (postId, poster) => {
+    const handleApplyRequest = async (postId, poster) => {
         try {
             console.log(`Applying to post: ${postId}`); // Log the postId
-            const url = `https://api-wing-s-projects.vercel.app/posts/${postId}/apply`;
-            console.log(`Request URL: ${url}`); // Log the URL
+            /*const url = `https://api-wing-s-projects.vercel.app/posts/${postId}/apply`;
+            console.log(`Request URL: ${url}`); // Log the URL*/
     
             // Apply to the post
             const response = await axios.patch(url, { username });
@@ -69,14 +69,14 @@ export default function Home() {
                 setAppliedPosts(prevState => ({ ...prevState, [postId]: true }));
     
                 // Create a chat and send an automatic message
-                const chatResponse = await axios.post('https://api-wing-s-projects.vercel.app/new-chat', {
+                const chatResponse = await axios.post('https://bumbledore-server.vercel.app/new-chat', {
                     username: username,
                     profile: poster,
                     postID: postId
                 });
     
                 if (chatResponse.status === 200) {
-                    const messageResponse = await axios.post('https://api-wing-s-projects.vercel.app/messages', {
+                    const messageResponse = await axios.post('https://bumbledore-server.vercel.app/messages', {
                         sender: username,
                         recipient: poster,
                         postID: postId,
@@ -98,7 +98,7 @@ export default function Home() {
         } catch (error) {
             console.error('Failed to apply:', error);
         }
-    }; */
+    }; 
     
 
     return (
@@ -152,7 +152,19 @@ export default function Home() {
                                                 data-postID={post._id.toString()}>
                                                     Message
                                             </button>
-                                        )}
+                                        )}                                        
+                                        </div>
+                                        <div>
+                                            {appliedPosts[post._id] ? (
+                                                <div className={styles.text}>Post applied successfully</div>
+                                            ) : (
+                                                <button
+                                                    onClick={() => handleApplyRequest(post._id, post.username)}
+                                                    type="button"
+                                                >
+                                                    Apply
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>

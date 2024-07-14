@@ -14,7 +14,7 @@ export default function UserProfile() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await axios.get(`https://api-wing-s-projects.vercel.app/user-profile?username=${username}`);
+                const response = await axios.get(`https://bumbledore-server.vercel.app/user-profile?username=${username}`);
                 console.log('Fetched profile:', response.data);
                 setProfile(response.data);
             } catch (error) {
@@ -25,7 +25,7 @@ export default function UserProfile() {
 
         const fetchReviews = async () => {
             try {
-                const response = await axios.get(`https://api-wing-s-projects.vercel.app/reviews?username=${username}`);
+                const response = await axios.get(`https://bumbledore-server.vercel.app/reviews?username=${username}`);
                 console.log('Fetched reviews:', response.data);
                 setReviews(response.data);
             } catch (error) {
@@ -46,7 +46,7 @@ export default function UserProfile() {
     const handleReviewSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`https://api-wing-s-projects.vercel.app/reviews`, { ...newReview, reviewer: profile.username });
+            const response = await axios.post(`https://bumbledore-server.vercel.app/reviews`, { ...newReview, reviewer: profile.username });
             setReviews([...reviews, response.data]);
             setNewReview({ postID: '', rating: 0, text: '' });
         } catch (error) {

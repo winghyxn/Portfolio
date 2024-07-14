@@ -25,7 +25,7 @@ export default function Messages() {
         };
 
         try {
-            const response = await axios.post('https://api-wing-s-projects.vercel.app/messages', messageData);
+            const response = await axios.post('https://bumbledore-server.vercel.app/messages', messageData);
             if (response.status === 200) {
                 fetchMessages(showChat);
             } 
@@ -37,7 +37,7 @@ export default function Messages() {
 
     const fetchMessages = async (chat) => {
         try {
-            const response = await axios.get(`https://api-wing-s-projects.vercel.app/messages?sender=${token}&&recipient=${chat.other}&&postID=${chat.postID}`);
+            const response = await axios.get(`https://bumbledore-server.vercel.app/messages?sender=${token}&&recipient=${chat.other}&&postID=${chat.postID}`);
             console.log('Fetched messages:', response.data);
             setMessages(response.data);
         } catch (error) {
@@ -48,7 +48,7 @@ export default function Messages() {
     useEffect(() => {
         const fetchUserChats = async () => {
             try {
-                const response = await axios.get(`https://api-wing-s-projects.vercel.app/chats?username=${token}`);
+                const response = await axios.get(`https://bumbledore-server.vercel.app/chats?username=${token}`);
                 setUserChats(response.data);
             } catch (error) {
                 console.error('Failed to fetch chats:', error);
