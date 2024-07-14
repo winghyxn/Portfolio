@@ -59,7 +59,7 @@ export default function Home() {
     const handleApplyRequest = async (postId, poster) => {
         try {
             console.log(`Applying to post: ${postId}`); // Log the postId
-            /*const url = `https://api-wing-s-projects.vercel.app/posts/${postId}/apply`;
+            const url = `https://bumbledore-server.vercel.app/posts/${postId}/apply`;
             console.log(`Request URL: ${url}`); // Log the URL*/
     
             // Apply to the post
