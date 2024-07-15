@@ -29,7 +29,7 @@ export default function UserProfile() {
             }
         };
 
-        /*const fetchReviews = async () => {
+        const fetchReviews = async () => {
             try {
                 const response = await axios.get(`https://bumbledore-server.vercel.app/reviews?username=${username}`); //`http://localhost:8080/reviews?username=${username}`);
                 console.log('Fetched reviews:', response.data);
@@ -38,10 +38,10 @@ export default function UserProfile() {
                 console.error('Failed to fetch reviews:', error);
                 setError(`Failed to fetch reviews: ${error.message}`); // Set detailed error message
             }
-        };*/
+        };
 
         fetchProfile();
-        //fetchReviews();
+        fetchReviews();
 
     }, [username]);
 
@@ -76,7 +76,7 @@ export default function UserProfile() {
                 reviewee: profile.username
             };
 
-            const response = await axios.post(`http://localhost:8080/reviews`/*`https://bumbledore-server.vercel.app/reviews`*/, reviewData);
+            const response = await axios.post(`https://bumbledore-server.vercel.app/reviews`/*`http://localhost:8080/reviews`*/, reviewData);
             setReviews([...reviews, response.data]);
             setSelectedID("");
             setNewReview({ postID: '', rating: 0, text: '', reviewer: '', reviewee: ''});
