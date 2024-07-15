@@ -17,7 +17,7 @@ export default function MyApplications() {
     useEffect(() => {
         const fetchMyApplications = async () => {
             try {
-                const response = await axios.get('https://api-wing-s-projects.vercel.app/posts/my-applications', {
+                const response = await axios.get('https://bumbledore-server.vercel.app/posts/my-applications', /*'http://localhost:8080/posts/my-applications'*/ {
                     params: { username }
                 });
                 setAppliedPosts(response.data);
@@ -48,17 +48,29 @@ export default function MyApplications() {
                     {appliedPosts.length > 0 ? (
                         appliedPosts.map((post) => (
                             <div key={post._id} className={styles.post}>
-                                <h3 className={styles.header}>{post._id}</h3>
-                                <h3 className={styles.header}>
-                                    Posted by: <Link className={styles.text} to={`/profile/${post.username}`}>{post.username}</Link>
-                                </h3>
-                                <p className={styles.text}>Course Code: {post.courseCode}</p>
-                                <p className={styles.text}>Type of Request: {post.typeOfRequest}</p>
-                                <p className={styles.text}>Description: {post.description}</p>
-                                {post.pay && <p className={styles.text}>Pay: {post.pay}</p>}
-                                {post.numGroupmates && <p className={styles.text}>Number of Groupmates Needed: {post.numGroupmates}</p>}
-                                <p className={styles.text}>Created At: {new Date(post.createdAt).toLocaleString()}</p>
-                                <p className={styles.text}>Status: {post.status}</p>
+                                <div className={styles.username}>
+                                    <div className={styles.header}>
+                                        @<Link className={styles.text} to={`/profile/${post.username}`}>{post.username}</Link>
+                                    </div>
+                                    <div className={styles.header}>#{post._id}</div>
+                                    <div className={styles.text}>status: {post.status}</div>
+                                </div>
+                                <div className={styles.request}>
+                                    <div className={styles.text}>
+                                        Course Code: {post.courseCode}
+                                    </div>
+                                    <div className={styles.text}>
+                                        Type of Request: {post.typeOfRequest}
+                                    </div>
+                                    <div className={styles.text}>
+                                        Description: {post.description}
+                                    </div>    
+                                    {post.pay && <div className={styles.text}>Pay: {post.pay}</div>} 
+                                    {post.numGroupmates && <div className={styles.text}>Number of Groupmates Needed: {post.numGroupmates}</div>}    
+                                </div>
+                                <div className={styles.apply}>
+                                    <div className={styles.text}>{new Date(post.createdAt).toLocaleString()}</div>
+                                </div>
                             </div>
                         ))
                     ) : (
