@@ -20,8 +20,8 @@ export default function Home() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await axios.get('https://bumbledore-server.vercel.app/posts');
-                const openPosts = response.data.filter(post => post.status === 'open');
+                const response = await axios.get('https://bumbledore-server.vercel.app/posts')//"http://localhost:8080/posts");
+                const openPosts = response.data.filter(post => post.status === 'Open');
                 setPosts(openPosts);
                 setLoading(false);
             } catch (error) {
@@ -141,7 +141,7 @@ export default function Home() {
                                         {post.numGroupmates && <div className={styles.text}>Number of Groupmates Needed: {post.numGroupmates}</div>}    
                                     </div>
                                     <div className={styles.apply}>
-                                        <div className={styles.text}>Posted At: {new Date(post.createdAt).toLocaleString()}</div>
+                                        <div className={styles.text}>{new Date(post.createdAt).toLocaleString()}</div>
                                         <div>
                                             {post.username !== username && (
                                             <button 
@@ -157,14 +157,15 @@ export default function Home() {
                                         <div>
                                             {appliedPosts[post._id] ? (
                                                 <div className={styles.text}>Post applied successfully</div>
-                                            ) : (
+                                            ) : post.username !== username 
+                                            ? (
                                                 <button
                                                     onClick={() => handleApplyRequest(post._id, post.username)}
                                                     type="button"
                                                 >
                                                     Apply
                                                 </button>
-                                            )}
+                                            ) : (<p></p>)}
                                         </div>
                                     </div>
                                 </div>

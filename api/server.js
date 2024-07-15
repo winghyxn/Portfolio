@@ -202,8 +202,7 @@ app.get('/posts', async (req, res) => {
     await client.connect();
     const database = client.db('bumbledore');
     const posts = database.collection('posts');
-    const openPosts = await posts.find({ status: 'open' }).toArray();
-    
+    const openPosts = await posts.find({ status: 'Open' }).toArray();
     res.status(200).json(openPosts);
   } catch (error) {
     console.error('Error fetching posts:', error);
@@ -230,7 +229,7 @@ app.post('/create-post', async (req, res) => {
           numGroupmates: typeOfRequest === 'lookingForGroupmate' ? numGroupmates : undefined,
           createdAt: new Date(),
           username, 
-          status: 'open',
+          status: 'Open',
           applicants: []
       };
 
@@ -253,9 +252,9 @@ app.get('/user-profile', async (req, res) => {
       const profiles = db.collection("userProfileInfo");
 
       const profile = await profiles.findOne({ username: username });
-      if (!profile) {
-          return res.status(404).send('User profile not found');
-      }
+      //if (!profile) {
+      //    return res.status(404).send('User profile not found');
+      //}
       res.status(200).json(profile);
   } catch (error) {
       console.error('Error fetching profile:', error);
@@ -468,9 +467,9 @@ app.get('/posts/my-applications', async (req, res) => {
       
       if (post.status === 'successful') {
         if (isAccepted) {
-          return { ...post, status: 'successful' };
+          return { ...post, status: 'Successful' };
         } else {
-          return { ...post, status: 'closed' };
+          return { ...post, status: 'Closed' };
         }
       } else {
         return post;
@@ -481,6 +480,38 @@ app.get('/posts/my-applications', async (req, res) => {
   } catch (error) {
     console.error('Error fetching my applications:', error);
     res.status(500).send('Failed to fetch my applications');
+  } finally {
+    await client.close();
+  }
+});
+
+app.get('/posts/reviewable-posts', async (req, res) => {
+  const first = req.query.first;
+  const second = req.query.second;
+
+  try {
+    await client.connect();
+    const database = client.db('bumbledore');
+    const posts = database.collection('posts');
+    const reviewablePosts = await posts.find({
+      $or: [
+        { username: first, acceptedApplicants: second, status: "Successful" },
+        { username: second, acceptedApplicants: first, status: "Successful" }
+      ]
+    })
+    .project({ _id: 1})
+    .toArray();
+    /*const myApplications = await posts.find({
+      $or: [
+        { applicants: { $exists: true, $elemMatch: { $eq: username } } },
+        { acceptedApplicants: { $exists: true, $elemMatch: { $eq: username } } }
+      ]
+    }).toArray();*/
+
+    res.status(200).json(reviewablePosts);
+  } catch (error) {
+    console.error('Error fetching my reviwable posts:', error);
+    res.status(500).send('Failed to fetch my reviewable posts');
   } finally {
     await client.close();
   }
@@ -535,12 +566,13 @@ app.patch('/posts/:id/accept', async (req, res) => {
 });
 
 app.post('/reviews', async (req, res) => {
-  const { postID, rating, text, reviewer } = req.body;
+  const { postID, rating, text, reviewer, reviewee } = req.body;
   const review = {
     postID,
     rating,
     text,
     reviewer,
+    reviewee,
     createdAt: new Date(),
   };
 
@@ -565,7 +597,7 @@ app.get('/reviews', async (req, res) => {
     await client.connect();
     const db = client.db('bumbledore');
     const reviews = db.collection('reviews');
-    const userReviews = await reviews.find({ reviewer: username }).toArray();
+    const userReviews = await reviews.find({ reviewee: username }).toArray();
     res.status(200).json(userReviews);
   } catch (error) {
     console.error('Error fetching reviews:', error);
