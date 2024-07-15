@@ -29,16 +29,16 @@ export default function UserProfile() {
             }
         };
 
-        const fetchReviews = async () => {
+        /*const fetchReviews = async () => {
             try {
-                const response = await axios.get(`https://bumbledore-server.vercel.app/reviews?username=${username}`/*`http://localhost:8080/reviews?username=${username}`*/);
+                const response = await axios.get(`https://bumbledore-server.vercel.app/reviews?username=${username}`); //`http://localhost:8080/reviews?username=${username}`);
                 console.log('Fetched reviews:', response.data);
                 setReviews(response.data);
             } catch (error) {
                 console.error('Failed to fetch reviews:', error);
                 setError(`Failed to fetch reviews: ${error.message}`); // Set detailed error message
             }
-        };
+        };*/
 
         fetchProfile();
         //fetchReviews();
