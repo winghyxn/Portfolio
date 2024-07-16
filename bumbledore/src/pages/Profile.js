@@ -32,11 +32,6 @@ export default function Profile() {
 
             const response = await axios.post(`https://bumbledore-server.vercel.app/my-profile`, profileData);
 
-            if (!response.ok) {
-                console.error('Failed to edit profile: Status code:', response.status);
-                setError(`Failed to edit profile: ${error.message}`);
-            }
-
             setProfile(response.data);
             setShowForm(false); // Close the form after successful submission
         } catch (error) {
