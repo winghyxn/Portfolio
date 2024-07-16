@@ -76,7 +76,7 @@ export default function UserProfile() {
                 reviewee: profile.username
             };
 
-            const response = await axios.post(`http://localhost:8080/reviews`/*`https://bumbledore-server.vercel.app/reviews`*/, reviewData);
+            const response = await axios.post(`https://bumbledore-server.vercel.app/reviews`/*`http://localhost:8080/reviews`*/, reviewData);
             setReviews([...reviews, response.data]); // when u edit review it shows up as new review, but w page refresh it is updated as same review
             setSelectedID("");
             setNewReview({ postID: '', rating: 0, text: '', reviewer: '', reviewee: ''});
