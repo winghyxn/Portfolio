@@ -36,8 +36,6 @@ export default function Profile() {
                 console.error('Failed to edit profile: Status code:', response.status);
                 setError(`Failed to edit profile: ${error.message}`);
             }
-
-            setProfile(response.data);
             setShowForm(false); // Close the form after successful submission
         } catch (error) {
             console.error("Failed to edit profile: ", error);
