@@ -580,7 +580,16 @@ app.post('/reviews', async (req, res) => {
     await client.connect();
     const db = client.db('bumbledore');
     const reviews = db.collection('reviews');
-    await reviews.insertOne(review);
+    const existingReview = reviews.findOne({ postID: postID});
+
+    if (existingReview) {
+      await reviews.replaceOne(
+        { postID: postID },
+        review
+      );
+    } else {
+      await reviews.insertOne(review);
+    }
     res.status(200).json(review);
   } catch (error) {
     console.error('Error submitting review:', error);

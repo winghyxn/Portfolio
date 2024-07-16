@@ -76,8 +76,8 @@ export default function UserProfile() {
                 reviewee: profile.username
             };
 
-            const response = await axios.post(`https://bumbledore-server.vercel.app/reviews`/*`http://localhost:8080/reviews`*/, reviewData);
-            setReviews([...reviews, response.data]);
+            const response = await axios.post(`http://localhost:8080/reviews`/*`https://bumbledore-server.vercel.app/reviews`*/, reviewData);
+            setReviews([...reviews, response.data]); // when u edit review it shows up as new review, but w page refresh it is updated as same review
             setSelectedID("");
             setNewReview({ postID: '', rating: 0, text: '', reviewer: '', reviewee: ''});
             setShowForm(false);
@@ -87,7 +87,11 @@ export default function UserProfile() {
         }
     };
 
-    //const averageRating = reviews.map()
+    const averageRating = (reviews.length > 0) ? (
+        (reviews.map((review) => parseInt(review.rating)).reduce((accumulator, currentValue) => accumulator + currentValue, 0) / reviews.length).toFixed(2)
+    ) : (
+        "-"
+    );
 
     if (error) {
         return <p>{error}</p>; // Display error message
@@ -156,7 +160,7 @@ export default function UserProfile() {
                         <p className="content-text">Year: {profile.year}</p>
                         <p className="content-text">Major: {profile.major}</p>
                         <p className="content-text">Description: {profile.description}</p>
-                        <p className="content-text">Average rating: 000</p>
+                        <p className="content-text">Average rating: {averageRating}</p>
                     </div>
                     <div className="content-box">
                         <h3 className="content-text">Reviews: </h3> 

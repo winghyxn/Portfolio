@@ -65,6 +65,12 @@ export default function Profile() {
         fetchReviews();
     }, [token]); // Only run when token changes
 
+    const averageRating = (reviews.length > 0) ? (
+        (reviews.map((review) => parseInt(review.rating)).reduce((accumulator, currentValue) => accumulator + currentValue, 0) / reviews.length).toFixed(2)
+    ) : (
+        "-"
+    );
+
     if (error) {
         return <p>{error}</p>; // Display error message
     }
@@ -125,6 +131,7 @@ export default function Profile() {
                         <p className="content-text">Year: {profile.year}</p>
                         <p className="content-text">Major: {profile.major}</p>
                         <p className="content-text">Description: {profile.description}</p>
+                        <p className="content-text">Average rating: {averageRating}</p>
                     </div>
                     <div className="content-box">
                         <h3 className="content-text">Reviews: </h3> 
