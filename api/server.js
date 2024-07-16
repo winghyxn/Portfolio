@@ -170,7 +170,7 @@ app.post('/my-profile', async (req, res) => {
     } else {
       await profiles.insertOne({ username, year, major, description });
     }
-    res.status(200).send('Profile edited successfully');
+    res.status(200).json({ username, year, major, description });
   } catch (error) {
     console.error('Error editing profile:', error);
     res.status(500).send('Failed to edit profile');
