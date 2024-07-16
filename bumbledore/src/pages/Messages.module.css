@@ -68,13 +68,19 @@
     margin-right: 1rem;
 }
 
+.sidebarButton {
+    width: 100%;
+    border: 1px solid #454e64ff;
+    padding: 1rem;
+}
+
 .sidebar {
     display: flex;
     flex-direction: column;
     grid-area: sidebar;
+    text-align: left;
     border-right: 1px solid #454e64ff;
 }
-
 
 .gridContainer {
     display: grid;

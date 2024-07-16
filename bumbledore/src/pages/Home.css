@@ -60,6 +60,8 @@ body {
     padding: 3rem; 
     width: 45rem; 
     height: fit-content; 
+    border: 1px solid #ccc;
+    border-radius: 4px;
 } 
 
 .content-text { 

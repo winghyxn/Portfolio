@@ -69,9 +69,9 @@ export default function Messages() {
                 <a className={styles.sidebarText} href="/home">Back</a>
                 {userChats ? (
                     userChats.map((chat) => (
-                        <div className={styles.sidebarText} key={`${chat.other}-${chat.postID}`}>
-                            <button onClick={() => handleChatClick(chat)}>
-                                {chat.other} - {chat.postID}
+                        <div key={`${chat.other}-${chat.postID}`}>
+                            <button className={styles.sidebarButton} onClick={() => handleChatClick(chat)}>
+                                @{chat.other} <br></br> ------- #{chat.postID}
                             </button>
                         </div>
                     ))
@@ -84,7 +84,7 @@ export default function Messages() {
                     <h1>Messages</h1>
                 ) : (
                     <h1>
-                        <Link className={styles.text} to={`/profile/${showChat.other}`}>{showChat.other}</Link> - {showChat.postID}
+                        <Link to={`/profile/${showChat.other}`}>@{showChat.other}</Link> --- #{showChat.postID}
                     </h1>
                 )}
             </div>

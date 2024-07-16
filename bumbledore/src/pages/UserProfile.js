@@ -47,7 +47,7 @@ export default function UserProfile() {
 
     const fetchReviewablePosts = async () => {
         try {
-            const response = await axios.get(`http://bumbledore-server.vercel.app/posts/reviewable-posts?first=${username}&&second=${token}`/*`http://localhost:8080/posts/reviewable-posts?first=${username}&&second=${token}`*/);
+            const response = await axios.get(`https://bumbledore-server.vercel.app/posts/reviewable-posts?first=${username}&&second=${token}`/*`http://localhost:8080/posts/reviewable-posts?first=${username}&&second=${token}`*/);
             console.log('Fetched reviewable posts:', response.data);
             setReviewOptions(response.data);
         } catch (error) {
@@ -115,11 +115,12 @@ export default function UserProfile() {
                                 value={selectedID} 
                                 onChange={handleIDSelection}
                                 className={formStyles.inputs}>
-                                    <option value="">
+                                    <option value="" className={formStyles.inputs}>
                                         Select
                                     </option> 
                                     {reviewOptions && reviewOptions.map(option => (
                                     <option 
+                                        className={formStyles.inputs}
                                         key={option._id} 
                                         value={option._id}>
                                             {option._id}
@@ -157,18 +158,21 @@ export default function UserProfile() {
                         <p className="content-text">Description: {profile.description}</p>
                         <p className="content-text">Average rating: 000</p>
                     </div>
-                    <div className="content-box">Reviews: 
+                    <div className="content-box">
+                        <h3 className="content-text">Reviews: </h3> 
                         {reviews.map(review => (
                             <div key={review._id} className="content-text">
                                 <p className="content-text">Rating: {review.rating}</p>
-                                <p className="content-text">{review.text}</p>
+                                <p className="content-text">Description: {review.text}</p>
                             </div>
                         ))}
                     </div>
-                    <button type="button" onClick={() => {
-                        setShowForm(true);
-                        fetchReviewablePosts();
-                        }}>Leave a review</button>
+                    <div>
+                        <button type="button" onClick={() => {
+                            setShowForm(true);
+                            fetchReviewablePosts();
+                            }}>Leave a review</button>
+                    </div>
                 </div>
             )}
         </div>

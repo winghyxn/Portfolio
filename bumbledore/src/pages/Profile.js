@@ -10,6 +10,8 @@ export default function Profile() {
     const [showForm, setShowForm] = useState(false);
     const [inputs, setInputs] = useState({});
     const [profile, setProfile] = useState({});
+    const [reviews, setReviews] = useState([]);
+    const [error, setError] = useState(null);
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -21,28 +23,25 @@ export default function Profile() {
         event.preventDefault();
 
         try {
-            const response = await fetch("https://bumbledore-server.vercel.app/my-profile", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: token,
-                    year: inputs.year,
-                    major: inputs.major,
-                    description: inputs.description
-                })
-            });
+            const profileData = {
+                username: token,
+                year: inputs.year,
+                major: inputs.major,
+                description: inputs.description
+            }
+
+            const response = await axios.post(`https://bumbledore-server.vercel.app/my-profile`, profileData);
 
             if (!response.ok) {
                 console.error('Failed to edit profile: Status code:', response.status);
-                alert('Failed to edit profile');
+                setError(`Failed to edit profile: ${error.message}`);
             }
 
+            setProfile(response.data);
             setShowForm(false); // Close the form after successful submission
         } catch (error) {
             console.error("Failed to edit profile: ", error);
-            alert('Failed to edit profile');
+            setError(`Failed to edit profile: ${error.message}`);
         }
     };
 
@@ -56,8 +55,24 @@ export default function Profile() {
             }
         };
 
+        const fetchReviews = async () => {
+            try {
+                const response = await axios.get(`https://bumbledore-server.vercel.app/reviews?username=${token}`); //`http://localhost:8080/reviews?username=${username}`);
+                console.log('Fetched reviews:', response.data);
+                setReviews(response.data);
+            } catch (error) {
+                console.error('Failed to fetch reviews:', error);
+                setError(`Failed to fetch reviews: ${error.message}`); // Set detailed error message
+            }
+        };
+
         fetchProfile();
+        fetchReviews();
     }, [token]); // Only run when token changes
+
+    if (error) {
+        return <p>{error}</p>; // Display error message
+    }
 
     return (
         <div className="grid-container">
@@ -73,8 +88,10 @@ export default function Profile() {
                         <label className={formStyles.label}>
                             Year:
                             <input
-                                type="text"
+                                type="number"
                                 name="year"
+                                min="1" 
+                                max="6"
                                 value={inputs.year || ''}
                                 onChange={handleChange}
                                 className={formStyles.inputs}
@@ -102,7 +119,9 @@ export default function Profile() {
                         </label>
                         <button type="submit">Submit</button>
                     </form>
-                    <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
+                    <div>
+                        <button type="button" onClick={() => setShowForm(false)}>Back</button>
+                    </div>
                 </div>
             ) : (
                 <div className="main-page">
@@ -112,7 +131,18 @@ export default function Profile() {
                         <p className="content-text">Major: {profile.major}</p>
                         <p className="content-text">Description: {profile.description}</p>
                     </div>
-                    <button onClick={() => setShowForm(true)}>Edit Profile</button>
+                    <div className="content-box">
+                        <h3 className="content-text">Reviews: </h3> 
+                        {reviews.map(review => (
+                            <div key={review._id} className="content-text">
+                                <p className="content-text">Rating: {review.rating}</p>
+                                <p className="content-text">Description: {review.text}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <div>
+                        <button onClick={() => setShowForm(true)}>Edit Profile</button>
+                    </div>
                 </div>
             )}
         </div>
