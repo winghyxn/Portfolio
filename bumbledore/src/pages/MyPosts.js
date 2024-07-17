@@ -147,7 +147,7 @@ export default function MyPosts() {
                                     )}
                                     {post.acceptedApplicants && (
                                         <div className={styles.header}>
-                                            Accepted: @<Link className={styles.text} to={`/profile/${post.acceptedApplicants[0]}`}>{post.acceptedApplicants[0]}</Link>
+                                            Accepted: @<Link className={styles.text} to={`/profile/${post.acceptedApplicant}`}>{post.acceptedApplicant}</Link>
                                         </div>
                                     )}
                                 </div>

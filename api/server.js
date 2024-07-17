@@ -545,7 +545,7 @@ app.patch('/posts/:id/accept', async (req, res) => {
       { _id: new ObjectId(id) },
       {
         $set: { status: 'Successful' },
-        $set: { acceptedApplicants: applicant },
+        $set: { acceptedApplicant: applicant },
         $pull: { applicants: applicant }
       }
     );
