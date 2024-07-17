@@ -25,7 +25,7 @@ export default function Messages() {
         };
 
         try {
-            const response = await axios.post("http://localhost:8080/messages"/*'https://bumbledore-server.vercel.app/messages'*/, messageData);
+            const response = await axios.post('https://bumbledore-server.vercel.app/messages'/*"http://localhost:8080/messages"*/, messageData);
             if (response.status === 200) {
                 fetchMessages(showChat);
             } 
@@ -76,7 +76,7 @@ export default function Messages() {
                         </div>
                     ))
                 ) : (
-                    <p>No chats</p>
+                    <div>No chats</div>
                 )}
             </div>
             <div className={styles.header}>
@@ -128,7 +128,7 @@ export default function Messages() {
                                 className={styles.textBarFormIputs} 
                                 type="submit"
                             >
-                                Submit
+                                Send
                             </button>
                         </form>
                     </div>

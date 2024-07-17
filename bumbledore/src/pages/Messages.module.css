@@ -16,10 +16,10 @@
 .textBar {
     display: flex;
     flex-direction: row;
-    grid-area: text-bar;
     width: 100%;
     align-items: center;
     justify-content: center;
+    align-self: flex-end;
 }
 
 .textBarForm {
@@ -28,15 +28,25 @@
     width: 100%;
     align-items: center;
     justify-content: center;
+    border-radius: 0px;
+    border-color: #fefdecff;
+    background-color: #fefdecff;
 }
 
 .textBarFormInputs {
-    margin: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    background-color: white;
+    width: 100%;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    border: 1.5px solid #454e64ff;
 }
 
 .messages {
     overflow-y: auto;
     box-sizing: border-box; 
+    flex: 1;
 }
 
 .mainPage {
@@ -46,8 +56,7 @@
     align-content: center; 
     grid-area: main-page; 
     overflow-y: auto;  
-    box-sizing: border-box; 
-    margin: 1rem; 
+    box-sizing: border-box;  
     text-align: center; 
     height: 100%;  
 }
