@@ -2,9 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
+const { createServer } = require('http')
+const { Server } = require('socket.io')
 const { MongoClient, ObjectId } = require('mongodb');
 
 const app = express();
+//const httpServer = createServer(app);
+//const io = new Server(httpServer);
 const port = 8080;
 
 const uri = "mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital";
@@ -24,6 +28,9 @@ const corsOptions = {
   allowedHeaders: 'Content-Type, Authorization'
 };
 
+/*io.on("connection", (socket) => {
+  console.log("connected!")
+}); */
 
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
@@ -465,7 +472,7 @@ app.get('/posts/my-applications', async (req, res) => {
     const modifiedApplications = myApplications.map(post => {
       const isAccepted = Array.isArray(post.acceptedApplicants) && post.acceptedApplicants.includes(username);
       
-      if (post.status === 'successful') {
+      if (post.status === 'Successful') {
         if (isAccepted) {
           return { ...post, status: 'Successful' };
         } else {
@@ -537,8 +544,8 @@ app.patch('/posts/:id/accept', async (req, res) => {
     const result = await posts.updateOne(
       { _id: new ObjectId(id) },
       {
-        $set: { status: 'successful' },
-        $addToSet: { acceptedApplicants: applicant },
+        $set: { status: 'Successful' },
+        $set: { acceptedApplicants: applicant },
         $pull: { applicants: applicant }
       }
     );
@@ -547,7 +554,7 @@ app.patch('/posts/:id/accept', async (req, res) => {
     if (post.applicants.length > 1) {
       await posts.updateMany(
         { _id: new ObjectId(id), 'applicants': { $nin: [applicant] } },
-        { $set: { 'applicants.$[elem].status': 'closed' } },
+        { $set: { 'applicants.$[elem].status': 'Closed' } },
         { arrayFilters: [{ 'elem': { $nin: [applicant] } }] }
       );
     }
@@ -619,5 +626,9 @@ app.get('/reviews', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
+
+/* httpServer.listen(port, () => {
+  console.log(`Server (socket.io) running on http://localhost:${port}`);
+}) */
 
 module.exports = app;
