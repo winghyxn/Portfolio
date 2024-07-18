@@ -280,36 +280,36 @@ app.post('/new-chat', async (req, res) => {
       const database = client.db('bumbledore');
       const allChats = database.collection('chats');
 
-      const selfHasChats = await allChats.find({ username: username });
-      const otherHasChats = await allChats.find({ username: profile });
+      const selfHasChats = await allChats.findOne({ username: username });
+      const otherHasChats = await allChats.findOne({ username: profile });
 
       if (!selfHasChats) {
         await allChats.insertOne({
           username: username,
-          chats: [{username: profile, postID: postID}]
-        });
-      } else {
-        await allChats.updateOne(
-          {username: username},
-          {
-            $addToSet: {chats: {username: profile, postID: postID}}
+          chats: []
         });
       }
 
       if (!otherHasChats) {
         await allChats.insertOne({
           username: profile, 
-          chats: [{username: username, postID: postID}]
+          chats: []
         });
-      } else {
-        await allChats.updateOne(
-          {username: profile}, 
-          {
-            $addToSet: {chats: {username: username, postID: postID}}
-        });
-      }
+      } 
 
-      res.status(200).send("Updated chats");
+      await allChats.updateOne(
+        {username: username},
+        {
+          $addToSet: {chats: {username: profile, postID: postID}}
+      });
+
+      await allChats.updateOne(
+        {username: profile}, 
+        {
+          $addToSet: {chats: {username: username, postID: postID}}
+      });
+
+      res.status(200).send("Successfully updated chats");
   } catch (error) {
       console.error('Error updating chats:', error);
       res.status(500).send('Failed to update chats');
@@ -326,7 +326,7 @@ app.get('/chats', async (req, res) => {
       const db = client.db("bumbledore");
       const allChats = db.collection("chats");
 
-      const chats = await allChats.find({ username: username });
+      const chats = await allChats.findOne({ username: username });
       res.status(200).json(chats);
   } catch (error) {
       console.error('Error fetching chats:', error);

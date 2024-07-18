@@ -50,6 +50,7 @@ export default function Messages() {
             try {
                 const response = await axios.get(`https://bumbledore-server.vercel.app/chats?username=${token}`/*`http://localhost:8080/chats?username=${token}`*/);
                 setUserChats(response.data);
+                console.log(response.data)
             } catch (error) {
                 console.error('Failed to fetch chats:', error);
             }
