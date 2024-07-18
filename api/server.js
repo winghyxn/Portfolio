@@ -280,28 +280,36 @@ app.post('/new-chat', async (req, res) => {
       const database = client.db('bumbledore');
       const allChats = database.collection('chats');
 
-      const selfHasChats = await allChats.findOne({ username: username, other: profile, postID: postID });
-      const otherHasChats = await allChats.findOne({ username: profile, other: username, postID: postID });
+      const selfHasChats = await allChats.find({ username: username });
+      const otherHasChats = await allChats.find({ username: profile });
 
       if (!selfHasChats) {
-          await allChats.insertOne({
-              username: username,
-              other: profile,
-              postID: postID,
-              chats: []
-          });
+        await allChats.insertOne({
+          username: username,
+          chats: [{username: profile, postID: postID}]
+        });
+      } else {
+        await allChats.updateOne(
+          {username: username},
+          {
+            $addToSet: {chats: {username: profile, postID: postID}}
+        });
       }
 
       if (!otherHasChats) {
-          await allChats.insertOne({
-              username: profile,
-              other: username,
-              postID: postID,
-              chats: []
-          });
+        await allChats.insertOne({
+          username: profile, 
+          chats: [{username: username, postID: postID}]
+        });
+      } else {
+        await allChats.updateOne(
+          {username: profile}, 
+          {
+            $addToSet: {chats: {username: username, postID: postID}}
+        });
       }
 
-      res.status(200).send('Chats updated successfully');
+      res.status(200).send("Updated chats");
   } catch (error) {
       console.error('Error updating chats:', error);
       res.status(500).send('Failed to update chats');
@@ -318,7 +326,7 @@ app.get('/chats', async (req, res) => {
       const db = client.db("bumbledore");
       const allChats = db.collection("chats");
 
-      const chats = await allChats.find({ username: username }).toArray();
+      const chats = await allChats.find({ username: username });
       res.status(200).json(chats);
   } catch (error) {
       console.error('Error fetching chats:', error);

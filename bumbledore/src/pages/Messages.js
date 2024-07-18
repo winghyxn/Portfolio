@@ -5,9 +5,9 @@ import useToken from "../components/useToken.js";
 import styles from './Messages.module.css';
 
 export default function Messages() {
-    const [userChats, setUserChats] = useState([]);
+    const [userChats, setUserChats] = useState({});
     const [messages, setMessages] = useState([]);
-    const [showChat, setShowChat] = useState({ other: "", postID: "" });
+    const [showChat, setShowChat] = useState({ username: "", postID: "" });
     const [input, setInput] = useState("");
     const { token } = useToken();
 
@@ -37,7 +37,7 @@ export default function Messages() {
 
     const fetchMessages = async (chat) => {
         try {
-            const response = await axios.get(`https://bumbledore-server.vercel.app/messages?sender=${token}&&recipient=${chat.other}&&postID=${chat.postID}`/*`http://localhost:8080/messages?sender=${token}&&recipient=${chat.other}&&postID=${chat.postID}`*/);
+            const response = await axios.get(`https://bumbledore-server.vercel.app/messages?sender=${token}&&recipient=${chat.username}&&postID=${chat.postID}`/*`http://localhost:8080/messages?sender=${token}&&recipient=${chat.other}&&postID=${chat.postID}`*/);
             console.log('Fetched messages:', response.data);
             setMessages(response.data);
         } catch (error) {
@@ -67,11 +67,11 @@ export default function Messages() {
         <div className={styles.gridContainer}>
             <div className={styles.sidebar}>
                 <a className={styles.sidebarText} href="/home">Back</a>
-                {userChats ? (
-                    userChats.map((chat) => (
-                        <div key={`${chat.other}-${chat.postID}`}>
+                {userChats.chats ? (
+                    userChats.chats.map((chat) => (
+                        <div key={`${chat.username}-${chat.postID}`}>
                             <button className={styles.sidebarButton} onClick={() => handleChatClick(chat)}>
-                                @{chat.other} <br></br> ------- #{chat.postID}
+                                @{chat.username} <br></br> ------- #{chat.postID}
                             </button>
                         </div>
                     ))
@@ -80,16 +80,16 @@ export default function Messages() {
                 )}
             </div>
             <div className={styles.header}>
-                {showChat.other === "" ? (
+                {showChat.username === "" ? (
                     <h1>Messages</h1>
                 ) : (
                     <h1>
-                        <Link to={`/profile/${showChat.other}`}>@{showChat.other}</Link> --- #{showChat.postID}
+                        <Link to={`/profile/${showChat.username}`}>@{showChat.username}</Link> --- #{showChat.postID}
                     </h1>
                 )}
             </div>
 
-            {showChat.other === "" ? (
+            {showChat.username === "" ? (
                 <div className={styles.mainPage}>
                     <div className={styles.messages}>
                         <p>Click on a username to access chat</p>
