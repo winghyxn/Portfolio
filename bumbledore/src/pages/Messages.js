@@ -48,7 +48,7 @@ export default function Messages() {
     useEffect(() => {
         const fetchUserChats = async () => {
             try {
-                const response = await axios.get(`https://bumbledore-server.vercel.app/chats?username=${token}`/*`http://localhost:8080/chats?username=${token}`*/);
+                const response = await axios.get(`https://api-wing-s-projects.vercel.app/chats?username=${token}`);
                 setUserChats(response.data);
                 console.log(response.data)
             } catch (error) {
@@ -62,6 +62,17 @@ export default function Messages() {
     const handleChatClick = (chat) => {
         setShowChat(chat);
         fetchMessages(chat);
+    };
+
+    const handleUsernameClick = async () => {
+        if (showChat.postID) {
+            try {
+                // Update usernameClicksMessages when a username is clicked
+                await axios.post(`https://api-wing-s-projects.vercel.app/clicks/${showChat.postID}`, { type: 'usernameClicksMessages' });
+            } catch (error) {
+                console.error('Failed to update usernameClicksMessages:', error);
+            }
+        }
     };
 
     return (
@@ -85,7 +96,13 @@ export default function Messages() {
                     <h1>Messages</h1>
                 ) : (
                     <h1>
-                        <Link to={`/profile/${showChat.username}`}>@{showChat.username}</Link> --- #{showChat.postID}
+                        <Link
+                            className={styles.text}
+                            to={`/profile/${showChat.other}`}
+                            onClick={handleUsernameClick} // Update count when username link is clicked
+                        >
+                            {showChat.other}
+                        </Link> - {showChat.postID}
                     </h1>
                 )}
             </div>
@@ -138,4 +155,3 @@ export default function Messages() {
         </div>
     );
 }
-

@@ -6,6 +6,7 @@ import useToken from "../components/useToken.js";
 import './Home.css';
 import styles from '../components/post.module.css';
 import loaderStyles from '../components/loader.module.css';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 export default function MyPosts() {
     const [posts, setPosts] = useState([]);
@@ -13,19 +14,34 @@ export default function MyPosts() {
     const [loading, setLoading] = useState(true);
     const [selectedApplicant, setSelectedApplicant] = useState({});
     const [confirmSelection, setConfirmSelection] = useState({});
+    const [clickCounts, setClickCounts] = useState({});
 
     const username = token;
 
     useEffect(() => {
         const fetchMyPosts = async () => {
             try {
-                const response = await axios.get('https://bumbledore-server.vercel.app/posts/my-posts', {//'http://localhost:8080/posts/my-posts', {
+                const response = await axios.get('https://api-wing-s-projects.vercel.app/posts/my-posts', {
                     params: { username }
                 });
-                setPosts(response.data);
+                const postsData = response.data;
+                setPosts(postsData);
+
+                for (const post of postsData) {
+                    try {
+                        const clickResponse = await axios.get(`https://api-wing-s-projects.vercel.app/clicks/${post._id}`);
+                        setClickCounts(prevCounts => ({
+                            ...prevCounts,
+                            [post._id]: clickResponse.data
+                        }));
+                    } catch (error) {
+                        console.error(`Failed to fetch click data for post ${post._id}:`, error.response ? error.response.data : error.message);
+                    }
+                }
+
                 setLoading(false);
             } catch (error) {
-                console.error('Failed to fetch my posts:', error);
+                console.error('Failed to fetch my posts:', error.response ? error.response.data : error.message);
             }
         };
 
@@ -34,7 +50,7 @@ export default function MyPosts() {
 
     const handleClosePost = async (postId) => {
         try {
-            const response = await axios.patch(`https://bumbledore-server.vercel.app/posts/${postId}/close`)//`http://localhost:8080/posts/${postId}/close`
+            const response = await axios.patch(`https://api-wing-s-projects.vercel.app/posts/${postId}/close`);
             if (response.status === 200) {
                 setPosts(posts.map(post => 
                     post._id === postId ? { ...post, status: 'closed' } : post
@@ -55,9 +71,9 @@ export default function MyPosts() {
     const handleConfirmApplicant = async (postId) => {
         const applicant = selectedApplicant[postId];
         if (!applicant) return;
-    
+
         try {
-            const response = await axios.patch(`https://bumbledore-server.vercel.app/posts/${postId}/accept`/*`http://localhost:8080/posts/${postId}/accept`*/, { applicant });
+            const response = await axios.patch(`https://api-wing-s-projects.vercel.app/posts/${postId}/accept`, { applicant });
             if (response.status === 200) {
                 setPosts(posts.map(post => 
                     post._id === postId ? { ...post, status: 'Successful', acceptedApplicant: applicant, applicants: post.applicants.filter(app => app !== applicant) } : post
@@ -71,7 +87,25 @@ export default function MyPosts() {
         } catch (error) {
             console.error("Failed to accept applicant", error);
         }
-    };    
+    };
+
+    const handleButtonClick = async (postId, type) => {
+        console.log(`Button clicked: postId=${postId}, type=${type}`); // Add this line for debugging
+
+        setClickCounts(prevCounts => ({
+            ...prevCounts,
+            [postId]: {
+                ...prevCounts[postId],
+                [type]: (prevCounts[postId]?.[type] || 0) + 1
+            }
+        }));
+
+        try {
+            await axios.post(`https://api-wing-s-projects.vercel.app/clicks/${postId}`, { type });
+        } catch (error) {
+            console.error('Failed to update click data:', error);
+        }
+    };
 
     return (
         <div className="grid-container">
@@ -93,7 +127,7 @@ export default function MyPosts() {
                             <div key={post._id} className={styles.post}>
                                 <div className={styles.username}>
                                     <div className={styles.header}>
-                                        @<Link className={styles.text} to={`/profile/${post.username}`}>{post.username}</Link>
+                                        @<Link className={styles.text} to={`/profile/${post.username}`} onClick={() => handleButtonClick(post._id, 'usernameClicks')}>{post.username}</Link>
                                     </div>
                                     <div className={styles.header}>#{post._id}</div>
                                     <div className={styles.text}>status: {post.status}</div>
@@ -116,7 +150,7 @@ export default function MyPosts() {
                                     {post.status === 'Open' && (
                                         <>
                                             <button 
-                                                onClick={() => handleClosePost(post._id)} 
+                                                onClick={() => {handleClosePost(post._id); handleButtonClick(post._id, 'closeClicks')}} 
                                                 type="button">
                                                 Close Post
                                             </button>
@@ -151,6 +185,30 @@ export default function MyPosts() {
                                         </div>
                                     )}
                                 </div>
+                                <button onClick={() => handleButtonClick(post._id, 'insights')}>
+                                    Show Insights
+                                </button>
+                                {clickCounts[post._id] && (
+                                    <BarChart
+                                        width={500}
+                                        height={300}
+                                        data={[
+                                            { name: 'Message Clicks', count: clickCounts[post._id].messageClicks || 0 },
+                                            { name: 'Apply Clicks', count: clickCounts[post._id].applyClicks || 0 },
+                                            { name: 'Profile Clicks', count: (clickCounts[post._id].usernameClicksHome || 0) + (clickCounts[post._id].usernameClicksApps || 0) + (clickCounts[post._id].usernameClicksMessages || 0) },
+                                        ]}
+                                        margin={{
+                                            top: 5, right: 30, left: 20, bottom: 5,
+                                        }}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="name" />
+                                        <YAxis />
+                                        <Tooltip />
+                                        <Legend />
+                                        <Bar dataKey="count" fill="#8884d8" />
+                                    </BarChart>
+                                )}
                             </div>
                         ))
                     ) : (
@@ -161,4 +219,3 @@ export default function MyPosts() {
         </div>
     );
 }
-

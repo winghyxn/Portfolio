@@ -17,7 +17,7 @@ export default function MyApplications() {
     useEffect(() => {
         const fetchMyApplications = async () => {
             try {
-                const response = await axios.get('https://bumbledore-server.vercel.app/posts/my-applications', /*'http://localhost:8080/posts/my-applications'*/ {
+                const response = await axios.get('https://api-wing-s-projects.vercel.app/posts/my-applications', {
                     params: { username }
                 });
                 setAppliedPosts(response.data);
@@ -29,6 +29,15 @@ export default function MyApplications() {
 
         fetchMyApplications();
     }, [username]);
+
+    const handleUsernameClick = async (postId) => {
+        try {
+            // Update usernameClicksApps when a username is clicked
+            await axios.post(`https://api-wing-s-projects.vercel.app/clicks/${postId}`, { type: 'usernameClicksApps' });
+        } catch (error) {
+            console.error('Failed to update usernameClicksApps:', error);
+        }
+    };
 
     return (
         <div className="grid-container">
@@ -50,7 +59,13 @@ export default function MyApplications() {
                             <div key={post._id} className={styles.post}>
                                 <div className={styles.username}>
                                     <div className={styles.header}>
-                                        @<Link className={styles.text} to={`/profile/${post.username}`}>{post.username}</Link>
+                                        @<Link
+                                            className={styles.text}
+                                            to={`/profile/${post.username}`}
+                                            onClick={() => handleUsernameClick(post._id)}
+                                        >
+                                            {post.username}
+                                        </Link>
                                     </div>
                                     <div className={styles.header}>#{post._id}</div>
                                     <div className={styles.text}>status: {post.status}</div>
