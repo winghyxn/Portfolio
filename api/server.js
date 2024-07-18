@@ -217,30 +217,37 @@ app.post('/create-post', async (req, res) => {
   const { typeOfRequest, courseCode, description, pay, numGroupmates, username } = req.body;
 
   try {
-      await client.connect();
-      const database = client.db('bumbledore');
-      const posts = database.collection('posts');
+    await client.connect();
+    const database = client.db('bumbledore');
+    const posts = database.collection('posts');
 
-      const post = {
-          typeOfRequest,
-          courseCode,
-          description,
-          pay: typeOfRequest === 'lookingForTutor' ? pay : undefined,
-          numGroupmates: typeOfRequest === 'lookingForGroupmate' ? numGroupmates : undefined,
-          createdAt: new Date(),
-          username, 
-          status: 'Open',
-          applicants: []
-      };
+    const post = {
+      typeOfRequest,
+      courseCode,
+      description,
+      pay: typeOfRequest === 'lookingForTutor' ? pay : undefined,
+      numGroupmates: typeOfRequest === 'lookingForGroupmate' ? numGroupmates : undefined,
+      createdAt: new Date(),
+      username,
+      status: 'Open',
+      applicants: [],
+      clickCounts: {  // Initialize clickCounts here
+        messageClicks: 0,
+        applyClicks: 0,
+        usernameClicksHome: 0,
+        usernameClicksApps: 0,
+        usernameClicksMessages: 0        
+      }
+    };
 
-      await posts.insertOne(post);
+    await posts.insertOne(post);
 
-      res.status(200).send('Post created successfully');
+    res.status(200).send('Post created successfully');
   } catch (error) {
-      console.error('Error creating post:', error);
-      res.status(500).send('Failed to create post');
+    console.error('Error creating post:', error);
+    res.status(500).send('Failed to create post');
   } finally {
-      await client.close();
+    await client.close();
   }
 });
 
@@ -606,6 +613,118 @@ app.get('/reviews', async (req, res) => {
     await client.close();
   }
 });
+
+app.post('/clicks/:postId', async (req, res) => {
+  const { postId } = req.params;
+  const { type } = req.body;
+
+  try {
+      if (!['messageClicks', 'applyClicks', 'usernameClicksHome', 'usernameClicksApps', 'usernameClicksMessages'].includes(type)) {
+          return res.status(400).json({ error: 'Invalid click type' });
+      }
+
+      await client.connect();
+      const database = client.db('bumbledore');
+      const posts = database.collection('posts');
+
+      // Convert postId to ObjectId
+      const postObjectId = new ObjectId(postId);
+
+      // Find the post
+      const post = await posts.findOne({ _id: postObjectId });
+      if (!post) {
+          return res.status(404).json({ error: 'Post not found' });
+      }
+
+      // Update the clickCounts
+      const updatedClickCounts = {
+          ...post.clickCounts,
+          [type]: (post.clickCounts?.[type] || 0) + 1
+      };
+
+      await posts.updateOne(
+          { _id: postObjectId },
+          { $set: { clickCounts: updatedClickCounts } }
+      );
+
+      res.status(200).json({ message: `Incremented ${type} count` });
+  } catch (error) {
+      console.error(`Error incrementing ${type} count for post ${postId}:`, error);
+      res.status(500).json({ error: 'Failed to increment click count' });
+  } finally {
+      await client.close();
+  }
+});
+
+
+// Retrieve click data
+app.get('/clicks/:postId', async (req, res) => {
+  const { postId } = req.params;
+
+  try {
+      const postObjectId = new ObjectId(postId);
+
+      await client.connect();
+      const database = client.db('bumbledore');
+      const posts = database.collection('posts');
+
+      const post = await posts.findOne({ _id: postObjectId });
+      if (!post) {
+          return res.status(404).json({ error: 'Post not found' });
+      }
+      const clickCounts = post.clickCounts || { 
+          messageClicks: 0, 
+          applyClicks: 0, 
+          usernameClicksHome: 0,
+          usernameClicksApps: 0,
+          usernameClicksMessages: 0
+      };
+      const usernameClicks = clickCounts.usernameClicksHome + clickCounts.usernameClicksApps + clickCounts.usernameClicksMessages;
+      res.status(200).json({
+          ...clickCounts,
+          usernameClicks
+      });
+  } catch (error) {
+      console.error('Error retrieving click data:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  } finally {
+      await client.close();
+  }
+});
+
+app.get('/user-clicks/:username', async (req, res) => {
+  const { username } = req.params;
+  console.log(`Received request for username clicks: ${username}`); // Add this line
+
+  try {
+      await client.connect();
+      const database = client.db('bumbledore');
+      const posts = database.collection('posts');
+
+      const userPosts = await posts.find({ username }).toArray();
+      console.log(`User posts: ${JSON.stringify(userPosts)}`); // Add this line
+
+      const totalClicks = userPosts.reduce((acc, post) => {
+          const { clickCounts } = post;
+          acc.usernameClicksHome += clickCounts?.usernameClicksHome || 0;
+          acc.usernameClicksApps += clickCounts?.usernameClicksApps || 0;
+          acc.usernameClicksMessages += clickCounts?.usernameClicksMessages || 0;
+          return acc;
+      }, {
+          usernameClicksHome: 0,
+          usernameClicksApps: 0,
+          usernameClicksMessages: 0
+      });
+
+      res.status(200).json(totalClicks);
+  } catch (error) {
+      console.error('Error retrieving user click data:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  } finally {
+      await client.close();
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
