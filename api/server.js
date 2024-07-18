@@ -2,9 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
+const { createServer } = require('http')
+const { Server } = require('socket.io')
 const { MongoClient, ObjectId } = require('mongodb');
 
 const app = express();
+//const httpServer = createServer(app);
+//const io = new Server(httpServer);
 const port = 8080;
 
 const uri = "mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital";
@@ -24,6 +28,9 @@ const corsOptions = {
   allowedHeaders: 'Content-Type, Authorization'
 };
 
+/*io.on("connection", (socket) => {
+  console.log("connected!")
+}); */
 
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
@@ -170,7 +177,7 @@ app.post('/my-profile', async (req, res) => {
     } else {
       await profiles.insertOne({ username, year, major, description });
     }
-    res.status(200).send('Profile edited successfully');
+    res.status(200).json({ username, year, major, description });
   } catch (error) {
     console.error('Error editing profile:', error);
     res.status(500).send('Failed to edit profile');
@@ -280,28 +287,36 @@ app.post('/new-chat', async (req, res) => {
       const database = client.db('bumbledore');
       const allChats = database.collection('chats');
 
-      const selfHasChats = await allChats.findOne({ username: username, other: profile, postID: postID });
-      const otherHasChats = await allChats.findOne({ username: profile, other: username, postID: postID });
+      const selfHasChats = await allChats.findOne({ username: username });
+      const otherHasChats = await allChats.findOne({ username: profile });
 
       if (!selfHasChats) {
-          await allChats.insertOne({
-              username: username,
-              other: profile,
-              postID: postID,
-              chats: []
-          });
+        await allChats.insertOne({
+          username: username,
+          chats: []
+        });
       }
 
       if (!otherHasChats) {
-          await allChats.insertOne({
-              username: profile,
-              other: username,
-              postID: postID,
-              chats: []
-          });
-      }
+        await allChats.insertOne({
+          username: profile, 
+          chats: []
+        });
+      } 
 
-      res.status(200).send('Chats updated successfully');
+      await allChats.updateOne(
+        {username: username},
+        {
+          $addToSet: {chats: {username: profile, postID: postID}}
+      });
+
+      await allChats.updateOne(
+        {username: profile}, 
+        {
+          $addToSet: {chats: {username: username, postID: postID}}
+      });
+
+      res.status(200).send("Successfully updated chats");
   } catch (error) {
       console.error('Error updating chats:', error);
       res.status(500).send('Failed to update chats');
@@ -318,7 +333,7 @@ app.get('/chats', async (req, res) => {
       const db = client.db("bumbledore");
       const allChats = db.collection("chats");
 
-      const chats = await allChats.find({ username: username }).toArray();
+      const chats = await allChats.findOne({ username: username });
       res.status(200).json(chats);
   } catch (error) {
       console.error('Error fetching chats:', error);
@@ -472,7 +487,7 @@ app.get('/posts/my-applications', async (req, res) => {
     const modifiedApplications = myApplications.map(post => {
       const isAccepted = Array.isArray(post.acceptedApplicants) && post.acceptedApplicants.includes(username);
       
-      if (post.status === 'successful') {
+      if (post.status === 'Successful') {
         if (isAccepted) {
           return { ...post, status: 'Successful' };
         } else {
@@ -544,8 +559,8 @@ app.patch('/posts/:id/accept', async (req, res) => {
     const result = await posts.updateOne(
       { _id: new ObjectId(id) },
       {
-        $set: { status: 'successful' },
-        $addToSet: { acceptedApplicants: applicant },
+        $set: { status: 'Successful' },
+        $set: { acceptedApplicant: applicant },
         $pull: { applicants: applicant }
       }
     );
@@ -554,7 +569,7 @@ app.patch('/posts/:id/accept', async (req, res) => {
     if (post.applicants.length > 1) {
       await posts.updateMany(
         { _id: new ObjectId(id), 'applicants': { $nin: [applicant] } },
-        { $set: { 'applicants.$[elem].status': 'closed' } },
+        { $set: { 'applicants.$[elem].status': 'Closed' } },
         { arrayFilters: [{ 'elem': { $nin: [applicant] } }] }
       );
     }
@@ -587,7 +602,16 @@ app.post('/reviews', async (req, res) => {
     await client.connect();
     const db = client.db('bumbledore');
     const reviews = db.collection('reviews');
-    await reviews.insertOne(review);
+    const existingReview = reviews.findOne({ postID: postID});
+
+    if (existingReview) {
+      await reviews.replaceOne(
+        { postID: postID },
+        review
+      );
+    } else {
+      await reviews.insertOne(review);
+    }
     res.status(200).json(review);
   } catch (error) {
     console.error('Error submitting review:', error);
@@ -729,5 +753,9 @@ app.get('/user-clicks/:username', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
+
+/* httpServer.listen(port, () => {
+  console.log(`Server (socket.io) running on http://localhost:${port}`);
+}) */
 
 module.exports = app;

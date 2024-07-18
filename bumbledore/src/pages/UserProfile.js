@@ -47,7 +47,7 @@ export default function UserProfile() {
 
     const fetchReviewablePosts = async () => {
         try {
-            const response = await axios.get(`http://bumbledore-server.vercel.app/posts/reviewable-posts?first=${username}&&second=${token}`/*`http://localhost:8080/posts/reviewable-posts?first=${username}&&second=${token}`*/);
+            const response = await axios.get(`https://bumbledore-server.vercel.app/posts/reviewable-posts?first=${username}&&second=${token}`/*`http://localhost:8080/posts/reviewable-posts?first=${username}&&second=${token}`*/);
             console.log('Fetched reviewable posts:', response.data);
             setReviewOptions(response.data);
         } catch (error) {
@@ -77,7 +77,7 @@ export default function UserProfile() {
             };
 
             const response = await axios.post(`https://bumbledore-server.vercel.app/reviews`/*`http://localhost:8080/reviews`*/, reviewData);
-            setReviews([...reviews, response.data]);
+            setReviews([...reviews, response.data]); // when u edit review it shows up as new review, but w page refresh it is updated as same review
             setSelectedID("");
             setNewReview({ postID: '', rating: 0, text: '', reviewer: '', reviewee: ''});
             setShowForm(false);
@@ -87,7 +87,11 @@ export default function UserProfile() {
         }
     };
 
-    //const averageRating = reviews.map()
+    const averageRating = (reviews.length > 0) ? (
+        (reviews.map((review) => parseInt(review.rating)).reduce((accumulator, currentValue) => accumulator + currentValue, 0) / reviews.length).toFixed(2)
+    ) : (
+        "-"
+    );
 
     if (error) {
         return <p>{error}</p>; // Display error message
@@ -115,11 +119,12 @@ export default function UserProfile() {
                                 value={selectedID} 
                                 onChange={handleIDSelection}
                                 className={formStyles.inputs}>
-                                    <option value="">
+                                    <option value="" className={formStyles.inputs}>
                                         Select
                                     </option> 
                                     {reviewOptions && reviewOptions.map(option => (
                                     <option 
+                                        className={formStyles.inputs}
                                         key={option._id} 
                                         value={option._id}>
                                             {option._id}
@@ -155,20 +160,24 @@ export default function UserProfile() {
                         <p className="content-text">Year: {profile.year}</p>
                         <p className="content-text">Major: {profile.major}</p>
                         <p className="content-text">Description: {profile.description}</p>
-                        <p className="content-text">Average rating: 000</p>
+                        <p className="content-text">Average rating: {averageRating}</p>
                     </div>
-                    <div className="content-box">Reviews: 
+                    <div className="content-box">
+                        <h3 className="content-text">Reviews: </h3> 
                         {reviews.map(review => (
                             <div key={review._id} className="content-text">
+                                <p className="content-text">-----------</p>
                                 <p className="content-text">Rating: {review.rating}</p>
-                                <p className="content-text">{review.text}</p>
+                                <p className="content-text">Description: {review.text}</p>
                             </div>
                         ))}
                     </div>
-                    <button type="button" onClick={() => {
-                        setShowForm(true);
-                        fetchReviewablePosts();
-                        }}>Leave a review</button>
+                    <div>
+                        <button type="button" onClick={() => {
+                            setShowForm(true);
+                            fetchReviewablePosts();
+                            }}>Leave a review</button>
+                    </div>
                 </div>
             )}
         </div>

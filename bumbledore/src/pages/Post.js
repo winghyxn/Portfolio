@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/sidebar'; // Adjust the path as needed
 import './Home.css';
 import formStyles from '../components/form.module.css';
@@ -13,6 +14,8 @@ export default function Post() {
     const [description, setDescription] = useState('');
     const [charCount, setCharCount] = useState(0);
     const { token } = useToken(); // Get the token from the custom hook
+
+    const navigate = useNavigate();
 
     const handleTypeChange = (e) => {
         setTypeOfRequest(e.target.value);
@@ -60,8 +63,7 @@ export default function Post() {
                 setNumGroupmates('');
                 setDescription('');
                 setCharCount(0);
-                // Show success message
-                alert('Post created successfully!');
+                navigate('/home');
             } else {
                 console.error('Failed to create post: Status code:', response.status);
                 alert('Failed to create post');

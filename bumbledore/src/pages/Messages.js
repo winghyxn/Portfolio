@@ -5,9 +5,9 @@ import useToken from "../components/useToken.js";
 import styles from './Messages.module.css';
 
 export default function Messages() {
-    const [userChats, setUserChats] = useState([]);
+    const [userChats, setUserChats] = useState({});
     const [messages, setMessages] = useState([]);
-    const [showChat, setShowChat] = useState({ other: "", postID: "" });
+    const [showChat, setShowChat] = useState({ username: "", postID: "" });
     const [input, setInput] = useState("");
     const { token } = useToken();
 
@@ -25,7 +25,7 @@ export default function Messages() {
         };
 
         try {
-            const response = await axios.post("https://api-wing-s-projects.vercel.app/messages", messageData);
+            const response = await axios.post('https://bumbledore-server.vercel.app/messages'/*"http://localhost:8080/messages"*/, messageData);
             if (response.status === 200) {
                 fetchMessages(showChat);
             } 
@@ -37,7 +37,7 @@ export default function Messages() {
 
     const fetchMessages = async (chat) => {
         try {
-            const response = await axios.get(`https://api-wing-s-projects.vercel.app/messages?sender=${token}&&recipient=${chat.other}&&postID=${chat.postID}`);
+            const response = await axios.get(`https://bumbledore-server.vercel.app/messages?sender=${token}&&recipient=${chat.username}&&postID=${chat.postID}`/*`http://localhost:8080/messages?sender=${token}&&recipient=${chat.other}&&postID=${chat.postID}`*/);
             console.log('Fetched messages:', response.data);
             setMessages(response.data);
         } catch (error) {
@@ -50,6 +50,7 @@ export default function Messages() {
             try {
                 const response = await axios.get(`https://api-wing-s-projects.vercel.app/chats?username=${token}`);
                 setUserChats(response.data);
+                console.log(response.data)
             } catch (error) {
                 console.error('Failed to fetch chats:', error);
             }
@@ -78,20 +79,20 @@ export default function Messages() {
         <div className={styles.gridContainer}>
             <div className={styles.sidebar}>
                 <a className={styles.sidebarText} href="/home">Back</a>
-                {userChats ? (
-                    userChats.map((chat) => (
-                        <div className={styles.sidebarText} key={`${chat.other}-${chat.postID}`}>
-                            <button onClick={() => handleChatClick(chat)}>
-                                {chat.other} - {chat.postID}
+                {userChats.chats ? (
+                    userChats.chats.map((chat) => (
+                        <div key={`${chat.username}-${chat.postID}`}>
+                            <button className={styles.sidebarButton} onClick={() => handleChatClick(chat)}>
+                                @{chat.username} <br></br> ------- #{chat.postID}
                             </button>
                         </div>
                     ))
                 ) : (
-                    <p>No chats</p>
+                    <div>No chats</div>
                 )}
             </div>
             <div className={styles.header}>
-                {showChat.other === "" ? (
+                {showChat.username === "" ? (
                     <h1>Messages</h1>
                 ) : (
                     <h1>
@@ -106,7 +107,7 @@ export default function Messages() {
                 )}
             </div>
 
-            {showChat.other === "" ? (
+            {showChat.username === "" ? (
                 <div className={styles.mainPage}>
                     <div className={styles.messages}>
                         <p>Click on a username to access chat</p>
@@ -145,7 +146,7 @@ export default function Messages() {
                                 className={styles.textBarFormIputs} 
                                 type="submit"
                             >
-                                Submit
+                                Send
                             </button>
                         </form>
                     </div>

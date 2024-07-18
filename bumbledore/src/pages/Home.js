@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+//import InfiniteScroll from "react-infinite-scroll-component";
 import axios from 'axios';
 import Sidebar from '../components/sidebar.js'; // Adjust the path as needed
 import useToken from "../components/useToken.js";
@@ -44,7 +45,7 @@ export default function Home() {
         };
 
         try {
-            const response = await axios.post('https://api-wing-s-projects.vercel.app/new-chat', userData);
+            const response = await axios.post('https://bumbledore-server.vercel.app/new-chat'/*'http://localhost:8080/new-chat'*/, userData);
             if (response.status === 200) {
                 console.log('Chat created successfully:', response.data);
                 navigate('/messages');
@@ -70,14 +71,14 @@ export default function Home() {
                 setAppliedPosts(prevState => ({ ...prevState, [postId]: true }));
 
                 // Create a chat and send an automatic message
-                const chatResponse = await axios.post('https://api-wing-s-projects.vercel.app/new-chat', {
+                const chatResponse = await axios.post('https://bumbledore-server.vercel.app/new-chat'/*'http://localhost:8080/new-chat'*/, {
                     username: username,
                     profile: poster,
                     postID: postId
                 });
 
                 if (chatResponse.status === 200) {
-                    const messageResponse = await axios.post('https://api-wing-s-projects.vercel.app/messages', {
+                    const messageResponse = await axios.post('https://bumbledore-server.vercel.app/messages'/*'http://localhost:8080/messages'*/, {
                         sender: username,
                         recipient: poster,
                         postID: postId,
@@ -193,8 +194,10 @@ export default function Home() {
                                                 <button
                                                     onClick={() => handleApplyRequest(post._id, post.username)}
                                                     type="button"
-                                                >
-                                                    Apply
+                                                    data-username={username}
+                                                    data-profile={post.username}
+                                                    data-postID={post._id.toString()}>
+                                                        Message
                                                 </button>
                                             ) : (<p></p>)}
                                     </div>
