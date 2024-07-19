@@ -82,11 +82,9 @@ export default function Profile() {
       console.log(`Fetching click data from: ${url}`); // Log for debugging
       const response = await axios.get(url);
       console.log(`Received click data: ${JSON.stringify(response.data)}`); // Log for debugging
-      setClickData(response.data);
+      setClickData(response.data.totalClicks);
 
-      // Fetch all posts for the user and calculate profile clicks for each post
-      const postsResponse = await axios.get(`https://api-wing-s-projects.vercel.app/posts?username=${token}`);
-      const posts = postsResponse.data;
+      const posts = response.data.userPosts;
       const postClicks = posts.map(post => ({
         id: post._id,
         totalClicks: (post.clickCounts?.usernameClicksHome || 0) +
@@ -206,5 +204,3 @@ export default function Profile() {
     </div>
   );
 }
-
-
