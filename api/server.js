@@ -716,6 +716,7 @@ app.get('/clicks/:postId', async (req, res) => {
   }
 });
 
+// server.js
 app.get('/user-clicks/:username', async (req, res) => {
   const { username } = req.params;
   console.log(`Received request for username clicks: ${username}`); // Add this line
@@ -740,7 +741,7 @@ app.get('/user-clicks/:username', async (req, res) => {
           usernameClicksMessages: 0
       });
 
-      res.status(200).json(totalClicks);
+      res.status(200).json({ totalClicks, userPosts });
   } catch (error) {
       console.error('Error retrieving user click data:', error);
       res.status(500).json({ error: 'Internal server error' });
@@ -758,4 +759,4 @@ app.listen(port, () => {
   console.log(`Server (socket.io) running on http://localhost:${port}`);
 }) */
 
-module.exports = app;
+  module.exports = app;
