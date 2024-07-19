@@ -98,10 +98,10 @@ export default function Messages() {
                     <h1>
                         <Link
                             className={styles.text}
-                            to={`/profile/${showChat.other}`}
+                            to={`/profile/${showChat.username}`}
                             onClick={handleUsernameClick} // Update count when username link is clicked
                         >
-                            {showChat.other}
+                            {showChat.username}
                         </Link> - {showChat.postID}
                     </h1>
                 )}
@@ -129,7 +129,7 @@ export default function Messages() {
                             className={styles.textBarForm} 
                             onSubmit={handleMessage}
                             data-sender={token}
-                            data-recipient={showChat.other}
+                            data-recipient={showChat.username}
                             data-postid={showChat.postID}
                         >
                             <textarea 
@@ -155,3 +155,5 @@ export default function Messages() {
         </div>
     );
 }
+
+
