@@ -15,6 +15,7 @@ export default function MyPosts() {
     const [selectedApplicant, setSelectedApplicant] = useState({});
     const [confirmSelection, setConfirmSelection] = useState({});
     const [clickCounts, setClickCounts] = useState({});
+    const [insightsVisible, setInsightsVisible] = useState({});
 
     const username = token;
 
@@ -107,6 +108,13 @@ export default function MyPosts() {
         }
     };
 
+    const toggleInsightsVisibility = (postId) => {
+        setInsightsVisible(prevVisibility => ({
+            ...prevVisibility,
+            [postId]: !prevVisibility[postId]
+        }));
+    };
+
     return (
         <div className="grid-container">
             <div className="sidebar">
@@ -185,10 +193,10 @@ export default function MyPosts() {
                                         </div>
                                     )}
                                 </div>
-                                <button onClick={() => handleButtonClick(post._id, 'insights')}>
-                                    Show Insights
+                                <button onClick={() => { toggleInsightsVisibility(post._id); handleButtonClick(post._id, 'insights'); }}>
+                                    {insightsVisible[post._id] ? 'Hide Insights' : 'Show Insights'}
                                 </button>
-                                {clickCounts[post._id] && (
+                                {insightsVisible[post._id] && clickCounts[post._id] && (
                                     <BarChart
                                         width={500}
                                         height={300}
@@ -208,7 +216,7 @@ export default function MyPosts() {
                                         <Legend />
                                         <Bar dataKey="count" fill="#8884d8" />
                                     </BarChart>
-                                )}
+                            )}
                             </div>
                         ))
                     ) : (
@@ -218,4 +226,4 @@ export default function MyPosts() {
             )}
         </div>
     );
-}
+}    
