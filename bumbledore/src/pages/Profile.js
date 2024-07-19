@@ -41,7 +41,7 @@ export default function Profile() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch("https://api-wing-s-projects.vercel.app/my-profile", {
+      const response = await fetch("https://bumbledore-server.vercel.app/my-profile", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -66,7 +66,7 @@ export default function Profile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`https://api-wing-s-projects.vercel.app/my-profile?username=${token}`);
+        const response = await axios.get(`https://bumbledore-server.vercel.app/my-profile?username=${token}`);
         setProfile(response.data);
       } catch (error) {
         console.error('Error fetching profile:', error);
@@ -78,7 +78,7 @@ export default function Profile() {
 
   const fetchClickData = useCallback(async () => {
     try {
-      const url = `https://api-wing-s-projects.vercel.app/user-clicks/${token}`;
+      const url = `https://bumbledore-server.vercel.app/user-clicks/${token}`;
       console.log(`Fetching click data from: ${url}`); // Log for debugging
       const response = await axios.get(url);
       console.log(`Received click data: ${JSON.stringify(response.data)}`); // Log for debugging
