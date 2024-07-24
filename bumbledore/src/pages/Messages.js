@@ -48,7 +48,7 @@ export default function Messages() {
     useEffect(() => {
         const fetchUserChats = async () => {
             try {
-                const response = await axios.get(`https://api-wing-s-projects.vercel.app/chats?username=${token}`);
+                const response = await axios.get(`https://bumbledore-server.vercel.app/chats?username=${token}`);
                 setUserChats(response.data);
                 console.log(response.data)
             } catch (error) {
@@ -68,7 +68,7 @@ export default function Messages() {
         if (showChat.postID) {
             try {
                 // Update usernameClicksMessages when a username is clicked
-                await axios.post(`https://api-wing-s-projects.vercel.app/clicks/${showChat.postID}`, { type: 'usernameClicksMessages' });
+                await axios.post(`https://bumbledore-server.vercel.app/clicks/${showChat.postID}`, { type: 'usernameClicksMessages' });
             } catch (error) {
                 console.error('Failed to update usernameClicksMessages:', error);
             }

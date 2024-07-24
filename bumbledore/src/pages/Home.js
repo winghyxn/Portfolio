@@ -21,7 +21,7 @@ export default function Home() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await axios.get('https://api-wing-s-projects.vercel.app/posts');
+                const response = await axios.get('https://bumbledore-server.vercel.app/posts');
                 const openPosts = response.data.filter(post => post.status === 'Open');
                 setPosts(openPosts);
                 setLoading(false);
@@ -61,7 +61,7 @@ export default function Home() {
     const handleApplyRequest = async (postId, poster) => {
         try {
             console.log(`Applying to post: ${postId}`);
-            const url = `https://api-wing-s-projects.vercel.app/posts/${postId}/apply`;
+            const url = `https://bumbledore-server.vercel.app/posts/${postId}/apply`;
             console.log(`Request URL: ${url}`);
 
             // Apply to the post
@@ -105,7 +105,7 @@ export default function Home() {
 
     const handleButtonClick = async (postId, type) => {
         try {
-            const response = await axios.post(`https://api-wing-s-projects.vercel.app/clicks/${postId}`, { type });
+            const response = await axios.post(`https://bumbledore-server.vercel.app/clicks/${postId}`, { type });
             if (response.status === 200) {
                 console.log(`Incremented ${type} count for post ${postId}`);
                 // Update local state to reflect the change immediately
