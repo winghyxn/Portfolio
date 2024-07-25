@@ -35,12 +35,12 @@ export default function Login({ setToken }) {
             const response = await axios.post("https://bumbledore-server.vercel.app/login", data);
             setToken(response.data);
 
-            if (response.ok) {
+            if (response.status === '200') {
                 navigate('/home');
             }
 
         } catch (error) {
-            setError(error);
+            setError(error.response.data.error);
             console.error('Request failed:', error);
         }
     }
@@ -50,26 +50,30 @@ export default function Login({ setToken }) {
             <h1 className = "login-title">Bumbledore</h1>
             <div>
             <h2 className = "login-subtitle">Login</h2>
-            <form onSubmit={handleSubmit}>
-                <label>Email:  </label>
+            <form aria-label="login-form" onSubmit={handleSubmit}>
+                <label>Email:  
                     <input 
                         type="email" 
                         name="email" 
+                        data-testid="email-login"
                         value={inputs.email || ""} 
                         onChange={handleChange} 
                         required 
                     />
+                </label>
                 <br />
-                <label>Password:  </label>
+                <label>Password:  
                     <input 
                         type="password" 
                         name="password" 
+                        data-testid="password-login"
                         value={inputs.password || ""} 
                         onChange={handleChange} 
                         required 
                     />
+                </label>
                 <br />
-                <input type="submit" id="submit-button" value="Login" />
+                <input type="submit" id="submit-button" name="Login" value="Login" />
             </form>
             </div>
             <p id = "text1">Don't have an account? <a href = "/create-account">Create Account</a></p>

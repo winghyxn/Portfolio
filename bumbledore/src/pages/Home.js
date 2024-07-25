@@ -22,8 +22,10 @@ export default function Home() {
         const fetchPosts = async () => {
             try {
                 const response = await axios.get('https://bumbledore-server.vercel.app/posts');
-                const openPosts = response.data.filter(post => post.status === 'Open');
-                setPosts(openPosts);
+                if (response.data) {
+                    const openPosts = response.data.filter(post => post.status === 'Open');
+                    setPosts(openPosts);
+                }
                 setLoading(false);
             } catch (error) {
                 console.error('Failed to fetch posts:', error);
@@ -197,7 +199,7 @@ export default function Home() {
                                                     data-username={username}
                                                     data-profile={post.username}
                                                     data-postID={post._id.toString()}>
-                                                        Message
+                                                        Apply
                                                 </button>
                                             ) : (<p></p>)}
                                     </div>
