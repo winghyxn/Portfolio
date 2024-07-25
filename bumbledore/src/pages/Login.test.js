@@ -32,8 +32,8 @@ describe("page loads correctly",() => {
             </BrowserRouter>
         );
     
-        const emailInput = screen.getByLabelText('Email:');
-        const passwordInput = screen.getByLabelText('Password:');
+        const emailInput = screen.getByTestId('email-login');
+        const passwordInput = screen.getByTestId('password-login');
     
         await user.type(emailInput, 'a@gmail.com');
         expect(emailInput.value).toBe('a@gmail.com');
@@ -76,8 +76,8 @@ describe('correct form input and submission', () => {
         expect(form).toBeInTheDocument();
         form.onsubmit = mockSubmit;
     
-        const emailInput = screen.getByLabelText('Email:');
-        const passwordInput = screen.getByLabelText('Password:');
+        const emailInput = screen.getByTestId('email-login');
+        const passwordInput = screen.getByTestId('password-login');
     
         await user.type(emailInput, 'a@gmail.com');
         await user.type(passwordInput, '0000');

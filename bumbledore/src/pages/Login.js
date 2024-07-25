@@ -55,6 +55,7 @@ export default function Login({ setToken }) {
                     <input 
                         type="email" 
                         name="email" 
+                        data-testid="email-login"
                         value={inputs.email || ""} 
                         onChange={handleChange} 
                         required 
@@ -65,6 +66,7 @@ export default function Login({ setToken }) {
                     <input 
                         type="password" 
                         name="password" 
+                        data-testid="password-login"
                         value={inputs.password || ""} 
                         onChange={handleChange} 
                         required 
