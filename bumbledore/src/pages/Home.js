@@ -199,7 +199,7 @@ export default function Home() {
                                                     data-username={username}
                                                     data-profile={post.username}
                                                     data-postID={post._id.toString()}>
-                                                        Message
+                                                        Apply
                                                 </button>
                                             ) : (<p></p>)}
                                     </div>
