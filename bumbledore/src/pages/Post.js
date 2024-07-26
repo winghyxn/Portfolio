@@ -83,7 +83,7 @@ export default function Post() {
                 <h1>Post</h1>
             </div>
             <div className="main-page">
-                <form className={formStyles.form} onSubmit={handleSubmit}>
+                <form aria-label="post-form" className={formStyles.form} onSubmit={handleSubmit}>
                     <div>
                         <label className={formStyles.label} htmlFor="typeOfRequest">Type of Request:</label>
                         <select
@@ -93,9 +93,9 @@ export default function Post() {
                             className={formStyles.inputs}
                             required
                         >
-                            <option value="">Select</option>
-                            <option value="lookingForTutor">Looking for Tutor</option>
-                            <option value="lookingForGroupmate">Looking for Groupmate</option>
+                            <option data-testid = "select" value="">Select</option>
+                            <option data-testid = "lookingForTutor" value="lookingForTutor">Looking for Tutor</option>
+                            <option data-testid = "lookingForGroupmate" value="lookingForGroupmate">Looking for Groupmate</option>
                         </select>
                     </div>
                     <div>

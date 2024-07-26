@@ -22,7 +22,7 @@ describe("page loads correctly",() => {
         expect(screen.getByText('Email:')).toBeInTheDocument();
     })
     
-    test('form able to be filled in', async () => {
+    test('form able to be filled in with input values updated', async () => {
         const mockSetToken = jest.fn(() => {token: "WiseGoose"});
         const user = userEvent.setup()
     

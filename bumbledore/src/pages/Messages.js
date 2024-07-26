@@ -97,12 +97,11 @@ export default function Messages() {
                 ) : (
                     <h1>
                         <Link
-                            className={styles.text}
                             to={`/profile/${showChat.username}`}
                             onClick={handleUsernameClick} // Update count when username link is clicked
                         >
-                            {showChat.username}
-                        </Link> - {showChat.postID}
+                            @{showChat.username}
+                        </Link> - #{showChat.postID}
                     </h1>
                 )}
             </div>

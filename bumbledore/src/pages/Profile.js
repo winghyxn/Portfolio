@@ -144,7 +144,9 @@ export default function Profile() {
             </label>
             <button type="submit">Submit</button>
           </form>
-          <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
+          <div>
+            <button type="button" onClick={() => setShowForm(false)}>Back</button>
+          </div>
         </div>
       ) : (
         <div className="main-page">
@@ -154,9 +156,11 @@ export default function Profile() {
             <p className="content-text">Major: {profile.major}</p>
             <p className="content-text">Description: {profile.description}</p>
           </div>
-          <button onClick={() => setShowForm(true)}>Edit Profile</button>
+          <div>
+            <button onClick={() => setShowForm(true)}>Edit Profile</button>
+          </div>
           {clickData && (
-            <div>
+            <div className="charts">
               <h3>Page where users came from</h3>
               <Bar
                 data={{
