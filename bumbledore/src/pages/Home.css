@@ -69,3 +69,10 @@ body {
     text-align: left; 
 } 
  
+.charts {
+    display: flex; 
+    flex-direction: column; 
+    justify-content: flex-start;  
+    align-content: center; 
+    height: 70%;
+}

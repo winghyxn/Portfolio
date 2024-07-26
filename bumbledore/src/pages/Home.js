@@ -152,7 +152,7 @@ export default function Home() {
                 <div className="main-page">
                     {posts.length > 0 ? (
                         posts.map((post) => (
-                            <div key={post._id} className={styles.post}>
+                            <div data-testid="post" key={post._id} className={styles.post}>
                                 <div className={styles.username}>
                                     <div className={styles.header}>
                                         @<Link className={styles.header} to={`/profile/${post.username}`} onClick={() => handleLinkClick(post._id)}>{post.username}</Link>
@@ -198,7 +198,7 @@ export default function Home() {
                                                     type="button"
                                                     data-username={username}
                                                     data-profile={post.username}
-                                                    data-postID={post._id.toString()}>
+                                                    data-postid={post._id.toString()}>
                                                         Apply
                                                 </button>
                                             ) : (<p></p>)}
