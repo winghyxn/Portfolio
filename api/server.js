@@ -502,34 +502,28 @@ app.get('/posts/my-applications', async (req, res) => {
 app.get('/posts/reviewable-posts', async (req, res) => {
   const first = req.query.first;
   const second = req.query.second;
-
   try {
     await client.connect();
     const database = client.db('bumbledore');
     const posts = database.collection('posts');
     const reviewablePosts = await posts.find({
       $or: [
-        { username: first, acceptedApplicants: second, status: "Successful" },
-        { username: second, acceptedApplicants: first, status: "Successful" }
+        { username: first, acceptedApplicant: second, status: "Successful" }, 
+        { username: second, acceptedApplicant: first, status: "Successful" }
       ]
     })
-    .project({ _id: 1})
+    .project({ _id: 1 })
     .toArray();
-    /*const myApplications = await posts.find({
-      $or: [
-        { applicants: { $exists: true, $elemMatch: { $eq: username } } },
-        { acceptedApplicants: { $exists: true, $elemMatch: { $eq: username } } }
-      ]
-    }).toArray();*/
 
     res.status(200).json(reviewablePosts);
   } catch (error) {
-    console.error('Error fetching my reviwable posts:', error);
-    res.status(500).send('Failed to fetch my reviewable posts');
+    console.error('Error fetching reviewable posts:', error);
+    res.status(500).send('Failed to fetch reviewable posts');
   } finally {
     await client.close();
   }
 });
+
 
 app.patch('/posts/:id/accept', async (req, res) => {
   const { id } = req.params;
@@ -751,4 +745,4 @@ app.listen(port, () => {
   console.log(`Server (socket.io) running on http://localhost:${port}`);
 }) */
 
-  module.exports = app;
+module.exports = app;
