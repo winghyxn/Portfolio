@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, lazy, Suspense } from 'react';
 import axios from 'axios';
 import Sidebar from "../components/sidebar.js";
-import formStyles from "../components/form.module.css";
+//import formStyles from "../components/form.module.css";
 import useToken from "../components/useToken.js";
+import loaderStyles from '../components/loader.module.css';
 import './Home.css';
 import { Bar } from 'react-chartjs-2';
 import {
@@ -24,23 +25,19 @@ ChartJS.register(
   Legend
 );
 
+const EditProfileForm = lazy(() => import('../components/editProfileForm.js'));
+
 export default function Profile() {
   const { token } = useToken();
   const [showForm, setShowForm] = useState(false);
-  const [inputs, setInputs] = useState({});
+  //const [inputs, setInputs] = useState({});
   const [profile, setProfile] = useState({});
   const [clickData, setClickData] = useState(null);
   const [postClicksData, setPostClicksData] = useState([]);
 
-  const handleChange = (event) => {
-    const name = event.target.name;
-    const value = event.target.value;
-    setInputs(values => ({ ...values, [name]: value }));
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
+  const handleSubmit = (responseData) => {
+    setProfile(responseData);
+    /*try {
       const response = await fetch("https://bumbledore-server.vercel.app/my-profile", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -60,7 +57,8 @@ export default function Profile() {
     } catch (error) {
       console.error("Failed to edit profile: ", error);
       alert('Failed to edit profile');
-    }
+    }*/
+    setShowForm(false);
   };
 
   useEffect(() => {
@@ -111,39 +109,9 @@ export default function Profile() {
       </div>
       {showForm ? (
         <div className="main-page">
-          <form onSubmit={handleSubmit} className={formStyles.form}>
-            <label className={formStyles.label}>
-              Year:
-              <input
-                type="text"
-                name="year"
-                value={inputs.year || ''}
-                onChange={handleChange}
-                className={formStyles.inputs}
-              />
-            </label>
-            <label className={formStyles.label}>
-              Major:
-              <input
-                type="text"
-                name="major"
-                value={inputs.major || ''}
-                onChange={handleChange}
-                className={formStyles.inputs}
-              />
-            </label>
-            <label className={formStyles.label}>
-              Description:
-              <input
-                type="text"
-                name="description"
-                value={inputs.description || ''}
-                onChange={handleChange}
-                className={formStyles.inputs}
-              />
-            </label>
-            <button type="submit">Submit</button>
-          </form>
+          <Suspense fallback={<div className={loaderStyles.loader}></div>}>
+            <EditProfileForm onSubmit={handleSubmit}></EditProfileForm>
+          </Suspense>
           <div>
             <button type="button" onClick={() => setShowForm(false)}>Back</button>
           </div>

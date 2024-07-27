@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import Post from './Post.js' ;
-import Home from './Home.js' ;
+import Post from '../pages/Post.js' ;
+import Home from '../pages/Home.js' ;
 import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
 
