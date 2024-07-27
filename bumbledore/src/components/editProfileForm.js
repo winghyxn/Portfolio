@@ -1,4 +1,4 @@
-import React, { useState, useTransition } from 'react';
+import React, { useState } from 'react';
 import useToken from "../components/useToken.js";
 import formStyles from "../components/form.module.css";
 import axios from 'axios';
@@ -8,8 +8,6 @@ export default function EditProfileForm({ onSubmit }) {
     const [inputs, setInputs] = useState({});
     const { token } = useToken();
 
-    const [isPending, setPending] = useState(false);
-
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
@@ -18,7 +16,6 @@ export default function EditProfileForm({ onSubmit }) {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setPending(true);
 
         try {
             const data = {
@@ -38,7 +35,6 @@ export default function EditProfileForm({ onSubmit }) {
             console.error("Failed to edit profile: ", error);
             alert('Failed to edit profile');
         }
-        setPending(false);
     };
 
     return (
@@ -82,5 +78,5 @@ export default function EditProfileForm({ onSubmit }) {
 
 EditProfileForm.propTypes = {
     onSubmit: PropTypes.func.isRequired,
-  };
+};
   

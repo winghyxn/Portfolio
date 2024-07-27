@@ -30,10 +30,11 @@ const EditProfileForm = lazy(() => import('../components/editProfileForm.js'));
 export default function Profile() {
   const { token } = useToken();
   const [showForm, setShowForm] = useState(false);
-  //const [inputs, setInputs] = useState({});
+  const [reviews, setReviews] = useState([]);
   const [profile, setProfile] = useState({});
   const [clickData, setClickData] = useState(null);
   const [postClicksData, setPostClicksData] = useState([]);
+  const [error, setError] = useState(null);
 
   const handleSubmit = (responseData) => {
     setProfile(responseData);
@@ -63,15 +64,28 @@ export default function Profile() {
 
   useEffect(() => {
     const fetchProfile = async () => {
+      const response = await axios.get(`https://bumbledore-server.vercel.app/my-profile?username=${token}`);
       try {
-        const response = await axios.get(`https://bumbledore-server.vercel.app/my-profile?username=${token}`);
         setProfile(response.data);
       } catch (error) {
+        setError(response.data);
         console.error('Error fetching profile:', error);
       }
     };
 
+    const fetchReviews = async () => {
+      try {
+          const response = await axios.get(`https://bumbledore-server.vercel.app/reviews?username=${token}`); //`http://localhost:8080/reviews?username=${username}`);
+          console.log('Fetched reviews:', response.data);
+          setReviews(response.data);
+      } catch (error) {
+          console.error('Failed to fetch reviews:', error);
+          setError(`Failed to fetch reviews: ${error.message}`); // Set detailed error message
+      }
+    };
+
     fetchProfile();
+    fetchReviews();
   }, [token]); // Only run when token changes
 
   const fetchClickData = useCallback(async () => {
@@ -97,7 +111,17 @@ export default function Profile() {
 
   useEffect(() => {
     fetchClickData();
-  }, [token, fetchClickData]); // Include fetchClickData in the dependency array
+  }, [token, fetchClickData]); 
+
+  const averageRating = (reviews.length > 0) ? (
+    (reviews.map((review) => parseInt(review.rating)).reduce((accumulator, currentValue) => accumulator + currentValue, 0) / reviews.length).toFixed(2)
+  ) : (
+    "-"
+  );
+
+  if (error) {
+    return <p>{error}</p>; // Display error message
+  }
 
   return (
     <div className="grid-container">
@@ -118,7 +142,7 @@ export default function Profile() {
         </div>
       ) : (
         <div className="main-page">
-          <h2>Welcome, {token}!</h2> {/* Display username */}
+          <h2>Welcome, {token}!</h2> 
           <div className="content-box">
             <p className="content-text">Year: {profile.year}</p>
             <p className="content-text">Major: {profile.major}</p>
@@ -127,8 +151,20 @@ export default function Profile() {
           <div>
             <button onClick={() => setShowForm(true)}>Edit Profile</button>
           </div>
+          <div className="content-box">
+              <h3 className="content-text">Reviews: </h3> 
+              {reviews.map(review => (
+                  <div key={review._id} className="content-text">
+                      <div className="content-text">-----------</div>
+                      <div className="content-text">Rating: {review.rating}</div>
+                      <div className="content-text">Description: {review.text}</div>
+                      <div className="content-text">Average Rating: {averageRating}</div>
+                  </div>
+              ))}
+          </div>
           {clickData && (
             <div className="charts">
+              <h2>Insights</h2>
               <h3>Page where users came from</h3>
               <Bar
                 data={{
