@@ -76,7 +76,6 @@ export default function UserProfile() {
             };
 
             const response = await axios.post(`https://bumbledore-server.vercel.app/reviews`, reviewData);
-            console.log(response.status);
             setReviews([...reviews, response.data]);
             setSelectedID("");
             setNewReview({ postID: '', rating: 0, text: '', reviewer: '', reviewee: ''});
@@ -166,6 +165,7 @@ export default function UserProfile() {
                         <h3 className="content-text">Reviews: </h3> 
                         {reviews.map(review => (
                             <div key={review._id} className="content-text">
+                                <p className="content-text">-----------------------</p>
                                 <p className="content-text">Rating: {review.rating}</p>
                                 <p className="content-text">Description: {review.text}</p>
                             </div>
