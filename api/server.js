@@ -588,7 +588,7 @@ app.post('/reviews', async (req, res) => {
     await client.connect();
     const db = client.db('bumbledore');
     const reviews = db.collection('reviews');
-    const existingReview = reviews.findOne({ postID: postID});
+    const existingReview = await reviews.findOne({ postID: postID});
 
     if (existingReview) {
       await reviews.replaceOne(

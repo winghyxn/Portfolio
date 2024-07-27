@@ -76,6 +76,7 @@ export default function UserProfile() {
             };
 
             const response = await axios.post(`https://bumbledore-server.vercel.app/reviews`, reviewData);
+            console.log(response.status);
             setReviews([...reviews, response.data]);
             setSelectedID("");
             setNewReview({ postID: '', rating: 0, text: '', reviewer: '', reviewee: ''});
