@@ -22,7 +22,7 @@ export default function MyPosts() {
     useEffect(() => {
         const fetchMyPosts = async () => {
             try {
-                const response = await axios.get('https://bumbledore-server.vercel.app/posts/my-posts', {
+                const response = await axios.get('https://api-wing-s-projects.vercel.app/posts/my-posts', {
                     params: { username }
                 });
                 const postsData = response.data;
@@ -30,7 +30,7 @@ export default function MyPosts() {
 
                 for (const post of postsData) {
                     try {
-                        const clickResponse = await axios.get(`https://bumbledore-server.vercel.app/clicks/${post._id}`);
+                        const clickResponse = await axios.get(`https://api-wing-s-projects.vercel.app/clicks/${post._id}`);
                         setClickCounts(prevCounts => ({
                             ...prevCounts,
                             [post._id]: clickResponse.data
@@ -51,7 +51,7 @@ export default function MyPosts() {
 
     const handleClosePost = async (postId) => {
         try {
-            const response = await axios.patch(`https://bumbledore-server.vercel.app/posts/${postId}/close`);
+            const response = await axios.patch(`https://api-wing-s-projects.vercel.app/posts/${postId}/close`);
             if (response.status === 200) {
                 setPosts(posts.map(post => 
                     post._id === postId ? { ...post, status: 'closed' } : post
@@ -74,10 +74,14 @@ export default function MyPosts() {
         if (!applicant) return;
 
         try {
-            const response = await axios.patch(`https://bumbledore-server.vercel.app/posts/${postId}/accept`, { applicant });
+            const response = await axios.patch(`https://api-wing-s-projects.vercel.app/posts/${postId}/accept`, { applicant });
             if (response.status === 200) {
                 setPosts(posts.map(post => 
-                    post._id === postId ? { ...post, status: 'Successful', acceptedApplicant: applicant, applicants: post.applicants.filter(app => app !== applicant) } : post
+                    post._id === postId ? { 
+                        ...post, 
+                        status: 'Successful', 
+                        acceptedApplicant: applicant, 
+                    } : post
                 ));
                 setConfirmSelection(prev => ({ ...prev, [postId]: true }));
                 console.log('Applicant accepted successfully');
@@ -102,7 +106,7 @@ export default function MyPosts() {
         }));
 
         try {
-            await axios.post(`https://bumbledore-server.vercel.app/clicks/${postId}`, { type });
+            await axios.post(`https://api-wing-s-projects.vercel.app/clicks/${postId}`, { type });
         } catch (error) {
             console.error('Failed to update click data:', error);
         }
@@ -216,7 +220,7 @@ export default function MyPosts() {
                                         <Legend />
                                         <Bar dataKey="count" fill="#8884d8" />
                                     </BarChart>
-                            )}
+                                )}
                             </div>
                         ))
                     ) : (
@@ -226,4 +230,6 @@ export default function MyPosts() {
             )}
         </div>
     );
+}
+
 }    
