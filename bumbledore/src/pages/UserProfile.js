@@ -20,7 +20,7 @@ export default function UserProfile() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await axios.get(`https://bumbledore.vercel.app/user-profile?username=${username}`);
+                const response = await axios.get(`https://bumbledore-server.vercel.app/user-profile?username=${username}`);
                 console.log('Fetched profile:', response.data);
                 setProfile(response.data);
             } catch (error) {
@@ -31,7 +31,7 @@ export default function UserProfile() {
 
         const fetchReviews = async () => {
             try {
-                const response = await axios.get(`https://bumbledore.vercel.app/reviews?username=${username}`);
+                const response = await axios.get(`https://bumbledore-server.vercel.app/reviews?username=${username}`);
                 console.log('Fetched reviews:', response.data);
                 setReviews(response.data);
             } catch (error) {
@@ -46,7 +46,7 @@ export default function UserProfile() {
 
     const fetchReviewablePosts = async () => {
         try {
-            const response = await axios.get(`https://bumbledore.vercel.app/posts/reviewable-posts?first=${username}&&second=${token}`);
+            const response = await axios.get(`https://bumbledore-server.vercel.app/posts/reviewable-posts?first=${username}&&second=${token}`);
             console.log('Fetched reviewable posts:', response.data);
             setReviewOptions(response.data);
         } catch (error) {
@@ -75,7 +75,7 @@ export default function UserProfile() {
                 reviewee: profile.username
             };
 
-            const response = await axios.post(`https://bumbledore.vercel.app/reviews`, reviewData);
+            const response = await axios.post(`https://bumbledore-server.vercel.app/reviews`, reviewData);
             setReviews([...reviews, response.data]);
             setSelectedID("");
             setNewReview({ postID: '', rating: 0, text: '', reviewer: '', reviewee: ''});
