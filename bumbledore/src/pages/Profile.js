@@ -147,6 +147,7 @@ export default function Profile() {
             <p className="content-text">Year: {profile.year}</p>
             <p className="content-text">Major: {profile.major}</p>
             <p className="content-text">Description: {profile.description}</p>
+            <p className="content-text">Average Rating: {averageRating}</p>
           </div>
           <div>
             <button onClick={() => setShowForm(true)}>Edit Profile</button>
@@ -158,7 +159,6 @@ export default function Profile() {
                       <div className="content-text">-----------</div>
                       <div className="content-text">Rating: {review.rating}</div>
                       <div className="content-text">Description: {review.text}</div>
-                      <div className="content-text">Average Rating: {averageRating}</div>
                   </div>
               ))}
           </div>
