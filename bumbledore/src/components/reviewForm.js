@@ -6,12 +6,12 @@ import PropTypes from 'prop-types';
 
 export default function Review({username, onSubmit}) {
     const { token } = useToken();
-    const [profile, setProfile] = useState({}); // Initialize with a default value
+    //const [profile, setProfile] = useState({}); // Initialize with a default value
     const [reviews, setReviews] = useState([]);
     const [reviewOptions, setReviewOptions] = useState([]);
     const [selectedID, setSelectedID] = useState("");
     const [newReview, setNewReview] = useState({ postID: '', rating: 0, text: '', reviewer: ''});
-    const [error, setError] = useState(null);
+    //const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchReviewablePosts = async () => {
@@ -21,7 +21,7 @@ export default function Review({username, onSubmit}) {
                 setReviewOptions(response.data);
             } catch (error) {
                 console.error('Failed to fetch reviewable posts:', error);
-                setError(`Failed to fetch reviewable posts: ${error.message}`); // Set detailed error message
+                //setError(`Failed to fetch reviewable posts: ${error.message}`); // Set detailed error message
             }
         }
 
@@ -45,7 +45,7 @@ export default function Review({username, onSubmit}) {
                 rating: newReview.rating,
                 text: newReview.text, 
                 reviewer: token,
-                reviewee: profile.username
+                reviewee: username
             };
 
             const response = await axios.post(`https://bumbledore-server.vercel.app/reviews`/*`http://localhost:8080/reviews`*/, reviewData);
@@ -55,7 +55,7 @@ export default function Review({username, onSubmit}) {
             onSubmit(response.data);
         } catch (error) {
             console.error('Failed to submit review:', error);
-            setError(`Failed to submit review: ${error.message}`);
+            //setError(`Failed to submit review: ${error.message}`);
         }
     };
 

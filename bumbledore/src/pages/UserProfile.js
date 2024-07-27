@@ -10,7 +10,7 @@ const Review = lazy(() => import('../components/reviewForm.js'));
 
 export default function UserProfile() {
     const { username } = useParams();
-    const { token } = useToken();
+    //const { token } = useToken();
     const [profile, setProfile] = useState({}); // Initialize with a default value
     const [reviews, setReviews] = useState([]);
     //const [reviewOptions, setReviewOptions] = useState([]);
