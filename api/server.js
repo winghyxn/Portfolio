@@ -477,28 +477,19 @@ app.get('/posts/my-applications', async (req, res) => {
     await client.connect();
     const database = client.db('bumbledore');
     const posts = database.collection('posts');
+
+    console.log(`Fetching applications for username: ${username}`);
+
     const myApplications = await posts.find({
       $or: [
         { applicants: { $exists: true, $elemMatch: { $eq: username } } },
-        { acceptedApplicants: { $exists: true, $elemMatch: { $eq: username } } }
+        { acceptedApplicant: username }
       ]
     }).toArray();
 
-    const modifiedApplications = myApplications.map(post => {
-      const isAccepted = Array.isArray(post.acceptedApplicants) && post.acceptedApplicants.includes(username);
-      
-      if (post.status === 'Successful') {
-        if (isAccepted) {
-          return { ...post, status: 'Successful' };
-        } else {
-          return { ...post, status: 'Closed' };
-        }
-      } else {
-        return post;
-      }
-    });
+    console.log(`Found applications: ${JSON.stringify(myApplications)}`);
 
-    res.status(200).json(modifiedApplications);
+    res.status(200).json(myApplications);
   } catch (error) {
     console.error('Error fetching my applications:', error);
     res.status(500).send('Failed to fetch my applications');
@@ -506,6 +497,7 @@ app.get('/posts/my-applications', async (req, res) => {
     await client.close();
   }
 });
+
 
 app.get('/posts/reviewable-posts', async (req, res) => {
   const first = req.query.first;
@@ -544,48 +536,48 @@ app.patch('/posts/:id/accept', async (req, res) => {
   const { applicant } = req.body;
 
   try {
-    await client.connect();
-    const database = client.db('bumbledore');
-    const posts = database.collection('posts');
+      await client.connect();
+      const database = client.db('bumbledore');
+      const posts = database.collection('posts');
 
-    const post = await posts.findOne({ _id: new ObjectId(id) });
+      const post = await posts.findOne({ _id: new ObjectId(id) });
 
-    if (!post) {
-      res.status(404).send('Post not found');
-      return;
-    }
-
-    // Update post status and accepted applicant
-    const result = await posts.updateOne(
-      { _id: new ObjectId(id) },
-      {
-        $set: { status: 'Successful' },
-        $set: { acceptedApplicant: applicant },
-        $pull: { applicants: applicant }
+      if (!post) {
+          res.status(404).send('Post not found');
+          return;
       }
-    );
 
-    // Update status to 'closed' for rejected applicants only
-    if (post.applicants.length > 1) {
-      await posts.updateMany(
-        { _id: new ObjectId(id), 'applicants': { $nin: [applicant] } },
-        { $set: { 'applicants.$[elem].status': 'Closed' } },
-        { arrayFilters: [{ 'elem': { $nin: [applicant] } }] }
+      // Update post status to 'Successful' and set the accepted applicant
+      const result = await posts.updateOne(
+          { _id: new ObjectId(id) },
+          { 
+              $set: { 
+                  status: 'Successful', 
+                  acceptedApplicant: applicant 
+              }
+          }
       );
-    }
 
-    if (result.modifiedCount === 1) {
-      res.status(200).send('Applicant accepted successfully');
-    } else {
-      res.status(404).send('Post not found');
-    }
+      // Set status 'closed' for all non-accepted applicants
+      await posts.updateMany(
+          { _id: new ObjectId(id), 'applicants': { $ne: applicant } },
+          { $set: { 'applicants.$[elem].status': 'closed' } },
+          { arrayFilters: [{ 'elem': { $ne: applicant } }] }
+      );
+
+      if (result.modifiedCount === 1) {
+          res.status(200).send('Applicant accepted successfully');
+      } else {
+          res.status(404).send('Post not found');
+      }
   } catch (error) {
-    console.error('Error accepting applicant:', error);
-    res.status(500).send('Failed to accept applicant');
+      console.error('Error accepting applicant:', error);
+      res.status(500).send('Failed to accept applicant');
   } finally {
-    await client.close();
+      await client.close();
   }
 });
+
 
 app.post('/reviews', async (req, res) => {
   const { postID, rating, text, reviewer, reviewee } = req.body;

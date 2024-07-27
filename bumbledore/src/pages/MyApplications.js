@@ -17,13 +17,14 @@ export default function MyApplications() {
     useEffect(() => {
         const fetchMyApplications = async () => {
             try {
-                const response = await axios.get('https://bumbledore-server.vercel.app/posts/my-applications', {
+                const response = await axios.get('https://api-wing-s-projects.vercel.app/posts/my-applications', {
                     params: { username }
                 });
                 setAppliedPosts(response.data);
-                setLoading(false);
             } catch (error) {
                 console.error('Failed to fetch my applications:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -32,8 +33,7 @@ export default function MyApplications() {
 
     const handleUsernameClick = async (postId) => {
         try {
-            // Update usernameClicksApps when a username is clicked
-            await axios.post(`https://bumbledore-server.vercel.app/clicks/${postId}`, { type: 'usernameClicksApps' });
+            await axios.post(`https://api-wing-s-projects.vercel.app/clicks/${postId}`, { type: 'usernameClicksApps' });
         } catch (error) {
             console.error('Failed to update usernameClicksApps:', error);
         }
