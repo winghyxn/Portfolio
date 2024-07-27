@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import Home from './Home.js' ;
+import Home from '../pages/Home.js' ;
 import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
 

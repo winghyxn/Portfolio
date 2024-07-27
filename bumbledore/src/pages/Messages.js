@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';  // Import Link component
 import useToken from "../components/useToken.js";
-import styles from './Messages.module.css';
+import styles from '../components/Messages.module.css';
 
 export default function Messages() {
     const [userChats, setUserChats] = useState({});
