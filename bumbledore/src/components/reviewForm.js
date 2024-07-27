@@ -26,7 +26,7 @@ export default function Review({username, onSubmit}) {
         }
 
         fetchReviewablePosts();
-    }, [token])
+    }, [username])
 
     const handleReviewChange = (e) => {
         const { name, value } = e.target;
