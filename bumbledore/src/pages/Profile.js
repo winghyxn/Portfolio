@@ -43,7 +43,7 @@ export default function Profile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`https://bumbledore.vercel.app/my-profile?username=${token}`);
+        const response = await axios.get(`https://bumbledore-server.vercel.app/my-profile?username=${token}`);
         setProfile(response.data);
       } catch (error) {
         setError('Error fetching profile');
@@ -52,7 +52,7 @@ export default function Profile() {
 
     const fetchReviews = async () => {
       try {
-        const response = await axios.get(`https://bumbledore.vercel.app/reviews?username=${token}`);
+        const response = await axios.get(`https://bumbledore-server.vercel.app/reviews?username=${token}`);
         setReviews(response.data);
       } catch (error) {
         setError('Failed to fetch reviews');
@@ -65,7 +65,7 @@ export default function Profile() {
 
   const fetchClickData = useCallback(async () => {
     try {
-      const url = `https://bumbledore.vercel.app/user-clicks/${token}`;
+      const url = `https://bumbledore-server.vercel.app/user-clicks/${token}`;
       const response = await axios.get(url);
       setClickData(response.data.totalClicks);
 

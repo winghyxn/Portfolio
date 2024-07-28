@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import UserProfile from './UserProfile.js';
+import UserProfile from '../pages/UserProfile.js';
 import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
 

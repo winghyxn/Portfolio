@@ -19,7 +19,7 @@ export default function Home() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await axios.get('https://bumbledore.vercel.app/posts');
+                const response = await axios.get('https://bumbledore-server.vercel.app/posts');
                 if (response.data) {
                     const openPosts = response.data.filter(post => post.status === 'Open');
                     setPosts(openPosts);
@@ -45,7 +45,7 @@ export default function Home() {
         };
 
         try {
-            const response = await axios.post('https://bumbledore.vercel.app/new-chat', userData);
+            const response = await axios.post('https://bumbledore-server.vercel.app/new-chat', userData);
             if (response.status === 200) {
                 console.log('Chat created successfully:', response.data);
                 navigate('/messages');
@@ -61,7 +61,7 @@ export default function Home() {
     const handleApplyRequest = async (postId, poster) => {
         try {
             console.log(`Applying to post: ${postId}`);
-            const url = `https://bumbledore.vercel.app/posts/${postId}/apply`;
+            const url = `https://bumbledore-server.vercel.app/posts/${postId}/apply`;
             console.log(`Request URL: ${url}`);
 
             // Apply to the post
@@ -78,14 +78,14 @@ export default function Home() {
                 }));
 
                 // Create a chat and send an automatic message
-                const chatResponse = await axios.post('https://bumbledore.vercel.app/new-chat', {
+                const chatResponse = await axios.post('https://bumbledore-server.vercel.app/new-chat', {
                     username: username,
                     profile: poster,
                     postID: postId
                 });
 
                 if (chatResponse.status === 200) {
-                    const messageResponse = await axios.post('https://bumbledore.vercel.app/messages', {
+                    const messageResponse = await axios.post('https://bumbledore-server.vercel.app/messages', {
                         sender: username,
                         recipient: poster,
                         postID: postId,
@@ -112,7 +112,7 @@ export default function Home() {
 
     const handleButtonClick = async (postId, type) => {
         try {
-            const response = await axios.post(`https://bumbledore.vercel.app/clicks/${postId}`, { type });
+            const response = await axios.post(`https://bumbledore-server.vercel.app/clicks/${postId}`, { type });
             if (response.status === 200) {
                 console.log(`Incremented ${type} count for post ${postId}`);
                 // Update local state to reflect the change immediately
