@@ -169,7 +169,7 @@ app.post('/my-profile', async (req, res) => {
     } else {
       await profiles.insertOne({ username, year, major, description });
     }
-    res.status(200).send('Profile edited successfully');
+    res.status(200).json({ username, year, major, description });
   } catch (error) {
     console.error('Error editing profile:', error);
     res.status(500).send('Failed to edit profile');
@@ -201,8 +201,7 @@ app.get('/posts', async (req, res) => {
     await client.connect();
     const database = client.db('bumbledore');
     const posts = database.collection('posts');
-    const openPosts = await posts.find({ status: 'open' }).toArray();
-    
+    const openPosts = await posts.find({ status: 'Open' }).toArray();
     res.status(200).json(openPosts);
   } catch (error) {
     console.error('Error fetching posts:', error);
@@ -217,29 +216,36 @@ app.post('/create-post', async (req, res) => {
   const { typeOfRequest, courseCode, description, pay, numGroupmates, username } = req.body;
 
   try {
-      await client.connect();
-      const database = client.db('bumbledore');
-      const posts = database.collection('posts');
+    await client.connect();
+    const database = client.db('bumbledore');
+    const posts = database.collection('posts');
+    const post = {
+      typeOfRequest,
+      courseCode,
+      description,
+      pay: typeOfRequest === 'lookingForTutor' ? pay : undefined,
+      numGroupmates: typeOfRequest === 'lookingForGroupmate' ? numGroupmates : undefined,
+      createdAt: new Date(),
+      username,
+      status: 'Open',
+      applicants: [],
+      clickCounts: {  // Initialize clickCounts here
+        messageClicks: 0,
+        applyClicks: 0,
+        usernameClicksHome: 0,
+        usernameClicksApps: 0,
+        usernameClicksMessages: 0        
+      }
+    };
 
-      const post = {
-          typeOfRequest,
-          courseCode,
-          description,
-          pay: typeOfRequest === 'lookingForTutor' ? pay : undefined,
-          numGroupmates: typeOfRequest === 'lookingForGroupmate' ? numGroupmates : undefined,
-          createdAt: new Date(),
-          username, 
-          status: 'open'
-      };
+    await posts.insertOne(post);
 
-      await posts.insertOne(post);
-
-      res.status(200).send('Post created successfully');
+    res.status(200).send('Post created successfully');
   } catch (error) {
-      console.error('Error creating post:', error);
-      res.status(500).send('Failed to create post');
+    console.error('Error creating post:', error);
+    res.status(500).send('Failed to create post');
   } finally {
-      await client.close();
+    await client.close();
   }
 });
 
@@ -251,9 +257,9 @@ app.get('/user-profile', async (req, res) => {
       const profiles = db.collection("userProfileInfo");
 
       const profile = await profiles.findOne({ username: username });
-      if (!profile) {
-          return res.status(404).send('User profile not found');
-      }
+      //if (!profile) {
+      //    return res.status(404).send('User profile not found');
+      //}
       res.status(200).json(profile);
   } catch (error) {
       console.error('Error fetching profile:', error);
@@ -263,8 +269,9 @@ app.get('/user-profile', async (req, res) => {
   }
 });
 
+
 app.post('/new-chat', async (req, res) => {
-  const { username, profile } = req.body;
+  const { username, profile, postID } = req.body;
 
   try {
       await client.connect();
@@ -276,29 +283,31 @@ app.post('/new-chat', async (req, res) => {
 
       if (!selfHasChats) {
         await allChats.insertOne({
-          username: username, 
-          chats: [profile]
+          username: username,
+          chats: []
         });
-      } else {
-        await allChats.updateOne(
-          { username: username },
-          { $addToSet: { chats: profile } }
-        );
       }
 
-      if (!otherHasChats){
+      if (!otherHasChats) {
         await allChats.insertOne({
-          username: profile,
-          chats: [username]
+          username: profile, 
+          chats: []
         });
-      } else {
-        await allChats.updateOne(
-          { username: profile },
-          { $addToSet: { chats: username } }
-        );
-      }
+      } 
 
-      res.status(200).send('Chats updated successfully');
+      await allChats.updateOne(
+        {username: username},
+        {
+          $addToSet: {chats: {username: profile, postID: postID}}
+      });
+
+      await allChats.updateOne(
+        {username: profile}, 
+        {
+          $addToSet: {chats: {username: username, postID: postID}}
+      });
+
+      res.status(200).send("Successfully updated chats");
   } catch (error) {
       console.error('Error updating chats:', error);
       res.status(500).send('Failed to update chats');
@@ -316,20 +325,18 @@ app.get('/chats', async (req, res) => {
       const allChats = db.collection("chats");
 
       const chats = await allChats.findOne({ username: username });
-      /*if (!profile) {
-          return res.status(404).send('User profile not found');
-      }*/
       res.status(200).json(chats);
   } catch (error) {
-      console.error('Error fetching profile:', error);
-      res.status(500).send('Failed to fetch profile');
+      console.error('Error fetching chats:', error);
+      res.status(500).send('Failed to fetch chats');
   } finally {
       await client.close();
   }
 });
 
+
 app.post('/messages', async (req, res) => {
-  const { sender, recipient, message } = req.body;
+  const { sender, recipient, message, postID } = req.body; // Include postID in the destructuring
 
   try {
       await client.connect();
@@ -339,13 +346,14 @@ app.post('/messages', async (req, res) => {
       const messageInfo = {
         sender: sender,
         recipient: recipient,
+        postID: postID, // Add postID to the message document
         message: message,
         createdAt: new Date(),
       };
 
       await allMessages.insertOne(messageInfo);
 
-      res.status(200).send({messageInfo});
+      res.status(200).send({ messageInfo });
   } catch (error) {
       console.error('Error sending message:', error);
       res.status(500).send('Failed to send message');
@@ -357,6 +365,7 @@ app.post('/messages', async (req, res) => {
 app.get('/messages', async (req, res) => {
   const sender = req.query.sender;
   const recipient = req.query.recipient;
+  const postID = req.query.postID;
 
   try {
       await client.connect();
@@ -365,11 +374,16 @@ app.get('/messages', async (req, res) => {
 
       const sort = { createdAt: 1 };
       const messages = await allMessages.find({
-        $or: [
-          { $and: [ {sender: sender}, {recipient: recipient}] },
-          { $and: [ {sender: recipient}, {recipient: sender}]}
+        $and: [
+          { postID: postID },
+          {
+            $or: [
+              { $and: [{ sender: sender }, { recipient: recipient }] },
+              { $and: [{ sender: recipient }, { recipient: sender }] }
+            ]
+          }
         ]
-      }).sort(sort).toArray(); 
+      }).sort(sort).toArray();
       res.status(200).json(messages);
   } catch (error) {
       console.error('Error fetching messages:', error);
@@ -414,6 +428,299 @@ app.patch('/posts/:id/close', async (req, res) => {
   } catch (error) {
       console.error('Error closing post:', error);
       res.status(500).send('Failed to close post');
+  } finally {
+      await client.close();
+  }
+});
+
+app.patch('/posts/:id/apply', async (req, res) => {
+  const { id } = req.params;
+  const { username } = req.body;
+
+  try {
+      await client.connect();
+      const database = client.db('bumbledore');
+      const posts = database.collection('posts');
+
+      const result = await posts.updateOne(
+          { _id: new ObjectId(id) },
+          { $addToSet: { applicants: username } }
+      );
+
+      if (result.modifiedCount === 1) {
+          res.status(200).send('Applied successfully');
+      } else {
+          res.status(404).send('Post not found');
+      }
+  } catch (error) {
+      console.error('Error applying to post:', error);
+      res.status(500).send('Failed to apply to post');
+  } finally {
+      await client.close();
+  }
+});
+
+app.get('/posts/my-applications', async (req, res) => {
+  const { username } = req.query;
+
+  try {
+    await client.connect();
+    const database = client.db('bumbledore');
+    const posts = database.collection('posts');
+
+    console.log(`Fetching applications for username: ${username}`);
+
+    const myApplications = await posts.find({
+      $or: [
+        { applicants: { $exists: true, $elemMatch: { $eq: username } } },
+        { acceptedApplicant: username }
+      ]
+    }).toArray();
+
+    console.log(`Found applications: ${JSON.stringify(myApplications)}`);
+
+    res.status(200).json(myApplications);
+  } catch (error) {
+    console.error('Error fetching my applications:', error);
+    res.status(500).send('Failed to fetch my applications');
+  } finally {
+    await client.close();
+  }
+});
+
+
+app.get('/posts/reviewable-posts', async (req, res) => {
+  const first = req.query.first;
+  const second = req.query.second;
+  try {
+    await client.connect();
+    const database = client.db('bumbledore');
+    const posts = database.collection('posts');
+    const reviewablePosts = await posts.find({
+      $or: [
+        { username: first, acceptedApplicant: second, status: "Successful" }, 
+        { username: second, acceptedApplicant: first, status: "Successful" }
+      ]
+    })
+    .project({ _id: 1 })
+    .toArray();
+
+    res.status(200).json(reviewablePosts);
+  } catch (error) {
+    console.error('Error fetching reviewable posts:', error);
+    res.status(500).send('Failed to fetch reviewable posts');
+  } finally {
+    await client.close();
+  }
+});
+
+
+app.patch('/posts/:id/accept', async (req, res) => {
+  const { id } = req.params;
+  const { applicant } = req.body;
+
+  try {
+      await client.connect();
+      const database = client.db('bumbledore');
+      const posts = database.collection('posts');
+
+      const post = await posts.findOne({ _id: new ObjectId(id) });
+
+      if (!post) {
+          res.status(404).send('Post not found');
+          return;
+      }
+
+      // Update post status to 'Successful' and set the accepted applicant
+      const result = await posts.updateOne(
+          { _id: new ObjectId(id) },
+          { 
+              $set: { 
+                  status: 'Successful', 
+                  acceptedApplicant: applicant 
+              }
+          }
+      );
+
+      // Set status 'closed' for all non-accepted applicants
+      await posts.updateMany(
+          { _id: new ObjectId(id), 'applicants': { $ne: applicant } },
+          { $set: { 'applicants.$[elem].status': 'closed' } },
+          { arrayFilters: [{ 'elem': { $ne: applicant } }] }
+      );
+
+      if (result.modifiedCount === 1) {
+          res.status(200).send('Applicant accepted successfully');
+      } else {
+          res.status(404).send('Post not found');
+      }
+  } catch (error) {
+      console.error('Error accepting applicant:', error);
+      res.status(500).send('Failed to accept applicant');
+  } finally {
+      await client.close();
+  }
+});
+
+
+app.post('/reviews', async (req, res) => {
+  const { postID, rating, text, reviewer, reviewee } = req.body;
+  const review = {
+    postID,
+    rating,
+    text,
+    reviewer,
+    reviewee,
+    createdAt: new Date(),
+  };
+
+  try {
+    await client.connect();
+    const db = client.db('bumbledore');
+    const reviews = db.collection('reviews');
+    const existingReview = await reviews.findOne({ postID: postID});
+
+    if (existingReview) {
+      await reviews.replaceOne(
+        { postID: postID },
+        review
+      );
+    } else {
+      await reviews.insertOne(review);
+    }
+    res.status(200).json(review);
+  } catch (error) {
+    console.error('Error submitting review:', error);
+    res.status(500).send('Failed to submit review');
+  } finally {
+    await client.close();
+  }
+});
+
+app.get('/reviews', async (req, res) => {
+  const username = req.query.username;
+
+  try {
+    await client.connect();
+    const db = client.db('bumbledore');
+    const reviews = db.collection('reviews');
+    const userReviews = await reviews.find({ reviewee: username }).toArray();
+    res.status(200).json(userReviews);
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    res.status(500).send('Failed to fetch reviews');
+  } finally {
+    await client.close();
+  }
+});
+
+app.post('/clicks/:postId', async (req, res) => {
+  const { postId } = req.params;
+  const { type } = req.body;
+
+  try {
+      if (!['messageClicks', 'applyClicks', 'usernameClicksHome', 'usernameClicksApps', 'usernameClicksMessages'].includes(type)) {
+          return res.status(400).json({ error: 'Invalid click type' });
+      }
+
+      await client.connect();
+      const database = client.db('bumbledore');
+      const posts = database.collection('posts');
+
+      // Convert postId to ObjectId
+      const postObjectId = new ObjectId(postId);
+
+      // Find the post
+      const post = await posts.findOne({ _id: postObjectId });
+      if (!post) {
+          return res.status(404).json({ error: 'Post not found' });
+      }
+
+      // Update the clickCounts
+      const updatedClickCounts = {
+          ...post.clickCounts,
+          [type]: (post.clickCounts?.[type] || 0) + 1
+      };
+
+      await posts.updateOne(
+          { _id: postObjectId },
+          { $set: { clickCounts: updatedClickCounts } }
+      );
+
+      res.status(200).json({ message: `Incremented ${type} count` });
+  } catch (error) {
+      console.error(`Error incrementing ${type} count for post ${postId}:`, error);
+      res.status(500).json({ error: 'Failed to increment click count' });
+  } finally {
+      await client.close();
+  }
+});
+
+
+// Retrieve click data
+app.get('/clicks/:postId', async (req, res) => {
+  const { postId } = req.params;
+
+  try {
+      const postObjectId = new ObjectId(postId);
+
+      await client.connect();
+      const database = client.db('bumbledore');
+      const posts = database.collection('posts');
+
+      const post = await posts.findOne({ _id: postObjectId });
+      if (!post) {
+          return res.status(404).json({ error: 'Post not found' });
+      }
+      const clickCounts = post.clickCounts || { 
+          messageClicks: 0, 
+          applyClicks: 0, 
+          usernameClicksHome: 0,
+          usernameClicksApps: 0,
+          usernameClicksMessages: 0
+      };
+      const usernameClicks = clickCounts.usernameClicksHome + clickCounts.usernameClicksApps + clickCounts.usernameClicksMessages;
+      res.status(200).json({
+          ...clickCounts,
+          usernameClicks
+      });
+  } catch (error) {
+      console.error('Error retrieving click data:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  } finally {
+      await client.close();
+  }
+});
+
+// server.js
+app.get('/user-clicks/:username', async (req, res) => {
+  const { username } = req.params;
+  console.log(`Received request for username clicks: ${username}`); // Add this line
+
+  try {
+      await client.connect();
+      const database = client.db('bumbledore');
+      const posts = database.collection('posts');
+
+      const userPosts = await posts.find({ username }).toArray();
+      console.log(`User posts: ${JSON.stringify(userPosts)}`); // Add this line
+
+      const totalClicks = userPosts.reduce((acc, post) => {
+          const { clickCounts } = post;
+          acc.usernameClicksHome += clickCounts?.usernameClicksHome || 0;
+          acc.usernameClicksApps += clickCounts?.usernameClicksApps || 0;
+          acc.usernameClicksMessages += clickCounts?.usernameClicksMessages || 0;
+          return acc;
+      }, {
+          usernameClicksHome: 0,
+          usernameClicksApps: 0,
+          usernameClicksMessages: 0
+      });
+
+      res.status(200).json({ totalClicks, userPosts });
+  } catch (error) {
+      console.error('Error retrieving user click data:', error);
+      res.status(500).json({ error: 'Internal server error' });
   } finally {
       await client.close();
   }

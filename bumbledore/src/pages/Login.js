@@ -1,18 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 import './Login.css';
-
-async function Authentication(credentials) {
-    return fetch("https://bumbledore-server.vercel.app/login", { 
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(credentials)
-    })
-    .then(data => data.json());
-}
 
 export default function Login({ setToken }) {
     const [inputs, setInputs] = useState({});
@@ -28,9 +18,7 @@ export default function Login({ setToken }) {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setError(null); // Clear previous error
-        const response = await Authentication(inputs);
-        setToken(response);
+        setError(null); 
 
         try {
             /*const response = await fetch("http://localhost:3000/login", {  //`${API_URL}/login`, {//fetch('', { https://bumbledore.vercel.app/login 
@@ -40,17 +28,19 @@ export default function Login({ setToken }) {
                 },
                 body: JSON.stringify(inputs)
             });*/
+            const data = {
+                email: inputs.email,
+                password: inputs.password
+            }
+            const response = await axios.post("https://bumbledore-server.vercel.app/login", data);
+            setToken(response.data);
 
-            if (response.ok) {
+            if (response.status === '200') {
                 navigate('/home');
-
-            } else {
-                // const errorMessage = await response.text()
-                setError(response.error);
-        }
+            }
 
         } catch (error) {
-            setError(response.error);
+            setError(error.response.data.error);
             console.error('Request failed:', error);
         }
     }
@@ -58,30 +48,34 @@ export default function Login({ setToken }) {
     return (
         <section>
             <h1 className = "login-title">Bumbledore</h1>
-            <container>
+            <div>
             <h2 className = "login-subtitle">Login</h2>
-            <form onSubmit={handleSubmit}>
-                <label>Email:  </label>
+            <form aria-label="login-form" onSubmit={handleSubmit}>
+                <label>Email:  
                     <input 
                         type="email" 
                         name="email" 
+                        data-testid="email-login"
                         value={inputs.email || ""} 
                         onChange={handleChange} 
                         required 
                     />
+                </label>
                 <br />
-                <label>Password:  </label>
+                <label>Password:  
                     <input 
                         type="password" 
                         name="password" 
+                        data-testid="password-login"
                         value={inputs.password || ""} 
                         onChange={handleChange} 
                         required 
                     />
+                </label>
                 <br />
-                <input type="submit" id="submit-button" value="Login" />
+                <input type="submit" id="submit-button" name="Login" value="Login" />
             </form>
-            </container>
+            </div>
             <p id = "text1">Don't have an account? <a href = "/create-account">Create Account</a></p>
             {error && <p id= "text1" style={{ color: 'red' }}>{error}</p>}
         </section>

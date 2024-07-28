@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';  // Import Link component
 import useToken from "../components/useToken.js";
-import styles from './Messages.module.css';
+import styles from '../components/Messages.module.css';
 
 export default function Messages() {
-    const [userChats, setUserChats] = useState([]);
+    const [userChats, setUserChats] = useState({});
     const [messages, setMessages] = useState([]);
-    const [showChat, setShowChat] = useState("");
+    const [showChat, setShowChat] = useState({ username: "", postID: "" });
     const [input, setInput] = useState("");
     const { token } = useToken();
 
@@ -14,17 +15,18 @@ export default function Messages() {
         e.preventDefault();
         const sender = e.target.dataset.sender;
         const recipient = e.target.dataset.recipient;
-        
-        const messageData = {
+        const postID = e.target.dataset.postid;
+
+        const messageData = {   
             sender: sender,
             recipient: recipient,
+            postID: postID,
             message: input
         };
 
         try {
-            const response = await axios.post('https://bumbledore-server.vercel.app/messages', messageData);
+            const response = await axios.post('https://bumbledore-server.vercel.app/messages'/*"http://localhost:8080/messages"*/, messageData);
             if (response.status === 200) {
-                console.log('Message sent:', response.data);
                 fetchMessages(showChat);
             } 
         } catch (error) {
@@ -35,7 +37,7 @@ export default function Messages() {
 
     const fetchMessages = async (chat) => {
         try {
-            const response = await axios.get(`https://bumbledore-server.vercel.app/messages?sender=${token}&&recipient=${chat}`);
+            const response = await axios.get(`https://bumbledore-server.vercel.app/messages?sender=${token}&&recipient=${chat.username}&&postID=${chat.postID}`/*`http://localhost:8080/messages?sender=${token}&&recipient=${chat.other}&&postID=${chat.postID}`*/);
             console.log('Fetched messages:', response.data);
             setMessages(response.data);
         } catch (error) {
@@ -47,15 +49,14 @@ export default function Messages() {
         const fetchUserChats = async () => {
             try {
                 const response = await axios.get(`https://bumbledore-server.vercel.app/chats?username=${token}`);
-                console.log('Fetched chats:', response.data);
                 setUserChats(response.data);
+                console.log(response.data)
             } catch (error) {
                 console.error('Failed to fetch chats:', error);
             }
         };
 
         fetchUserChats();
-
     }, [token]);
 
     const handleChatClick = (chat) => {
@@ -63,31 +64,49 @@ export default function Messages() {
         fetchMessages(chat);
     };
 
+    const handleUsernameClick = async () => {
+        if (showChat.postID) {
+            try {
+                // Update usernameClicksMessages when a username is clicked
+                await axios.post(`https://bumbledore-server.vercel.app/clicks/${showChat.postID}`, { type: 'usernameClicksMessages' });
+            } catch (error) {
+                console.error('Failed to update usernameClicksMessages:', error);
+            }
+        }
+    };
+
     return (
         <div className={styles.gridContainer}>
             <div className={styles.sidebar}>
-                <a className={styles.sidebarText} href = "/home">Back</a>
+                <a className={styles.sidebarText} href="/home">Back</a>
                 {userChats.chats ? (
                     userChats.chats.map((chat) => (
-                        <div className={styles.sidebarText} key={chat}>
-                            <button onClick={() => handleChatClick(chat)}>
-                                {chat}
+                        <div key={`${chat.username}-${chat.postID}`}>
+                            <button className={styles.sidebarButton} onClick={() => handleChatClick(chat)}>
+                                @{chat.username} <br></br> ------- #{chat.postID}
                             </button>
                         </div>
                     ))
                 ) : (
-                    <p>No chats</p>
+                    <div>No chats</div>
                 )}
             </div>
             <div className={styles.header}>
-                {showChat === "" ? (
+                {showChat.username === "" ? (
                     <h1>Messages</h1>
                 ) : (
-                    <h1>{showChat}</h1>
+                    <h1>
+                        <Link
+                            to={`/profile/${showChat.username}`}
+                            onClick={handleUsernameClick} // Update count when username link is clicked
+                        >
+                            @{showChat.username}
+                        </Link> - #{showChat.postID}
+                    </h1>
                 )}
             </div>
-            
-            {showChat === "" ? (
+
+            {showChat.username === "" ? (
                 <div className={styles.mainPage}>
                     <div className={styles.messages}>
                         <p>Click on a username to access chat</p>
@@ -100,7 +119,7 @@ export default function Messages() {
                             <div key={message._id} className={styles.textbox}>
                                 <h3 className={styles.text}>{message.sender}</h3>
                                 <p className={styles.text}>{message.message}</p>
-                                <p className={styles.text}>{message.createdAt}</p>
+                                <p className={styles.text}>{new Date(message.createdAt).toLocaleString()}</p>
                             </div>
                         ))}
                     </div>
@@ -109,22 +128,24 @@ export default function Messages() {
                             className={styles.textBarForm} 
                             onSubmit={handleMessage}
                             data-sender={token}
-                            data-recipient={showChat}
+                            data-recipient={showChat.username}
+                            data-postid={showChat.postID}
                         >
                             <textarea 
-                                className={styles.textBarFormInputs}                                    name="messageInput"
+                                className={styles.textBarFormInputs}
+                                name="messageInput"
                                 row="2"
                                 cols="40"
                                 value={input} 
                                 onChange={e => setInput(e.target.value)}
                                 required
                             >
-                           </textarea>
+                            </textarea>
                             <button 
                                 className={styles.textBarFormIputs} 
                                 type="submit"
-                                >
-                                    Submit
+                            >
+                                Send
                             </button>
                         </form>
                     </div>
@@ -133,3 +154,5 @@ export default function Messages() {
         </div>
     );
 }
+
+

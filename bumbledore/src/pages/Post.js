@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/sidebar'; // Adjust the path as needed
 import './Home.css';
 import formStyles from '../components/form.module.css';
@@ -13,6 +14,8 @@ export default function Post() {
     const [description, setDescription] = useState('');
     const [charCount, setCharCount] = useState(0);
     const { token } = useToken(); // Get the token from the custom hook
+
+    const navigate = useNavigate();
 
     const handleTypeChange = (e) => {
         setTypeOfRequest(e.target.value);
@@ -37,16 +40,18 @@ export default function Post() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         const postData = {
             typeOfRequest,
             courseCode,
             description,
             pay: typeOfRequest === 'lookingForTutor' ? `${pay}/h` : undefined,
             numGroupmates: typeOfRequest === 'lookingForGroupmate' ? numGroupmates : undefined,
-            username: token, // Add the username to the post data
+            username: token, 
+            status: 'open',
+            applicants: [] // Initialize applicants array
         };
-
+    
         try {
             const response = await axios.post('https://bumbledore-server.vercel.app/create-post', postData);
             if (response.status === 200) {
@@ -58,8 +63,7 @@ export default function Post() {
                 setNumGroupmates('');
                 setDescription('');
                 setCharCount(0);
-                // Show success message
-                alert('Post created successfully!');
+                navigate('/home');
             } else {
                 console.error('Failed to create post: Status code:', response.status);
                 alert('Failed to create post');
@@ -68,7 +72,7 @@ export default function Post() {
             console.error('Error creating post:', error);
             alert('Failed to create post');
         }
-    };
+    };    
 
     return (
         <div className="grid-container">
@@ -79,7 +83,7 @@ export default function Post() {
                 <h1>Post</h1>
             </div>
             <div className="main-page">
-                <form className={formStyles.form} onSubmit={handleSubmit}>
+                <form aria-label="post-form" className={formStyles.form} onSubmit={handleSubmit}>
                     <div>
                         <label className={formStyles.label} htmlFor="typeOfRequest">Type of Request:</label>
                         <select
@@ -89,9 +93,9 @@ export default function Post() {
                             className={formStyles.inputs}
                             required
                         >
-                            <option value="">Select</option>
-                            <option value="lookingForTutor">Looking for Tutor</option>
-                            <option value="lookingForGroupmate">Looking for Groupmate</option>
+                            <option data-testid = "select" value="">Select</option>
+                            <option data-testid = "lookingForTutor" value="lookingForTutor">Looking for Tutor</option>
+                            <option data-testid = "lookingForGroupmate" value="lookingForGroupmate">Looking for Groupmate</option>
                         </select>
                     </div>
                     <div>

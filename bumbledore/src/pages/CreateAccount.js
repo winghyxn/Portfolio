@@ -46,12 +46,13 @@ export default function CreateAccount() {
       <h1 className = "login-title">Bumbledore</h1>
       <div>
         <h2 className = "login-subtitle">Create Account</h2>
-        <form onSubmit={handleSubmit}>
+        <form aria-label="create-account-form" onSubmit={handleSubmit}>
           <label>
             Email:
             <input
               type="email"
               name="email"
+              data-testid="email-createaccount"
               value={inputs.email || ''}
               onChange={handleChange}
               required
@@ -62,12 +63,13 @@ export default function CreateAccount() {
             <input
               type="password"
               name="password"
+              data-testid="password-createaccount"
               value={inputs.password || ''}
               onChange={handleChange}
               required
             />
           </label>
-          <input type="submit" id="submit-button" value="Create Account" />
+          <input type="submit" id="submit-button" name="Create Account" value="Create Account" />
         </form>
       </div>
       <p id = "text1">Already have an account? <a href = "/">Login</a></p>

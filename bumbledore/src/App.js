@@ -7,7 +7,8 @@ import Post from './pages/Post.js';
 import Messages from './pages/Messages.js';
 import Profile from './pages/Profile.js';
 import UserProfile from './pages/UserProfile.js'; // Import the new component
-import Map from './pages/Map.js';
+import MyPosts from './pages/MyPosts.js';
+import MyApplications from './pages/MyApplications.js';
 import './App.css';
 
 function App() {
@@ -36,7 +37,8 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/post" element={<Post />} />
           <Route path="/messages" element={<Messages />} />
-          <Route path="/my-applications-posts" element={<Map />} />
+          <Route path="/my-posts" element={<MyPosts />} />
+          <Route path="/my-applications" element={<MyApplications />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:username" element={<UserProfile />} /> {/* New route */}
         </Routes>
@@ -47,3 +49,12 @@ function App() {
 
 export default App;
 
+/*import { render, screen } from '@testing-library/react';
+import App from './App';
+
+test('renders learn react link', () => {
+  render(<App />);
+  const linkElement = screen.getByText(/learn react/i);
+  expect(linkElement).toBeInTheDocument();
+}); 
+*/
