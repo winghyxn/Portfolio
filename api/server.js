@@ -2,13 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
-const { createServer } = require('http')
-const { Server } = require('socket.io')
 const { MongoClient, ObjectId } = require('mongodb');
 
 const app = express();
-//const httpServer = createServer(app);
-//const io = new Server(httpServer);
 const port = 8080;
 
 const uri = "mongodb+srv://kweyne:tfaoAz9bCAuXWwpD@orbital.fmsrize.mongodb.net/?retryWrites=true&w=majority&appName=orbital";
@@ -27,10 +23,6 @@ const corsOptions = {
   methods: 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
   allowedHeaders: 'Content-Type, Authorization'
 };
-
-/*io.on("connection", (socket) => {
-  console.log("connected!")
-}); */
 
 app.use(bodyParser.json());
 app.use(cors(corsOptions));
@@ -227,7 +219,6 @@ app.post('/create-post', async (req, res) => {
     await client.connect();
     const database = client.db('bumbledore');
     const posts = database.collection('posts');
-
     const post = {
       typeOfRequest,
       courseCode,
@@ -401,7 +392,6 @@ app.get('/messages', async (req, res) => {
       await client.close();
   }
 });
-
 
 app.get('/posts/my-posts', async (req, res) => {
   const { username } = req.query;
@@ -736,13 +726,8 @@ app.get('/user-clicks/:username', async (req, res) => {
   }
 });
 
-
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
-
-/* httpServer.listen(port, () => {
-  console.log(`Server (socket.io) running on http://localhost:${port}`);
-}) */
 
 module.exports = app;

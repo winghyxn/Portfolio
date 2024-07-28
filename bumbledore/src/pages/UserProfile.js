@@ -5,7 +5,6 @@ import useToken from "../components/useToken.js";
 import Sidebar from '../components/sidebar'; // Adjust the path as needed
 import formStyles from "../components/form.module.css";
 import './Home.css'; // Import the new CSS file
-
 export default function UserProfile() {
     const { username } = useParams();
     const { token } = useToken();
@@ -39,7 +38,6 @@ export default function UserProfile() {
                 setError(`Failed to fetch reviews: ${error.message}`);
             }
         };
-
         fetchProfile();
         fetchReviews();
     }, [username]);
@@ -95,11 +93,9 @@ export default function UserProfile() {
     if (error) {
         return <p>{error}</p>;
     }
-
     if (!profile) {
         return <p>Loading profile...</p>;
     }
-
     return (
         <div className="grid-container">
             <div className="sidebar">
@@ -182,3 +178,4 @@ export default function UserProfile() {
         </div>
     );
 }
+

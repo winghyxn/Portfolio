@@ -91,9 +91,9 @@ export default function Profile() {
   const fetchClickData = useCallback(async () => {
     try {
       const url = `https://bumbledore-server.vercel.app/user-clicks/${token}`;
-      console.log(`Fetching click data from: ${url}`); // Log for debugging
+      console.log(`Fetching click data from: ${url}`); 
       const response = await axios.get(url);
-      console.log(`Received click data: ${JSON.stringify(response.data)}`); // Log for debugging
+      console.log(`Received click data: ${JSON.stringify(response.data)}`); 
       setClickData(response.data.totalClicks);
 
       const posts = response.data.userPosts;
@@ -118,7 +118,7 @@ export default function Profile() {
   ) : (
     "-"
   );
-
+  
   if (error) {
     return <p>{error}</p>; // Display error message
   }
@@ -212,3 +212,4 @@ export default function Profile() {
     </div>
   );
 }
+
