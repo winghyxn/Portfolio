@@ -5,6 +5,7 @@ import useToken from "../components/useToken.js";
 import Sidebar from '../components/sidebar'; // Adjust the path as needed
 import formStyles from "../components/form.module.css";
 import './Home.css'; // Import the new CSS file
+
 export default function UserProfile() {
     const { username } = useParams();
     const { token } = useToken();
@@ -19,8 +20,7 @@ export default function UserProfile() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await axios.get(`https://bumbledore-server.vercel.app/user-profile?username=${username}`);
-                console.log('Fetched profile:', response.data);
+                const response = await axios.get(`https://bumbledore.vercel.app/user-profile?username=${username}`);
                 setProfile(response.data);
             } catch (error) {
                 console.error('Failed to fetch profile:', error);
@@ -30,21 +30,21 @@ export default function UserProfile() {
 
         const fetchReviews = async () => {
             try {
-                const response = await axios.get(`https://bumbledore-server.vercel.app/reviews?username=${username}`);
-                console.log('Fetched reviews:', response.data);
+                const response = await axios.get(`https://bumbledore.vercel.app/reviews?username=${username}`);
                 setReviews(response.data);
             } catch (error) {
                 console.error('Failed to fetch reviews:', error);
                 setError(`Failed to fetch reviews: ${error.message}`);
             }
         };
+
         fetchProfile();
         fetchReviews();
     }, [username]);
 
     const fetchReviewablePosts = async () => {
         try {
-            const response = await axios.get(`https://bumbledore-server.vercel.app/posts/reviewable-posts?first=${username}&&second=${token}`);
+            const response = await axios.get(`https://bumbledore.vercel.app/posts/reviewable-posts?first=${username}&&second=${token}`);
             console.log('Fetched reviewable posts:', response.data);
             setReviewOptions(response.data);
         } catch (error) {
@@ -73,7 +73,7 @@ export default function UserProfile() {
                 reviewee: profile.username
             };
 
-            const response = await axios.post(`https://bumbledore-server.vercel.app/reviews`, reviewData);
+            const response = await axios.post(`https://bumbledore.vercel.app/reviews`, reviewData);
             setReviews([...reviews, response.data]);
             setSelectedID("");
             setNewReview({ postID: '', rating: 0, text: '', reviewer: '', reviewee: ''});
@@ -93,9 +93,11 @@ export default function UserProfile() {
     if (error) {
         return <p>{error}</p>;
     }
+
     if (!profile) {
         return <p>Loading profile...</p>;
     }
+
     return (
         <div className="grid-container">
             <div className="sidebar">
@@ -161,7 +163,6 @@ export default function UserProfile() {
                         <h3 className="content-text">Reviews: </h3> 
                         {reviews.map(review => (
                             <div key={review._id} className="content-text">
-                                <p className="content-text">-----------------------</p>
                                 <p className="content-text">Rating: {review.rating}</p>
                                 <p className="content-text">Description: {review.text}</p>
                             </div>
@@ -178,4 +179,6 @@ export default function UserProfile() {
         </div>
     );
 }
+
+
 

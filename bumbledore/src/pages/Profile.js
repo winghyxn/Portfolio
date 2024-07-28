@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback, lazy, Suspense } from 'react';
 import axios from 'axios';
 import Sidebar from "../components/sidebar.js";
-//import formStyles from "../components/form.module.css";
 import useToken from "../components/useToken.js";
 import loaderStyles from '../components/loader.module.css';
 import './Home.css';
@@ -38,62 +37,36 @@ export default function Profile() {
 
   const handleSubmit = (responseData) => {
     setProfile(responseData);
-    /*try {
-      const response = await fetch("https://bumbledore-server.vercel.app/my-profile", {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: token,
-          year: inputs.year,
-          major: inputs.major,
-          description: inputs.description
-        })
-      });
-
-      if (!response.ok) {
-        console.error('Failed to edit profile: Status code:', response.status);
-        alert('Failed to edit profile');
-      }
-      setShowForm(false); // Close the form after successful submission
-    } catch (error) {
-      console.error("Failed to edit profile: ", error);
-      alert('Failed to edit profile');
-    }*/
     setShowForm(false);
   };
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const response = await axios.get(`https://bumbledore-server.vercel.app/my-profile?username=${token}`);
       try {
+        const response = await axios.get(`https://bumbledore.vercel.app/my-profile?username=${token}`);
         setProfile(response.data);
       } catch (error) {
-        setError(response.data);
-        console.error('Error fetching profile:', error);
+        setError('Error fetching profile');
       }
     };
 
     const fetchReviews = async () => {
       try {
-          const response = await axios.get(`https://bumbledore-server.vercel.app/reviews?username=${token}`); //`http://localhost:8080/reviews?username=${username}`);
-          console.log('Fetched reviews:', response.data);
-          setReviews(response.data);
+        const response = await axios.get(`https://bumbledore.vercel.app/reviews?username=${token}`);
+        setReviews(response.data);
       } catch (error) {
-          console.error('Failed to fetch reviews:', error);
-          setError(`Failed to fetch reviews: ${error.message}`); // Set detailed error message
+        setError('Failed to fetch reviews');
       }
     };
 
     fetchProfile();
     fetchReviews();
-  }, [token]); // Only run when token changes
+  }, [token]);
 
   const fetchClickData = useCallback(async () => {
     try {
-      const url = `https://bumbledore-server.vercel.app/user-clicks/${token}`;
-      console.log(`Fetching click data from: ${url}`); 
+      const url = `https://bumbledore.vercel.app/user-clicks/${token}`;
       const response = await axios.get(url);
-      console.log(`Received click data: ${JSON.stringify(response.data)}`); 
       setClickData(response.data.totalClicks);
 
       const posts = response.data.userPosts;
@@ -105,20 +78,20 @@ export default function Profile() {
       }));
       setPostClicksData(postClicks);
     } catch (error) {
-      console.error('Error fetching click data:', error);
+      setError('Error fetching clickData');
     }
   }, [token]);
 
   useEffect(() => {
     fetchClickData();
-  }, [token, fetchClickData]); 
+  }, [token, fetchClickData]);
 
   const averageRating = (reviews.length > 0) ? (
     (reviews.map((review) => parseInt(review.rating)).reduce((accumulator, currentValue) => accumulator + currentValue, 0) / reviews.length).toFixed(2)
   ) : (
     "-"
   );
-  
+
   if (error) {
     return <p>{error}</p>; // Display error message
   }
@@ -147,7 +120,6 @@ export default function Profile() {
             <p className="content-text">Year: {profile.year}</p>
             <p className="content-text">Major: {profile.major}</p>
             <p className="content-text">Description: {profile.description}</p>
-            <p className="content-text">Average Rating: {averageRating}</p>
           </div>
           <div>
             <button onClick={() => setShowForm(true)}>Edit Profile</button>
@@ -159,6 +131,7 @@ export default function Profile() {
                       <div className="content-text">-----------</div>
                       <div className="content-text">Rating: {review.rating}</div>
                       <div className="content-text">Description: {review.text}</div>
+                      <div className="content-text">Average Rating: {averageRating}</div>
                   </div>
               ))}
           </div>
@@ -212,4 +185,3 @@ export default function Profile() {
     </div>
   );
 }
-

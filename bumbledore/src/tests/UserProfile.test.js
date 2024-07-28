@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import UserProfile from '../pages/UserProfile.js';
+import { render, screen, waitFor } from '@testing-library/react';
+import UserProfile from './UserProfile.js';
 import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
 
@@ -15,8 +15,37 @@ beforeEach(() => {
 });
 
 describe("page loads correctly", () => {
-  test('renders User Profile component', () => {
-      render(<BrowserRouter><UserProfile/></BrowserRouter>);
-      expect(screen.getByRole("heading", {name: "'s Profile"})).toBeInTheDocument();
-  });
+    test('renders User Profile component', async () => {
+        axios.get.mockResolvedValueOnce({
+            data: {
+                username: "BrightChicken",
+                year: "2",
+                major: "cs",
+                description: "hehehaha"
+            }
+        });
+
+        axios.get.mockResolvedValueOnce({
+            data: [] // No reviews
+        });
+      
+        render(<BrowserRouter><UserProfile/></BrowserRouter>);
+        
+        await waitFor(() => {
+            // Using a more flexible matcher
+            const profileHeading = screen.getByText((content, element) => {
+                return element.tagName.toLowerCase() === 'h1' && content.includes('Profile');
+            });
+
+            expect(profileHeading).toBeInTheDocument();
+
+            const profileLink = screen.getByText((content, element) => {
+                return element.tagName.toLowerCase() === 'a' && content.includes('Profile');
+            });
+
+            expect(profileLink).toBeInTheDocument();
+        });
+    });
 });
+
+
