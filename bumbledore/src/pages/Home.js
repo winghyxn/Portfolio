@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-//import InfiniteScroll from "react-infinite-scroll-component";
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Sidebar from '../components/sidebar.js'; // Adjust the path as needed
 import useToken from "../components/useToken.js";
@@ -12,7 +11,6 @@ export default function Home() {
     const [posts, setPosts] = useState([]);
     const { token } = useToken();
     const [loading, setLoading] = useState(true);
-    const [appliedPosts, setAppliedPosts] = useState({});
     const navigate = useNavigate();
 
     // Assuming token contains the username directly
@@ -21,7 +19,7 @@ export default function Home() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await axios.get('https://bumbledore-server.vercel.app/posts');
+                const response = await axios.get('https://bumbledore.vercel.app/posts');
                 if (response.data) {
                     const openPosts = response.data.filter(post => post.status === 'Open');
                     setPosts(openPosts);
@@ -47,7 +45,7 @@ export default function Home() {
         };
 
         try {
-            const response = await axios.post('https://bumbledore-server.vercel.app/new-chat'/*'http://localhost:8080/new-chat'*/, userData);
+            const response = await axios.post('https://bumbledore.vercel.app/new-chat', userData);
             if (response.status === 200) {
                 console.log('Chat created successfully:', response.data);
                 navigate('/messages');
@@ -63,24 +61,31 @@ export default function Home() {
     const handleApplyRequest = async (postId, poster) => {
         try {
             console.log(`Applying to post: ${postId}`);
-            const url = `https://bumbledore-server.vercel.app/posts/${postId}/apply`;
+            const url = `https://bumbledore.vercel.app/posts/${postId}/apply`;
             console.log(`Request URL: ${url}`);
 
             // Apply to the post
             const response = await axios.patch(url, { username });
             if (response.status === 200) {
                 console.log('Applied successfully');
-                setAppliedPosts(prevState => ({ ...prevState, [postId]: true }));
+
+                // Update the post state to reflect the applied status
+                setPosts(prevPosts => prevPosts.map(post => {
+                    if (post._id === postId) {
+                        return { ...post, isApplied: true };
+                    }
+                    return post;
+                }));
 
                 // Create a chat and send an automatic message
-                const chatResponse = await axios.post('https://bumbledore-server.vercel.app/new-chat'/*'http://localhost:8080/new-chat'*/, {
+                const chatResponse = await axios.post('https://bumbledore.vercel.app/new-chat', {
                     username: username,
                     profile: poster,
                     postID: postId
                 });
 
                 if (chatResponse.status === 200) {
-                    const messageResponse = await axios.post('https://bumbledore-server.vercel.app/messages'/*'http://localhost:8080/messages'*/, {
+                    const messageResponse = await axios.post('https://bumbledore.vercel.app/messages', {
                         sender: username,
                         recipient: poster,
                         postID: postId,
@@ -107,7 +112,7 @@ export default function Home() {
 
     const handleButtonClick = async (postId, type) => {
         try {
-            const response = await axios.post(`https://bumbledore-server.vercel.app/clicks/${postId}`, { type });
+            const response = await axios.post(`https://bumbledore.vercel.app/clicks/${postId}`, { type });
             if (response.status === 200) {
                 console.log(`Incremented ${type} count for post ${postId}`);
                 // Update local state to reflect the change immediately
@@ -131,8 +136,15 @@ export default function Home() {
         }
     };
 
-    const handleLinkClick = (postId) => {
-        handleButtonClick(postId, 'usernameClicksHome');
+    const handleLinkClick = (postUsername, postId) => {
+        if (postUsername !== username) {
+            handleButtonClick(postId, 'usernameClicksHome');
+        }
+        if (postUsername === username) {
+            navigate(`/profile`);
+        } else {
+            navigate(`/profile/${postUsername}`);
+        }
     };
 
     return (
@@ -155,7 +167,7 @@ export default function Home() {
                             <div data-testid="post" key={post._id} className={styles.post}>
                                 <div className={styles.username}>
                                     <div className={styles.header}>
-                                        @<Link className={styles.header} to={`/profile/${post.username}`} onClick={() => handleLinkClick(post._id)}>{post.username}</Link>
+                                        @<span className={styles.header} onClick={() => handleLinkClick(post.username, post._id)}>{post.username}</span>
                                     </div>
                                     <div className={styles.header}>
                                         #{post._id}
@@ -189,7 +201,7 @@ export default function Home() {
                                         )}
                                     </div>
                                     <div>
-                                        {appliedPosts[post._id] ? (
+                                        {post.isApplied ? (
                                             <div className={styles.text}>Post applied successfully</div>
                                         ) : post.username !== username
                                             ? (
