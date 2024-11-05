@@ -1,0 +1,76 @@
+/*--lavender-blush: #fef2f3ff;
+--sky-magenta: #d46ca5ff;
+--magenta-dye: #be3781ff;
+--goldenrod: #e1ac24ff;
+--maize: #f5eb44ff;
+--ivory: #fefdecff;
+--cool-gray: #8f97c5ff;
+--yinmn-blue: #47529bff;
+--charcoal: #454e64ff;
+--rich-black: #0b111dff;
+*/
+
+* {
+    background-color: #fefdecff;
+}
+
+.login-title {
+    font-size: 32pt;
+    margin: 50px;
+    text-align: center;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    margin: 50px;
+}
+
+.login-subtitle {
+    font-size: 1rem;
+    text-align: center;
+}
+
+form {
+    text-align: center;
+    margin: 0 auto;
+    padding: 2%;
+    width: 20%;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+label {
+    text-align: center;
+    background-color: #f9f9f9;
+    margin: 0 auto;
+}
+
+input[type="email"],
+input[type="password"] {
+    padding: 2%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 100%;
+    margin: 0.5rem auto;
+    text-align: left;
+    background-color: white
+}
+
+#submit-button {
+    background-color: #be3781ff;
+    padding: 5px;
+    color: white;
+    text-align: center;
+    border-radius: 3px;
+    margin: 0 auto;
+}
+
+#submit-button:hover, 
+button:hover {
+    text-align: center;
+    border-radius: 3px;
+    opacity: 70%;
+}
+
+#text1 {
+    text-align: center;
+}
